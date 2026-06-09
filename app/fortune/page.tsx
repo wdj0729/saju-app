@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { loadSession } from '@/lib/session';
 import { FORTUNE_TEXT } from '@/lib/fortune-text';
 import type { SajuSession } from '@/lib/session';
+import ShareCard from '@/components/ShareCard';
+import ShareButton from '@/components/ShareButton';
 
 type Period = '오늘' | '이달' | '올해';
 
@@ -19,6 +21,7 @@ export default function FortunePage() {
   const [isStreaming, setIsStreaming] = useState(false);
   const [aiError, setAiError] = useState('');
   const abortRef = useRef<AbortController | null>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!session) router.replace('/saju');
@@ -31,6 +34,9 @@ export default function FortunePage() {
   }, []);
 
   if (!session) return null;
+
+  const today = new Date();
+  const dateStr = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`;
 
   const { ilgan } = session.result;
   const fortune = FORTUNE_TEXT[ilgan] ?? FORTUNE_TEXT['甲'];
@@ -123,6 +129,15 @@ export default function FortunePage() {
 
   return (
     <div className="flex flex-col min-h-screen">
+      <ShareCard
+        ref={cardRef}
+        type="fortune"
+        name={session.input.name}
+        ilgan={ilgan}
+        period={activeTab}
+        summary={currentPeriod.summary}
+        date={dateStr}
+      />
       {/* 헤더 */}
       <header className="flex items-center gap-3 px-4 py-4 border-b border-border">
         <button
@@ -201,13 +216,18 @@ export default function FortunePage() {
       </div>
 
       {/* 하단 궁합 버튼 */}
-      <div className="px-4 pb-8">
+      <div className="flex gap-3 px-4 pb-8">
         <button
           onClick={() => router.push('/compatibility')}
-          className="w-full py-3 rounded-2xl bg-card text-muted text-sm font-medium hover:bg-card-hover transition-colors"
+          className="flex-1 py-3 rounded-2xl bg-card text-muted text-sm font-medium hover:bg-card-hover transition-colors"
         >
           💑 궁합 보러 가기
         </button>
+        <ShareButton
+          cardRef={cardRef}
+          filename="fortune.png"
+          shareTitle={`${activeTab} 운세`}
+        />
       </div>
     </div>
   );
