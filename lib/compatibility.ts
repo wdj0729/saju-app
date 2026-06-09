@@ -1,4 +1,3 @@
-// lib/compatibility.ts
 import type { SajuResult } from './saju-calculator';
 import type { Ohaeng } from './saju-data';
 
@@ -72,6 +71,11 @@ export function loadCompatSession(): CompatibilitySession | null {
   } catch {
     return null;
   }
+}
+
+export function clearCompatSession(): void {
+  if (typeof window === 'undefined') return;
+  sessionStorage.removeItem(COMPAT_KEY);
 }
 
 export function calcCompatibility(a: SajuResult, b: SajuResult): CompatibilityResult {
