@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadSession } from '@/lib/session';
 import { ILGAN_TEXT } from '@/lib/ilgan-text';
+import { saveProfile, isProfileSaved } from '@/lib/profiles';
 import SajuGrid from '@/components/SajuGrid';
 import OhaengChart from '@/components/OhaengChart';
 import type { SajuSession } from '@/lib/session';
@@ -21,11 +22,19 @@ export default function SajuResultPage() {
   }, [session, router]);
 
   const cardRef = useRef<HTMLDivElement>(null);
+  const [isSaved, setIsSaved] = useState(() => {
+    return session ? isProfileSaved(session.input) : false;
+  });
 
   if (!session) return null;
 
   const { input, result } = session;
   const displayName = input.name ? `${input.name}의 사주` : '사주 결과';
+
+  function handleSave() {
+    saveProfile(input, result.ilgan);
+    setIsSaved(true);
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -88,6 +97,14 @@ export default function SajuResultPage() {
           className="flex-1 py-3 rounded-2xl bg-card text-muted text-sm font-medium hover:bg-card-hover transition-colors"
         >
           궁합 보기
+        </button>
+        <button
+          onClick={handleSave}
+          disabled={isSaved}
+          className="bg-card text-muted py-3 px-4 rounded-2xl hover:bg-card-hover transition-colors disabled:opacity-50"
+          aria-label="프로필 저장"
+        >
+          {isSaved ? '✓' : '💾'}
         </button>
         <ShareButton
           cardRef={cardRef}
