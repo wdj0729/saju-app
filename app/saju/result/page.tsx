@@ -5,8 +5,10 @@ import { useRouter } from 'next/navigation';
 import { loadSession } from '@/lib/session';
 import { ILGAN_TEXT } from '@/lib/ilgan-text';
 import { saveProfile, isProfileSaved } from '@/lib/profiles';
+import { calculateDaewoon, calcMadeAge } from '@/lib/daewoon';
 import SajuGrid from '@/components/SajuGrid';
 import OhaengChart from '@/components/OhaengChart';
+import DaewoonChart from '@/components/DaewoonChart';
 import type { SajuSession } from '@/lib/session';
 import ShareCard from '@/components/ShareCard';
 import ShareButton from '@/components/ShareButton';
@@ -30,6 +32,16 @@ export default function SajuResultPage() {
 
   const { input, result } = session;
   const displayName = input.name ? `${input.name}의 사주` : '사주 결과';
+
+  const daewoon = input.gender
+    ? calculateDaewoon(
+        { year: input.year, month: input.month, day: input.day, hour: input.hour, isLunar: input.isLunar },
+        input.gender,
+        result.year,
+        result.month,
+      )
+    : null;
+  const currentAge = calcMadeAge(input.year, input.month, input.day);
 
   function handleSave() {
     saveProfile(input, result.ilgan);
@@ -83,6 +95,11 @@ export default function SajuResultPage() {
           <p className="text-xs text-muted mb-4">오행 분포</p>
           <OhaengChart ohaeng={result.ohaeng} />
         </div>
+
+        {/* 대운 */}
+        {daewoon && (
+          <DaewoonChart result={daewoon} currentAge={currentAge} />
+        )}
       </div>
 
       <div className="flex gap-3 px-4 pb-8">
