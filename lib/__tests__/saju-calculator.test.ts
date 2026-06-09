@@ -122,6 +122,27 @@ describe('getMonthPillar', () => {
     expect(p.ji).toBe('子');
     expect(p.gan).toBe('丙');
   });
+
+  it('2024-03-07 (경칩 3/5 이후) → 卯月, 甲辰년 → 丁卯월', () => {
+    // 惊蛰(경칩) 검증 — 경칩 이후 卯月
+    // 卯月: jiIndex=3, offset=(3-2+12)%12=1, ganIndex=(2+1)%10=3 → 丁
+    const p = getMonthPillar(2024, 3, 7, '甲');
+    expect(p.ji).toBe('卯');
+    expect(p.gan).toBe('丁');
+  });
+
+  it('2024-02-10 乙庚년 계산 → 戊寅월', () => {
+    // 乙庚년: yearGanIndex=1, OHODUN[1]=4(戊) → 인월=戊寅
+    const p = getMonthPillar(2024, 2, 10, '乙');
+    expect(p.ji).toBe('寅');
+    expect(p.gan).toBe('戊');
+  });
+
+  it('2024-02-10 丙辛년 계산 → 庚寅월', () => {
+    const p = getMonthPillar(2024, 2, 10, '丙');
+    expect(p.ji).toBe('寅');
+    expect(p.gan).toBe('庚');
+  });
 });
 
 describe('getDayPillar', () => {
@@ -181,6 +202,27 @@ describe('getHourPillar', () => {
     // 乙ganIndex=1, OJADUN[1%5]=2(丙), jiIndex=0 → 丙子
     const p = getHourPillar(0, '乙');
     expect(p.gan).toBe('丙');
+    expect(p.ji).toBe('子');
+  });
+
+  it('丙일 hour=0 (자시) → 戊子시', () => {
+    // 丙ganIndex=2, OJADUN[2%5]=4(戊), jiIndex=0 → 戊子
+    const p = getHourPillar(0, '丙');
+    expect(p.gan).toBe('戊');
+    expect(p.ji).toBe('子');
+  });
+
+  it('丁일 hour=0 (자시) → 庚子시', () => {
+    // 丁ganIndex=3, OJADUN[3%5]=6(庚), jiIndex=0 → 庚子
+    const p = getHourPillar(0, '丁');
+    expect(p.gan).toBe('庚');
+    expect(p.ji).toBe('子');
+  });
+
+  it('戊일 hour=0 (자시) → 壬子시', () => {
+    // 戊ganIndex=4, OJADUN[4%5]=8(壬), jiIndex=0 → 壬子
+    const p = getHourPillar(0, '戊');
+    expect(p.gan).toBe('壬');
     expect(p.ji).toBe('子');
   });
 });

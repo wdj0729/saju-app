@@ -106,7 +106,7 @@ export function getDayPillar(y: number, m: number, d: number): Pillar {
 }
 
 function hourToJiIndex(hour: number): number {
-  if (hour === 23) return 0; // 야자시 → 당일 子時
+  if (hour === 23) return 0; // 야자시는 당일 子時로 처리 (설계 의도)
   return Math.floor((hour + 1) / 2);
 }
 
