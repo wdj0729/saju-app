@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { calculateSaju } from '@/lib/saju-calculator';
 import { saveSession } from '@/lib/session';
@@ -34,16 +34,13 @@ export default function SajuInputPage() {
   const [error,     setError]     = useState('');
 
   const maxDay = isLunar ? 30 : new Date(year, month, 0).getDate();
-
-  useEffect(() => {
-    if (day > maxDay) setDay(maxDay);
-  }, [maxDay]); // eslint-disable-line react-hooks/exhaustive-deps
+  const clampedDay = Math.min(day, maxDay);
 
   function handleSubmit() {
     setError('');
     try {
-      const result = calculateSaju({ year, month, day, hour: hourValue, isLunar });
-      saveSession({ input: { name, year, month, day, hour: hourValue, isLunar }, result });
+      const result = calculateSaju({ year, month, day: clampedDay, hour: hourValue, isLunar });
+      saveSession({ input: { name, year, month, day: clampedDay, hour: hourValue, isLunar }, result });
       router.push('/saju/result');
     } catch {
       setError('입력한 날짜를 확인해주세요.');
@@ -131,7 +128,7 @@ export default function SajuInputPage() {
         <div>
           <label className={labelClass}>생일</label>
           <select
-            value={day}
+            value={clampedDay}
             onChange={(e) => setDay(Number(e.target.value))}
             className={inputClass}
           >

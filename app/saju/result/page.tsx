@@ -10,16 +10,15 @@ import type { SajuSession } from '@/lib/session';
 
 export default function SajuResultPage() {
   const router = useRouter();
-  const [session, setSession] = useState<SajuSession | null>(null);
+  const [session] = useState<SajuSession | null>(() =>
+    typeof window !== 'undefined' ? loadSession() : null
+  );
 
   useEffect(() => {
-    const data = loadSession();
-    if (!data) {
+    if (!session) {
       router.replace('/saju');
-      return;
     }
-    setSession(data);
-  }, [router]);
+  }, [session, router]);
 
   if (!session) return null;
 
