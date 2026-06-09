@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { calculateSaju } from '@/lib/saju-calculator';
 import { saveSession } from '@/lib/session';
+import { loadProfiles } from '@/lib/profiles';
+import type { Profile } from '@/lib/profiles';
 
 const SIJIN = [
   { label: '자시 (23·0시)',  value: 0  },
@@ -25,6 +27,7 @@ const MONTHS = Array.from({ length: 12 },  (_, i) => i + 1);
 
 export default function SajuInputPage() {
   const router = useRouter();
+  const [profiles] = useState<Profile[]>(() => loadProfiles());
   const [name,      setName]      = useState('');
   const [isLunar,   setIsLunar]   = useState(false);
   const [year,      setYear]      = useState(1990);
@@ -32,6 +35,15 @@ export default function SajuInputPage() {
   const [day,       setDay]       = useState(1);
   const [hourValue, setHourValue] = useState<number | null>(null);
   const [error,     setError]     = useState('');
+
+  function loadFromProfile(profile: Profile) {
+    setName(profile.name);
+    setYear(profile.year);
+    setMonth(profile.month);
+    setDay(profile.day);
+    setHourValue(profile.hour);
+    setIsLunar(profile.isLunar);
+  }
 
   const maxDay = isLunar ? 30 : new Date(year, month, 0).getDate();
   const clampedDay = Math.min(day, maxDay);
@@ -64,6 +76,37 @@ export default function SajuInputPage() {
       </header>
 
       <div className="flex flex-col gap-5 px-4 py-6 flex-1">
+        {profiles.length > 0 && (
+          <div className="bg-card rounded-2xl px-4 py-3">
+            <p className="text-xs text-muted mb-2 font-medium">저장된 프로필 불러오기</p>
+            <div className="flex flex-col gap-2">
+              {profiles.map((profile) => (
+                <div
+                  key={profile.id}
+                  className="flex justify-between items-center bg-card-hover rounded-xl px-3 py-2"
+                >
+                  <div className="min-w-0">
+                    <span className="text-sm text-primary font-medium truncate">
+                      {profile.name || '이름 없음'}
+                    </span>
+                    <span className="text-xs text-muted ml-2">
+                      {profile.year}.{String(profile.month).padStart(2, '0')}.{String(profile.day).padStart(2, '0')}
+                      {' · '}{profile.isLunar ? '음력' : '양력'}
+                      {' · '}{profile.ilgan}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => loadFromProfile(profile)}
+                    className="text-xs text-primary hover:opacity-70 transition-opacity ml-3 flex-shrink-0"
+                  >
+                    선택
+                  </button>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-muted mt-3 text-center">또는 새로 입력하기 ↓</p>
+          </div>
+        )}
         {/* 이름 */}
         <div>
           <label className={labelClass}>이름 (선택)</label>
