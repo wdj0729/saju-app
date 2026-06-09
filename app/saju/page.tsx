@@ -27,14 +27,15 @@ const MONTHS = Array.from({ length: 12 },  (_, i) => i + 1);
 
 export default function SajuInputPage() {
   const router = useRouter();
-  const [profiles, setProfiles] = useState<Profile[]>(() => loadProfiles());
-  const [name,      setName]      = useState('');
-  const [isLunar,   setIsLunar]   = useState(false);
-  const [year,      setYear]      = useState(1990);
-  const [month,     setMonth]     = useState(1);
-  const [day,       setDay]       = useState(1);
-  const [hourValue, setHourValue] = useState<number | null>(null);
-  const [error,     setError]     = useState('');
+  const [profiles,   setProfiles]   = useState<Profile[]>(() => loadProfiles());
+  const [name,       setName]       = useState('');
+  const [isLunar,    setIsLunar]    = useState(false);
+  const [year,       setYear]       = useState(1990);
+  const [month,      setMonth]      = useState(1);
+  const [day,        setDay]        = useState(1);
+  const [hourValue,  setHourValue]  = useState<number | null>(null);
+  const [gender,     setGender]     = useState<'M' | 'F'>('M');
+  const [error,      setError]      = useState('');
 
   function loadFromProfile(profile: Profile) {
     setName(profile.name);
@@ -43,24 +44,27 @@ export default function SajuInputPage() {
     setDay(profile.day);
     setHourValue(profile.hour);
     setIsLunar(profile.isLunar);
+    setGender(profile.gender ?? 'M');
   }
 
-  const maxDay = isLunar ? 30 : new Date(year, month, 0).getDate();
+  const maxDay     = isLunar ? 30 : new Date(year, month, 0).getDate();
   const clampedDay = Math.min(day, maxDay);
 
   function handleSubmit() {
     setError('');
     try {
       const result = calculateSaju({ year, month, day: clampedDay, hour: hourValue, isLunar });
-      saveSession({ input: { name, year, month, day: clampedDay, hour: hourValue, isLunar }, result });
+      saveSession({
+        input: { name, year, month, day: clampedDay, hour: hourValue, isLunar, gender },
+        result,
+      });
       router.push('/saju/result');
     } catch {
       setError('입력한 날짜를 확인해주세요.');
     }
   }
 
-  const inputClass =
-    'w-full bg-card border border-border rounded-xl px-4 py-3 text-primary text-sm appearance-none';
+  const inputClass = 'w-full bg-card border border-border rounded-xl px-4 py-3 text-primary text-sm appearance-none';
   const labelClass = 'block text-xs text-muted mb-1.5';
 
   return (
@@ -109,6 +113,7 @@ export default function SajuInputPage() {
             <p className="text-xs text-muted mt-3 text-center">또는 새로 입력하기 ↓</p>
           </div>
         )}
+
         {/* 이름 */}
         <div>
           <label className={labelClass}>이름 (선택)</label>
@@ -119,6 +124,26 @@ export default function SajuInputPage() {
             onChange={(e) => setName(e.target.value)}
             className={inputClass}
           />
+        </div>
+
+        {/* 성별 */}
+        <div>
+          <label className={labelClass}>성별</label>
+          <div className="flex gap-2">
+            {(['M', 'F'] as const).map((g) => (
+              <button
+                key={g}
+                onClick={() => setGender(g)}
+                className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                  gender === g
+                    ? 'bg-primary-gradient text-white'
+                    : 'bg-card text-muted'
+                }`}
+              >
+                {g === 'M' ? '남성' : '여성'}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* 양력/음력 토글 */}
