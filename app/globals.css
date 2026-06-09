@@ -14,3 +14,9 @@
   --color-geum:      #e2e8f0;
   --color-su:        #60a5fa;
 }
+
+@layer utilities {
+  .bg-primary-gradient {
+    background-image: linear-gradient(to right, #667eea, #764ba2);
+  }
+}

@@ -34,34 +34,37 @@ export default function Home() {
       </div>
 
       <div className="flex flex-col gap-3 w-full">
-        {CARDS.map((card) =>
-          card.active ? (
-            <Link
-              key={card.title}
-              href={card.href}
-              className="bg-card rounded-2xl p-4 flex items-center gap-4 hover:bg-card-hover transition-colors"
-            >
+        {CARDS.map((card) => {
+          const inner = (
+            <>
               <span className="text-2xl">{card.emoji}</span>
               <div className="flex-1">
                 <p className="text-sm font-semibold text-primary">{card.title}</p>
                 <p className="text-xs text-muted mt-0.5">{card.subtitle}</p>
               </div>
-              <span className="text-muted">→</span>
+              <span className={card.active ? 'text-muted' : 'text-xs text-muted'}>
+                {card.active ? '→' : '준비 중'}
+              </span>
+            </>
+          );
+
+          return card.active ? (
+            <Link
+              key={card.title}
+              href={card.href}
+              className="bg-card rounded-2xl p-4 flex items-center gap-4 hover:bg-card-hover transition-colors"
+            >
+              {inner}
             </Link>
           ) : (
             <div
               key={card.title}
               className="bg-card rounded-2xl p-4 flex items-center gap-4 opacity-50 pointer-events-none"
             >
-              <span className="text-2xl">{card.emoji}</span>
-              <div className="flex-1">
-                <p className="text-sm font-semibold text-primary">{card.title}</p>
-                <p className="text-xs text-muted mt-0.5">{card.subtitle}</p>
-              </div>
-              <span className="text-xs text-muted">준비 중</span>
+              {inner}
             </div>
-          )
-        )}
+          );
+        })}
       </div>
     </main>
   );

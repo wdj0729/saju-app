@@ -10,9 +10,7 @@ import type { SajuSession } from '@/lib/session';
 
 export default function SajuResultPage() {
   const router = useRouter();
-  const [session] = useState<SajuSession | null>(() =>
-    typeof window !== 'undefined' ? loadSession() : null
-  );
+  const [session] = useState<SajuSession | null>(() => loadSession());
 
   useEffect(() => {
     if (!session) {
@@ -64,7 +62,7 @@ export default function SajuResultPage() {
       <div className="flex gap-3 px-4 pb-8">
         <button
           onClick={() => router.push('/fortune')}
-          className="flex-1 py-3 rounded-2xl bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white text-sm font-medium"
+          className="flex-1 py-3 rounded-2xl bg-primary-gradient text-white text-sm font-medium"
         >
           운세 보기
         </button>

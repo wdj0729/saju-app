@@ -1,4 +1,3 @@
-// app/api/ai-analysis/route.ts
 import Anthropic from '@anthropic-ai/sdk';
 import { NextRequest } from 'next/server';
 
@@ -21,7 +20,17 @@ interface AiAnalysisRequest {
 }
 
 export async function POST(req: NextRequest) {
-  const { ilgan, ohaeng, pillars } = (await req.json()) as AiAnalysisRequest;
+  let body: unknown;
+  try {
+    body = await req.json();
+  } catch {
+    return new Response('요청 형식이 잘못되었습니다.', { status: 400 });
+  }
+
+  const { ilgan, ohaeng, pillars } = body as AiAnalysisRequest;
+  if (!ilgan || !ohaeng || !pillars?.year || !pillars?.month || !pillars?.day) {
+    return new Response('필수 파라미터가 누락되었습니다.', { status: 400 });
+  }
 
   const pillarText = [
     `${pillars.year.gan}${pillars.year.ji}`,

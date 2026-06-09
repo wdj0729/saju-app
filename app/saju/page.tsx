@@ -86,7 +86,7 @@ export default function SajuInputPage() {
                 onClick={() => setIsLunar(lunar)}
                 className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                   isLunar === lunar
-                    ? 'bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white'
+                    ? 'bg-primary-gradient text-white'
                     : 'bg-card text-muted'
                 }`}
               >
@@ -163,7 +163,7 @@ export default function SajuInputPage() {
       <div className="px-4 pb-8">
         <button
           onClick={handleSubmit}
-          className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white font-semibold text-sm"
+          className="w-full py-4 rounded-2xl bg-primary-gradient text-white font-semibold text-sm"
         >
           사주 분석하기
         </button>

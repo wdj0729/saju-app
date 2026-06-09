@@ -10,17 +10,9 @@ type Period = '오늘' | '이달' | '올해';
 
 const PERIODS: Period[] = ['오늘', '이달', '올해'];
 
-const PERIOD_LABEL: Record<Period, string> = {
-  오늘: '오늘의 운세',
-  이달: '이달의 운세',
-  올해: '올해의 운세',
-};
-
 export default function FortunePage() {
   const router = useRouter();
-  const [session] = useState<SajuSession | null>(() =>
-    typeof window !== 'undefined' ? loadSession() : null
-  );
+  const [session] = useState<SajuSession | null>(() => loadSession());
   const [activeTab, setActiveTab] = useState<Period>('오늘');
   const [isExpanded, setIsExpanded] = useState(false);
   const [aiText, setAiText] = useState('');
@@ -51,11 +43,12 @@ export default function FortunePage() {
 
   async function requestAiAnalysis() {
     if (!session) return;
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
     setIsStreaming(true);
     setAiText('');
     setAiError('');
-    const controller = new AbortController();
-    abortRef.current = controller;
     try {
       const res = await fetch('/api/ai-analysis', {
         method: 'POST',
@@ -65,12 +58,10 @@ export default function FortunePage() {
           ilgan,
           ohaeng: session.result.ohaeng,
           pillars: {
-            year: { gan: session.result.year.gan, ji: session.result.year.ji },
-            month: { gan: session.result.month.gan, ji: session.result.month.ji },
-            day: { gan: session.result.day.gan, ji: session.result.day.ji },
-            hour: session.result.hour
-              ? { gan: session.result.hour.gan, ji: session.result.hour.ji }
-              : null,
+            year:  session.result.year,
+            month: session.result.month,
+            day:   session.result.day,
+            hour:  session.result.hour ?? null,
           },
         }),
       });
@@ -90,6 +81,44 @@ export default function FortunePage() {
     } finally {
       setIsStreaming(false);
     }
+  }
+
+  function renderAiContent() {
+    if (aiError && !aiText) return (
+      <div>
+        <p className="text-sm text-hwa mb-2">{aiError}</p>
+        <button onClick={requestAiAnalysis} className="text-xs text-muted underline">
+          다시 시도
+        </button>
+      </div>
+    );
+    if (isStreaming && !aiText) return (
+      <div className="flex items-center gap-2 text-sm text-muted">
+        <span className="animate-pulse">●</span>
+        <span>분석 중...</span>
+      </div>
+    );
+    if (aiText) return (
+      <>
+        <div className="text-sm text-primary leading-relaxed whitespace-pre-wrap">
+          {aiText}
+          {isStreaming && <span className="animate-pulse opacity-70">▌</span>}
+        </div>
+        {!isStreaming && (
+          <button onClick={requestAiAnalysis} className="mt-3 text-xs text-muted underline">
+            다시 요청
+          </button>
+        )}
+      </>
+    );
+    return (
+      <button
+        onClick={requestAiAnalysis}
+        className="w-full py-3 rounded-xl bg-primary-gradient text-white text-sm font-medium"
+      >
+        분석 요청하기
+      </button>
+    );
   }
 
   return (
@@ -119,7 +148,7 @@ export default function FortunePage() {
           >
             {period}
             {activeTab === period && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[#667eea] to-[#764ba2]" />
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-gradient" />
             )}
           </button>
         ))}
@@ -131,7 +160,7 @@ export default function FortunePage() {
           {/* 요약 */}
           <div className="p-4">
             <p className="text-xs text-muted mb-2">
-              💫 {PERIOD_LABEL[activeTab]} · {ilgan} 일간
+              💫 {activeTab}의 운세 · {ilgan} 일간
             </p>
             <p className="text-sm text-primary leading-relaxed">
               {currentPeriod.summary}
@@ -167,52 +196,7 @@ export default function FortunePage() {
         {/* AI 심층 분석 카드 */}
         <div className="bg-card rounded-2xl p-4">
           <p className="text-xs text-muted mb-3">🤖 AI 심층 분석</p>
-
-          {!aiText && !isStreaming && !aiError && (
-            <button
-              onClick={requestAiAnalysis}
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white text-sm font-medium"
-            >
-              분석 요청하기
-            </button>
-          )}
-
-          {isStreaming && !aiText && (
-            <div className="flex items-center gap-2 text-sm text-muted">
-              <span className="animate-pulse">●</span>
-              <span>분석 중...</span>
-            </div>
-          )}
-
-          {aiText && (
-            <div className="text-sm text-primary leading-relaxed whitespace-pre-wrap">
-              {aiText}
-              {isStreaming && (
-                <span className="animate-pulse opacity-70">▌</span>
-              )}
-            </div>
-          )}
-
-          {aiError && !aiText && (
-            <div>
-              <p className="text-sm text-hwa mb-2">{aiError}</p>
-              <button
-                onClick={requestAiAnalysis}
-                className="text-xs text-muted underline"
-              >
-                다시 시도
-              </button>
-            </div>
-          )}
-
-          {aiText && !isStreaming && (
-            <button
-              onClick={requestAiAnalysis}
-              className="mt-3 text-xs text-muted underline"
-            >
-              다시 요청
-            </button>
-          )}
+          {renderAiContent()}
         </div>
       </div>
 

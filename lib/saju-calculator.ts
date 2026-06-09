@@ -62,11 +62,9 @@ export function getYearPillar(y: number, m: number, d: number): Pillar {
 }
 
 function getMonthJiIndex(y: number, m: number, d: number): number {
-  // 입력일 기준 최근 35일을 순방향 스캔해 가장 마지막 절기(節) 확인
   const inputMs = Date.UTC(y, m - 1, d);
-  let jiIndex = -1;
 
-  for (let offset = 35; offset >= 0; offset--) {
+  for (let offset = 0; offset <= 35; offset++) {
     const ms   = inputMs - offset * 86400000;
     const date = new Date(ms);
     const name = getJieQiName(
@@ -75,12 +73,11 @@ function getMonthJiIndex(y: number, m: number, d: number): number {
       date.getUTCDate(),
     );
     if (Object.prototype.hasOwnProperty.call(JEOLGI_JI, name)) {
-      jiIndex = JEOLGI_JI[name];
+      return JEOLGI_JI[name];
     }
   }
 
-  if (jiIndex === -1) throw new Error(`절기 탐색 실패: ${y}-${m}-${d}`);
-  return jiIndex;
+  throw new Error(`절기 탐색 실패: ${y}-${m}-${d}`);
 }
 
 export function getMonthPillar(y: number, m: number, d: number, yearGan: string): Pillar {
@@ -131,14 +128,9 @@ export function calcOhaeng(pillars: (Pillar | null)[]): Record<Ohaeng, number> {
     result[pillar.jiElement]  += 1.0;  // 지지 표면
 
     const jjg = JIJANGGAN[pillar.ji];
-    if (jjg.length === 2) {
-      result[GAN_OHAENG[jjg[0]]] += 0.5; // 여기
-      result[GAN_OHAENG[jjg[1]]] += 1.0; // 정기
-    } else {
-      result[GAN_OHAENG[jjg[0]]] += 0.5; // 여기
-      result[GAN_OHAENG[jjg[1]]] += 0.5; // 중기
-      result[GAN_OHAENG[jjg[2]]] += 1.0; // 정기
-    }
+    result[GAN_OHAENG[jjg[0]]] += 0.5;                              // 여기
+    if (jjg.length === 3) result[GAN_OHAENG[jjg[1]]] += 0.5;       // 중기
+    result[GAN_OHAENG[jjg.at(-1)!]] += 1.0;                         // 정기
   }
 
   return result;
