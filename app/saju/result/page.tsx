@@ -67,8 +67,8 @@ export default function SajuResultPage() {
           운세 보기
         </button>
         <button
-          disabled
-          className="flex-1 py-3 rounded-2xl bg-card text-muted text-sm font-medium opacity-50 cursor-not-allowed"
+          onClick={() => router.push('/compatibility')}
+          className="flex-1 py-3 rounded-2xl bg-card text-muted text-sm font-medium hover:bg-card-hover transition-colors"
         >
           궁합 보기
         </button>

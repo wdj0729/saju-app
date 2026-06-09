@@ -20,7 +20,7 @@ const CARDS = [
     title: '궁합 보기',
     subtitle: '두 사람의 사주 궁합 분석',
     href: '/compatibility',
-    active: false,
+    active: true,
   },
 ] as const;
 
