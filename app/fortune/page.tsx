@@ -203,10 +203,10 @@ export default function FortunePage() {
       {/* 하단 궁합 버튼 */}
       <div className="px-4 pb-8">
         <button
-          disabled
-          className="w-full py-3 rounded-2xl bg-card text-muted text-sm font-medium opacity-50 cursor-not-allowed"
+          onClick={() => router.push('/compatibility')}
+          className="w-full py-3 rounded-2xl bg-card text-muted text-sm font-medium hover:bg-card-hover transition-colors"
         >
-          💑 궁합 보러 가기 · 준비 중
+          💑 궁합 보러 가기
         </button>
       </div>
     </div>
