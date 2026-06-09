@@ -33,16 +33,16 @@ interface PersonFormProps {
   year: number; setYear: (v: number) => void;
   month: number; setMonth: (v: number) => void;
   day: number; setDay: (v: number) => void;
+  clampedDay: number;
   hourValue: number | null; setHourValue: (v: number | null) => void;
 }
 
 function PersonForm({
   label, name, setName, isLunar, setIsLunar,
   year, setYear, month, setMonth, day, setDay,
-  hourValue, setHourValue,
+  clampedDay, hourValue, setHourValue,
 }: PersonFormProps) {
-  const maxDay   = isLunar ? 30 : new Date(year, month, 0).getDate();
-  const clampDay = Math.min(day, maxDay);
+  const maxDay = isLunar ? 30 : new Date(year, month, 0).getDate();
 
   return (
     <div className="bg-card rounded-2xl px-4 py-4 flex flex-col gap-4">
@@ -67,7 +67,7 @@ function PersonForm({
               key={String(lunar)}
               onClick={() => setIsLunar(lunar)}
               className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                isLunar === lunar ? 'bg-primary-gradient text-white' : 'bg-card-hover text-muted'
+                isLunar === lunar ? 'bg-primary-gradient text-white' : 'bg-card text-muted'
               }`}
             >
               {lunar ? '음력' : '양력'}
@@ -92,7 +92,7 @@ function PersonForm({
 
       <div>
         <label className={labelClass}>생일</label>
-        <select value={clampDay} onChange={(e) => setDay(Number(e.target.value))} className={inputClass}>
+        <select value={clampedDay} onChange={(e) => setDay(Number(e.target.value))} className={inputClass}>
           {Array.from({ length: maxDay }, (_, i) => i + 1).map((d) => (
             <option key={d} value={d}>{d}일</option>
           ))}
@@ -173,6 +173,7 @@ export default function CompatibilityPage() {
           year={yearA} setYear={setYearA}
           month={monthA} setMonth={setMonthA}
           day={dayA} setDay={setDayA}
+          clampedDay={clampedDayA}
           hourValue={hourValueA} setHourValue={setHourValueA}
         />
 
@@ -187,6 +188,7 @@ export default function CompatibilityPage() {
           year={yearB} setYear={setYearB}
           month={monthB} setMonth={setMonthB}
           day={dayB} setDay={setDayB}
+          clampedDay={clampedDayB}
           hourValue={hourValueB} setHourValue={setHourValueB}
         />
 
