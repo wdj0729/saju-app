@@ -51,6 +51,7 @@ export default function Home() {
           day: profile.day,
           hour: profile.hour,
           isLunar: profile.isLunar,
+          gender: profile.gender ?? 'M',
         },
         result,
       });
