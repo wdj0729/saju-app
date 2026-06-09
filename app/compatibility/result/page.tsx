@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { loadCompatSession } from '@/lib/compatibility';
 import type { CompatibilitySession } from '@/lib/compatibility';
 import type { Ohaeng } from '@/lib/saju-data';
+import ShareCard from '@/components/ShareCard';
+import ShareButton from '@/components/ShareButton';
 
 const OHAENG_ORDER: Ohaeng[] = ['목', '화', '토', '금', '수'];
 const OHAENG_LABEL: Record<Ohaeng, string> = { 목:'木', 화:'火', 토:'土', 금:'金', 수:'水' };
@@ -17,6 +19,7 @@ export default function CompatibilityResultPage() {
   const [isStreaming, setIsStreaming]  = useState(false);
   const [aiError, setAiError]         = useState('');
   const abortRef = useRef<AbortController | null>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!session) router.replace('/compatibility');
@@ -110,6 +113,16 @@ export default function CompatibilityResultPage() {
 
   return (
     <div className="flex flex-col min-h-screen">
+      <ShareCard
+        ref={cardRef}
+        type="compatibility"
+        nameA={nameA}
+        nameB={nameB}
+        score={score}
+        grade={grade}
+        gradeLabel={gradeLabel}
+        summary={summary}
+      />
       <header className="flex items-center gap-3 px-4 py-4 border-b border-border">
         <button
           onClick={() => router.push('/compatibility')}
@@ -176,13 +189,18 @@ export default function CompatibilityResultPage() {
         </div>
       </div>
 
-      <div className="px-4 pb-8">
+      <div className="flex gap-3 px-4 pb-8">
         <button
           onClick={() => router.push('/compatibility')}
-          className="w-full py-3 rounded-2xl bg-card text-muted text-sm font-medium hover:bg-card-hover transition-colors"
+          className="flex-1 py-3 rounded-2xl bg-card text-muted text-sm font-medium hover:bg-card-hover transition-colors"
         >
           다시 분석하기
         </button>
+        <ShareButton
+          cardRef={cardRef}
+          filename="compatibility-result.png"
+          shareTitle="궁합 결과"
+        />
       </div>
     </div>
   );
