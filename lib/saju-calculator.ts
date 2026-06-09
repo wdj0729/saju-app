@@ -145,7 +145,8 @@ export function calcOhaeng(pillars: (Pillar | null)[]): Record<Ohaeng, number> {
 }
 
 export function calculateSaju(input: SajuInput): SajuResult {
-  let { year, month, day, hour, isLunar } = input;
+  let { year, month, day } = input;
+  const { hour, isLunar } = input;
 
   if (isLunar) {
     const solar = Lunar.fromYmd(year, month, day).getSolar();
