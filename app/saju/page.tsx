@@ -27,7 +27,7 @@ const MONTHS = Array.from({ length: 12 },  (_, i) => i + 1);
 
 export default function SajuInputPage() {
   const router = useRouter();
-  const [profiles] = useState<Profile[]>(() => loadProfiles());
+  const [profiles, setProfiles] = useState<Profile[]>(() => loadProfiles());
   const [name,      setName]      = useState('');
   const [isLunar,   setIsLunar]   = useState(false);
   const [year,      setYear]      = useState(1990);
@@ -85,8 +85,8 @@ export default function SajuInputPage() {
                   key={profile.id}
                   className="flex justify-between items-center bg-card-hover rounded-xl px-3 py-2"
                 >
-                  <div className="min-w-0">
-                    <span className="text-sm text-primary font-medium truncate">
+                  <div className="min-w-0 truncate">
+                    <span className="text-sm text-primary font-medium">
                       {profile.name || '이름 없음'}
                     </span>
                     <span className="text-xs text-muted ml-2">
@@ -96,8 +96,10 @@ export default function SajuInputPage() {
                     </span>
                   </div>
                   <button
+                    type="button"
                     onClick={() => loadFromProfile(profile)}
                     className="text-xs text-primary hover:opacity-70 transition-opacity ml-3 flex-shrink-0"
+                    aria-label={`${profile.name || '이름 없음'} 선택`}
                   >
                     선택
                   </button>
