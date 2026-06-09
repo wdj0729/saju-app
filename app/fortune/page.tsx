@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadSession } from '@/lib/session';
 import { FORTUNE_TEXT } from '@/lib/fortune-text';
@@ -26,16 +26,22 @@ export default function FortunePage() {
   const [aiText, setAiText] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
   const [aiError, setAiError] = useState('');
+  const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     if (!session) router.replace('/saju');
   }, [session, router]);
 
+  useEffect(() => {
+    return () => {
+      abortRef.current?.abort();
+    };
+  }, []);
+
   if (!session) return null;
 
-  const activeSession = session;
-  const { ilgan } = activeSession.result;
-  const fortune = FORTUNE_TEXT[ilgan];
+  const { ilgan } = session.result;
+  const fortune = FORTUNE_TEXT[ilgan] ?? FORTUNE_TEXT['甲'];
   const currentPeriod = fortune[activeTab];
 
   function handleTabChange(tab: Period) {
@@ -44,22 +50,26 @@ export default function FortunePage() {
   }
 
   async function requestAiAnalysis() {
+    if (!session) return;
     setIsStreaming(true);
     setAiText('');
     setAiError('');
+    const controller = new AbortController();
+    abortRef.current = controller;
     try {
       const res = await fetch('/api/ai-analysis', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
         body: JSON.stringify({
           ilgan,
-          ohaeng: activeSession.result.ohaeng,
+          ohaeng: session.result.ohaeng,
           pillars: {
-            year: { gan: activeSession.result.year.gan, ji: activeSession.result.year.ji },
-            month: { gan: activeSession.result.month.gan, ji: activeSession.result.month.ji },
-            day: { gan: activeSession.result.day.gan, ji: activeSession.result.day.ji },
-            hour: activeSession.result.hour
-              ? { gan: activeSession.result.hour.gan, ji: activeSession.result.hour.ji }
+            year: { gan: session.result.year.gan, ji: session.result.year.ji },
+            month: { gan: session.result.month.gan, ji: session.result.month.ji },
+            day: { gan: session.result.day.gan, ji: session.result.day.ji },
+            hour: session.result.hour
+              ? { gan: session.result.hour.gan, ji: session.result.hour.ji }
               : null,
           },
         }),
@@ -72,7 +82,10 @@ export default function FortunePage() {
         if (done) break;
         setAiText((prev) => prev + decoder.decode(value, { stream: true }));
       }
+      setAiText((prev) => prev + decoder.decode());
     } catch (err) {
+      if (err instanceof Error && err.name === 'AbortError') return;
+      setAiText('');
       setAiError(err instanceof Error ? err.message : '오류가 발생했습니다.');
     } finally {
       setIsStreaming(false);
@@ -90,7 +103,7 @@ export default function FortunePage() {
           ← 내 사주
         </button>
         <h1 className="text-sm font-semibold text-primary">
-          {activeSession.input.name ? `${activeSession.input.name} · ${ilgan} 일간` : `${ilgan} 일간`}
+          {session.input.name ? `${session.input.name} · ${ilgan} 일간` : `${ilgan} 일간`}
         </h1>
       </header>
 
@@ -136,7 +149,7 @@ export default function FortunePage() {
 
           {/* 상세 내용 */}
           {isExpanded && (
-            <div className="px-4 pb-4 pt-3 flex flex-col gap-3 border-t border-border">
+            <div className="px-4 pb-4 pt-3 flex flex-col gap-3">
               {(
                 Object.entries(currentPeriod.details) as [string, string][]
               ).map(([key, value]) => (
@@ -180,7 +193,7 @@ export default function FortunePage() {
             </div>
           )}
 
-          {aiError && (
+          {aiError && !aiText && (
             <div>
               <p className="text-sm text-hwa mb-2">{aiError}</p>
               <button
