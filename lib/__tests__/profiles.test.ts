@@ -27,6 +27,7 @@ const INPUT: SajuSessionInput = {
   day: 15,
   hour: null,
   isLunar: false,
+  gender: 'M',
 };
 
 describe('loadProfiles', () => {

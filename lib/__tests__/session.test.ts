@@ -36,7 +36,7 @@ const DUMMY_RESULT: SajuResult = {
 };
 
 const DUMMY_SESSION: SajuSession = {
-  input: { name: '홍길동', year: 1990, month: 6, day: 15, hour: null, isLunar: false },
+  input: { name: '홍길동', year: 1990, month: 6, day: 15, hour: null, isLunar: false, gender: 'M' },
   result: DUMMY_RESULT,
 };
 

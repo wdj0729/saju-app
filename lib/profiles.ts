@@ -10,6 +10,7 @@ export interface Profile {
   day: number;
   hour: number | null;
   isLunar: boolean;
+  gender?: 'M' | 'F';
   ilgan: string;
   createdAt: number;
 }
@@ -56,6 +57,7 @@ export function saveProfile(input: SajuSessionInput, ilgan: string): void {
     day: input.day,
     hour: input.hour,
     isLunar: input.isLunar,
+    gender: input.gender,
     ilgan,
     createdAt: Date.now(),
   });

@@ -7,6 +7,7 @@ export interface SajuSessionInput {
   day: number;
   hour: number | null;
   isLunar: boolean;
+  gender: 'M' | 'F';
 }
 
 export interface SajuSession {
