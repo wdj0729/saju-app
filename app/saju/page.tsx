@@ -27,7 +27,7 @@ const MONTHS = Array.from({ length: 12 },  (_, i) => i + 1);
 
 export default function SajuInputPage() {
   const router = useRouter();
-  const [profiles,   setProfiles]   = useState<Profile[]>(() => loadProfiles());
+  const [profiles] = useState<Profile[]>(() => loadProfiles());
   const [name,       setName]       = useState('');
   const [isLunar,    setIsLunar]    = useState(false);
   const [year,       setYear]       = useState(1990);
