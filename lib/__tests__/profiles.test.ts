@@ -75,6 +75,12 @@ describe('saveProfile', () => {
     expect(p.id.length).toBeGreaterThan(0);
     expect(typeof p.createdAt).toBe('number');
   });
+
+  it('저장된 profile에 gender가 포함됨', () => {
+    saveProfile(INPUT, '甲');
+    const p = loadProfiles()[0];
+    expect(p.gender).toBe('M');
+  });
 });
 
 describe('deleteProfile', () => {
