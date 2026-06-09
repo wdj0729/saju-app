@@ -28,6 +28,7 @@ export function loadProfiles(): Profile[] {
 }
 
 function persist(profiles: Profile[]): void {
+  if (typeof window === 'undefined') return;
   localStorage.setItem(KEY, JSON.stringify(profiles));
 }
 
@@ -47,8 +48,9 @@ export function saveProfile(input: SajuSessionInput, ilgan: string): void {
   if (typeof window === 'undefined') return;
   if (isProfileSaved(input)) return;
   const profiles = loadProfiles();
+  const now = Date.now();
   profiles.push({
-    id: String(Date.now()),
+    id: String(now),
     name: input.name,
     year: input.year,
     month: input.month,
@@ -56,7 +58,7 @@ export function saveProfile(input: SajuSessionInput, ilgan: string): void {
     hour: input.hour,
     isLunar: input.isLunar,
     ilgan,
-    createdAt: Date.now(),
+    createdAt: now,
   });
   persist(profiles);
 }
