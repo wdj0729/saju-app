@@ -121,6 +121,27 @@ export function getHourPillar(hour: number, dayGan: string): Pillar {
   return { gan, ji, ganElement: GAN_OHAENG[gan], jiElement: JI_OHAENG[ji] };
 }
 
-export function calcOhaeng(_pillars: (Pillar | null)[]): Record<Ohaeng, number> { throw new Error('not implemented'); }
+export function calcOhaeng(pillars: (Pillar | null)[]): Record<Ohaeng, number> {
+  const result: Record<Ohaeng, number> = { 목:0, 화:0, 토:0, 금:0, 수:0 };
+
+  for (const pillar of pillars) {
+    if (!pillar) continue;
+
+    result[pillar.ganElement] += 1.0;  // 천간
+    result[pillar.jiElement]  += 1.0;  // 지지 표면
+
+    const jjg = JIJANGGAN[pillar.ji];
+    if (jjg.length === 2) {
+      result[GAN_OHAENG[jjg[0]]] += 0.5; // 여기
+      result[GAN_OHAENG[jjg[1]]] += 1.0; // 정기
+    } else {
+      result[GAN_OHAENG[jjg[0]]] += 0.5; // 여기
+      result[GAN_OHAENG[jjg[1]]] += 0.5; // 중기
+      result[GAN_OHAENG[jjg[2]]] += 1.0; // 정기
+    }
+  }
+
+  return result;
+}
 
 export function calculateSaju(_input: SajuInput): SajuResult { throw new Error('not implemented'); }

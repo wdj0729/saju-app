@@ -184,3 +184,34 @@ describe('getHourPillar', () => {
     expect(p.ji).toBe('子');
   });
 });
+
+describe('calcOhaeng', () => {
+  it('甲子 기둥 하나 → 목1.0, 수2.5', () => {
+    const pillar: Pillar = { gan:'甲', ji:'子', ganElement:'목', jiElement:'수' };
+    const result = calcOhaeng([pillar]);
+    expect(result['목']).toBeCloseTo(1.0);
+    expect(result['수']).toBeCloseTo(2.5); // 子:수1 + 壬(여기):수0.5 + 癸(정기):수1
+  });
+
+  it('null 기둥은 건너뜀', () => {
+    const pillar: Pillar = { gan:'甲', ji:'子', ganElement:'목', jiElement:'수' };
+    const r1 = calcOhaeng([pillar, null]);
+    const r2 = calcOhaeng([pillar]);
+    expect(r1).toEqual(r2);
+  });
+
+  it('모든 오행 키가 존재', () => {
+    const result = calcOhaeng([]);
+    expect(Object.keys(result).sort()).toEqual(['금', '목', '수', '토', '화'].sort());
+  });
+
+  it('丑 지장간(癸辛己) — 여기0.5 + 중기0.5 + 정기1', () => {
+    const pillar: Pillar = { gan:'甲', ji:'丑', ganElement:'목', jiElement:'토' };
+    const result = calcOhaeng([pillar]);
+    // 甲:목1, 丑표면:토1, 癸여기:수0.5, 辛중기:금0.5, 己정기:토1
+    expect(result['목']).toBeCloseTo(1.0);
+    expect(result['토']).toBeCloseTo(2.0); // 丑표면1 + 己정기1
+    expect(result['수']).toBeCloseTo(0.5);
+    expect(result['금']).toBeCloseTo(0.5);
+  });
+});
