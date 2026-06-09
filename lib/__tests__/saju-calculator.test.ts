@@ -150,3 +150,37 @@ describe('getDayPillar', () => {
     expect(p.ji).toBe('戌');
   });
 });
+
+describe('getHourPillar', () => {
+  it('甲일 hour=0 (자시) → 甲子시', () => {
+    const p = getHourPillar(0, '甲');
+    expect(p.gan).toBe('甲');
+    expect(p.ji).toBe('子');
+  });
+
+  it('甲일 hour=23 (야자시) → 甲子시 (당일 자시 처리)', () => {
+    const p = getHourPillar(23, '甲');
+    expect(p.gan).toBe('甲');
+    expect(p.ji).toBe('子');
+  });
+
+  it('甲일 hour=1 (축시) → 乙丑시', () => {
+    const p = getHourPillar(1, '甲');
+    expect(p.gan).toBe('乙');
+    expect(p.ji).toBe('丑');
+  });
+
+  it('甲일 hour=13 (미시, jiIndex=7) → 辛未시', () => {
+    // jiIndex=floor(14/2)=7, ganIndex=(0+7)%10=7 → 辛
+    const p = getHourPillar(13, '甲');
+    expect(p.gan).toBe('辛');
+    expect(p.ji).toBe('未');
+  });
+
+  it('乙일 hour=0 (자시) → 丙子시', () => {
+    // 乙ganIndex=1, OJADUN[1%5]=2(丙), jiIndex=0 → 丙子
+    const p = getHourPillar(0, '乙');
+    expect(p.gan).toBe('丙');
+    expect(p.ji).toBe('子');
+  });
+});

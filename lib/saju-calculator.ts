@@ -105,7 +105,21 @@ export function getDayPillar(y: number, m: number, d: number): Pillar {
   return indexToPillar(index);
 }
 
-export function getHourPillar(_hour: number, _dayGan: string): Pillar { throw new Error('not implemented'); }
+function hourToJiIndex(hour: number): number {
+  if (hour === 23) return 0; // 야자시 → 당일 子時
+  return Math.floor((hour + 1) / 2);
+}
+
+export function getHourPillar(hour: number, dayGan: string): Pillar {
+  const jiIndex      = hourToJiIndex(hour);
+  const dayGanIndex  = GAN.indexOf(dayGan as (typeof GAN)[number]);
+  const hourGanStart = OJADUN[dayGanIndex % 5];
+  const hourGanIndex = (hourGanStart + jiIndex) % 10;
+
+  const gan = GAN[hourGanIndex];
+  const ji  = JI[jiIndex];
+  return { gan, ji, ganElement: GAN_OHAENG[gan], jiElement: JI_OHAENG[ji] };
+}
 
 export function calcOhaeng(_pillars: (Pillar | null)[]): Record<Ohaeng, number> { throw new Error('not implemented'); }
 
