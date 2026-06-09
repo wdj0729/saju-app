@@ -61,11 +61,10 @@ export default function SajuResultPage() {
         </div>
       </div>
 
-      {/* Phase 2 버튼 (비활성화) */}
       <div className="flex gap-3 px-4 pb-8">
         <button
-          disabled
-          className="flex-1 py-3 rounded-2xl bg-card text-muted text-sm font-medium opacity-50 cursor-not-allowed"
+          onClick={() => router.push('/fortune')}
+          className="flex-1 py-3 rounded-2xl bg-gradient-to-r from-[#667eea] to-[#764ba2] text-white text-sm font-medium"
         >
           운세 보기
         </button>

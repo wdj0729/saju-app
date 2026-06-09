@@ -13,7 +13,7 @@ const CARDS = [
     title: '오늘 운세',
     subtitle: '일간별 맞춤 운세',
     href: '/fortune',
-    active: false,
+    active: true,
   },
   {
     emoji: '💑',
