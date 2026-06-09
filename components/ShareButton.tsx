@@ -17,7 +17,7 @@ export default function ShareButton({ cardRef, filename, shareTitle }: ShareButt
       const html2canvas = (await import('html2canvas')).default;
       const canvas = await html2canvas(cardRef.current, {
         useCORS: true,
-        backgroundColor: null,
+        backgroundColor: '#1e1e2e',
         scale: window.devicePixelRatio || 2,
       });
       const blob = await new Promise<Blob>((resolve, reject) => {
@@ -31,7 +31,9 @@ export default function ShareButton({ cardRef, filename, shareTitle }: ShareButt
         const a = document.createElement('a');
         a.href = url;
         a.download = filename;
+        document.body.appendChild(a);
         a.click();
+        document.body.removeChild(a);
         setTimeout(() => URL.revokeObjectURL(url), 100);
       }
     } catch (err) {
