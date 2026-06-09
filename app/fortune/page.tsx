@@ -90,7 +90,7 @@ export default function FortunePage() {
           ← 내 사주
         </button>
         <h1 className="text-sm font-semibold text-primary">
-          {activeSession.input.name ? `${activeSession.input.name}의 운세` : '운세'}
+          {activeSession.input.name ? `${activeSession.input.name} · ${ilgan} 일간` : `${ilgan} 일간`}
         </h1>
       </header>
 
