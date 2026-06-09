@@ -1,11 +1,12 @@
 import type { DaewoonResult } from '@/lib/daewoon';
+import type { Ohaeng } from '@/lib/saju-data';
 
 interface DaewoonChartProps {
   result: DaewoonResult;
-  currentAge: number;   // 만 나이, result 페이지에서 calcMadeAge()로 계산 후 전달
+  currentAge: number;
 }
 
-const OHAENG_HANJA: Record<string, string> = {
+const OHAENG_HANJA: Record<Ohaeng, string> = {
   목: '木', 화: '火', 토: '土', 금: '金', 수: '水',
 };
 
@@ -36,7 +37,7 @@ export default function DaewoonChart({ result, currentAge }: DaewoonChartProps) 
 
           return (
             <div
-              key={i}
+              key={pillar.gan + pillar.ji}
               className={`rounded-xl p-3 flex items-center gap-3 ${
                 isCurrent ? 'border' : 'bg-card-hover'
               }`}
