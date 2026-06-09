@@ -21,6 +21,10 @@ export default function SajuResultPage() {
     }
   }, [session, router]);
 
+  useEffect(() => {
+    if (session) setIsSaved(isProfileSaved(session.input));
+  }, []);
+
   const cardRef = useRef<HTMLDivElement>(null);
   const [isSaved, setIsSaved] = useState(() => {
     return session ? isProfileSaved(session.input) : false;
