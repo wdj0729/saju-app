@@ -1,12 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadSession } from '@/lib/session';
 import { ILGAN_TEXT } from '@/lib/ilgan-text';
 import SajuGrid from '@/components/SajuGrid';
 import OhaengChart from '@/components/OhaengChart';
 import type { SajuSession } from '@/lib/session';
+import ShareCard from '@/components/ShareCard';
+import ShareButton from '@/components/ShareButton';
 
 export default function SajuResultPage() {
   const router = useRouter();
@@ -18,6 +20,8 @@ export default function SajuResultPage() {
     }
   }, [session, router]);
 
+  const cardRef = useRef<HTMLDivElement>(null);
+
   if (!session) return null;
 
   const { input, result } = session;
@@ -25,6 +29,19 @@ export default function SajuResultPage() {
 
   return (
     <div className="flex flex-col min-h-screen">
+      <ShareCard
+        ref={cardRef}
+        type="saju"
+        name={input.name}
+        ilgan={result.ilgan}
+        pillars={{
+          year:  result.year.gan  + result.year.ji,
+          month: result.month.gan + result.month.ji,
+          day:   result.day.gan   + result.day.ji,
+          hour:  result.hour ? result.hour.gan + result.hour.ji : undefined,
+        }}
+        ohaeng={result.ohaeng}
+      />
       <header className="flex items-center gap-3 px-4 py-4 border-b border-border">
         <button
           onClick={() => router.push('/saju')}
@@ -72,6 +89,11 @@ export default function SajuResultPage() {
         >
           궁합 보기
         </button>
+        <ShareButton
+          cardRef={cardRef}
+          filename="saju-result.png"
+          shareTitle="내 사주 결과"
+        />
       </div>
     </div>
   );
