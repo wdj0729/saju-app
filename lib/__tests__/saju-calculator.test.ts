@@ -215,3 +215,44 @@ describe('calcOhaeng', () => {
     expect(result['금']).toBeCloseTo(0.5);
   });
 });
+
+describe('calculateSaju', () => {
+  it('양력 1984-02-05 시간없음 → 4기둥 + ilgan + ohaeng 반환', () => {
+    const result = calculateSaju({ year:1984, month:2, day:5, hour:null, isLunar:false });
+    expect(result.year.gan).toBe('甲');
+    expect(result.year.ji).toBe('子');
+    expect(result.day).toBeDefined();
+    expect(result.hour).toBeNull();
+    expect(result.ilgan).toBe(result.day.gan);
+    const total = Object.values(result.ohaeng).reduce((a, b) => a + b, 0);
+    expect(total).toBeGreaterThan(0);
+  });
+
+  it('시간 있음 → hour 기둥이 null이 아님', () => {
+    const result = calculateSaju({ year:2024, month:6, day:15, hour:10, isLunar:false });
+    expect(result.hour).not.toBeNull();
+    expect(result.hour!.ji).toBe('巳'); // hour=10 → jiIndex=floor(11/2)=5 → 巳
+  });
+
+  it('음력 입력 → 양력 변환 후 계산', () => {
+    // 음력 2024-01-01 = 양력 2024-02-10
+    const resultLunar = calculateSaju({ year:2024, month:1, day:1, hour:null, isLunar:true });
+    const resultSolar = calculateSaju({ year:2024, month:2, day:10, hour:null, isLunar:false });
+    expect(resultLunar.year.gan).toBe(resultSolar.year.gan);
+    expect(resultLunar.day.gan).toBe(resultSolar.day.gan);
+  });
+
+  it('ohaeng 합계가 시주 없을 때 예상 범위 (10.5~12)', () => {
+    const result = calculateSaju({ year:1984, month:2, day:5, hour:null, isLunar:false });
+    const total  = Object.values(result.ohaeng).reduce((a, b) => a + b, 0);
+    expect(total).toBeGreaterThanOrEqual(10.5);
+    expect(total).toBeLessThanOrEqual(12);
+  });
+
+  it('ohaeng 합계가 시주 있을 때 예상 범위 (14~16)', () => {
+    const result = calculateSaju({ year:1984, month:2, day:5, hour:10, isLunar:false });
+    const total  = Object.values(result.ohaeng).reduce((a, b) => a + b, 0);
+    expect(total).toBeGreaterThanOrEqual(14);
+    expect(total).toBeLessThanOrEqual(16);
+  });
+});

@@ -144,4 +144,27 @@ export function calcOhaeng(pillars: (Pillar | null)[]): Record<Ohaeng, number> {
   return result;
 }
 
-export function calculateSaju(_input: SajuInput): SajuResult { throw new Error('not implemented'); }
+export function calculateSaju(input: SajuInput): SajuResult {
+  let { year, month, day, hour, isLunar } = input;
+
+  if (isLunar) {
+    const solar = Lunar.fromYmd(year, month, day).getSolar();
+    year  = solar.getYear();
+    month = solar.getMonth();
+    day   = solar.getDay();
+  }
+
+  const yearPillar  = getYearPillar(year, month, day);
+  const monthPillar = getMonthPillar(year, month, day, yearPillar.gan);
+  const dayPillar   = getDayPillar(year, month, day);
+  const hourPillar  = hour !== null ? getHourPillar(hour, dayPillar.gan) : null;
+
+  return {
+    year:   yearPillar,
+    month:  monthPillar,
+    day:    dayPillar,
+    hour:   hourPillar,
+    ilgan:  dayPillar.gan,
+    ohaeng: calcOhaeng([yearPillar, monthPillar, dayPillar, hourPillar]),
+  };
+}
