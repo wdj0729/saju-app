@@ -62,7 +62,7 @@ export default function Home() {
 
   function handleDelete(id: string) {
     deleteProfile(id);
-    setProfiles(loadProfiles());
+    setProfiles(prev => prev.filter(p => p.id !== id));
   }
 
   return (
@@ -88,7 +88,7 @@ export default function Home() {
             {profiles.map((profile) => (
               <div key={profile.id} className="relative inline-flex items-center">
                 <button
-                  onClick={() => !isEditing && handleProfileSelect(profile)}
+                  onClick={() => handleProfileSelect(profile)}
                   disabled={isEditing}
                   className="bg-card-hover rounded-full px-3 py-1.5 text-xs text-primary disabled:cursor-default"
                 >
