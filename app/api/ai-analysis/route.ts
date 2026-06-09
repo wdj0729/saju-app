@@ -73,8 +73,8 @@ export async function POST(req: NextRequest) {
               controller.enqueue(encoder.encode(event.delta.text));
             }
           }
-        } catch {
-          controller.error(new Error('스트리밍 중 오류가 발생했습니다.'));
+        } catch (err) {
+          console.error('[ai-analysis] stream error:', err);
         } finally {
           controller.close();
         }
