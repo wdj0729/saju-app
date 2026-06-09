@@ -39,7 +39,7 @@ interface PersonFormProps {
 
 function PersonForm({
   label, name, setName, isLunar, setIsLunar,
-  year, setYear, month, setMonth, day, setDay,
+  year, setYear, month, setMonth, setDay,
   clampedDay, hourValue, setHourValue,
 }: PersonFormProps) {
   const maxDay = isLunar ? 30 : new Date(year, month, 0).getDate();
