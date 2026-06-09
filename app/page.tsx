@@ -98,7 +98,7 @@ export default function Home() {
                   <button
                     onClick={() => handleDelete(profile.id)}
                     className="absolute -top-1 -right-1 w-4 h-4 bg-hwa rounded-full text-white text-xs flex items-center justify-center leading-none"
-                    aria-label={`${profile.name} 삭제`}
+                    aria-label={`${profile.name || '이름 없음'} 삭제`}
                   >
                     ×
                   </button>
