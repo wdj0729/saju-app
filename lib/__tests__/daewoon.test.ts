@@ -58,10 +58,10 @@ describe('calculateDaewoon', () => {
     expect(result.pillars).toHaveLength(8);
   });
 
-  it('대운수는 1 이상 11 이하 (절기 최대 32일 ÷ 3)', () => {
+  it('대운수는 1 이상 12 이하 (절기 간격 최대 ~35일 ÷ 3)', () => {
     const result = calculateDaewoon(input1984M, 'M', saju1984.year, saju1984.month);
     expect(result.daewoonSu).toBeGreaterThanOrEqual(1);
-    expect(result.daewoonSu).toBeLessThanOrEqual(11);
+    expect(result.daewoonSu).toBeLessThanOrEqual(12);
   });
 
   it('첫 대운의 startAge === daewoonSu', () => {

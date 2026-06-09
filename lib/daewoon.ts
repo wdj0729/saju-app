@@ -2,6 +2,7 @@ import { Solar, Lunar } from 'lunar-javascript';
 import { GAN, JI, GAN_OHAENG, JI_OHAENG, JEOLGI_JI } from './saju-data';
 import type { Ohaeng } from './saju-data';
 import type { Pillar, SajuInput } from './saju-calculator';
+import { getJieQiName } from './saju-calculator';
 
 export interface DaewoonPillar {
   gan: string;
@@ -23,10 +24,6 @@ const YIN_GAN = new Set(['乙', '丁', '己', '辛', '癸']);
 function isForward(yearGan: string, gender: 'M' | 'F'): boolean {
   const isYangYear = !YIN_GAN.has(yearGan);
   return (isYangYear && gender === 'M') || (!isYangYear && gender === 'F');
-}
-
-function getJieQiName(y: number, m: number, d: number): string {
-  return Solar.fromYmd(y, m, d).getLunar().getJieQi();
 }
 
 function findNextJeolgiDays(y: number, m: number, d: number): number {

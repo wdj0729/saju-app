@@ -36,7 +36,7 @@ function indexToPillar(index: number): Pillar {
   return { gan, ji, ganElement: GAN_OHAENG[gan], jiElement: JI_OHAENG[ji] };
 }
 
-function getJieQiName(y: number, m: number, d: number): string {
+export function getJieQiName(y: number, m: number, d: number): string {
   return Solar.fromYmd(y, m, d).getLunar().getJieQi();
 }
 
