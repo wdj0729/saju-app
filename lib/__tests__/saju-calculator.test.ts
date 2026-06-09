@@ -65,3 +65,31 @@ describe('saju-data', () => {
     });
   });
 });
+
+describe('getYearPillar', () => {
+  it('1984-02-05 (입춘 2월4일 이후) → 甲子년', () => {
+    const p = getYearPillar(1984, 2, 5);
+    expect(p.gan).toBe('甲');
+    expect(p.ji).toBe('子');
+    expect(p.ganElement).toBe('목');
+    expect(p.jiElement).toBe('수');
+  });
+
+  it('1984-02-03 (입춘 이전) → 癸亥년', () => {
+    const p = getYearPillar(1984, 2, 3);
+    expect(p.gan).toBe('癸');
+    expect(p.ji).toBe('亥');
+  });
+
+  it('2024-06-15 → 甲辰년', () => {
+    const p = getYearPillar(2024, 6, 15);
+    expect(p.gan).toBe('甲');
+    expect(p.ji).toBe('辰');
+  });
+
+  it('1900-03-01 → 庚子년', () => {
+    const p = getYearPillar(1900, 3, 1);
+    expect(p.gan).toBe('庚');
+    expect(p.ji).toBe('子');
+  });
+});
