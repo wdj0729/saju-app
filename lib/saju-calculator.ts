@@ -95,9 +95,15 @@ export function getMonthPillar(y: number, m: number, d: number, yearGan: string)
   return { gan, ji, ganElement: GAN_OHAENG[gan], jiElement: JI_OHAENG[ji] };
 }
 
-const DAY_REF_MS    = Date.UTC(1900, 0, 31);
-const DAY_REF_INDEX = 10;
-export function getDayPillar(_y: number, _m: number, _d: number): Pillar { throw new Error('not implemented'); }
+const DAY_REF_MS    = Date.UTC(1900, 0, 31); // 1900-01-31 UTC 자정
+const DAY_REF_INDEX = 10;                     // 甲戌 = 60갑자 인덱스 10
+
+export function getDayPillar(y: number, m: number, d: number): Pillar {
+  const inputMs  = Date.UTC(y, m - 1, d);
+  const daysDiff = Math.round((inputMs - DAY_REF_MS) / 86400000);
+  const index    = ((daysDiff + DAY_REF_INDEX) % 60 + 60) % 60;
+  return indexToPillar(index);
+}
 
 export function getHourPillar(_hour: number, _dayGan: string): Pillar { throw new Error('not implemented'); }
 
