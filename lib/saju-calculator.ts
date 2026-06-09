@@ -61,9 +61,39 @@ export function getYearPillar(y: number, m: number, d: number): Pillar {
   return indexToPillar(index);
 }
 
-// 나머지 함수들은 이후 Task에서 구현 — 지금은 throw로 유지
-function getMonthJiIndex(_y: number, _m: number, _d: number): number { throw new Error('not implemented'); }
-export function getMonthPillar(_y: number, _m: number, _d: number, _yearGan: string): Pillar { throw new Error('not implemented'); }
+function getMonthJiIndex(y: number, m: number, d: number): number {
+  // 입력일 기준 최근 35일을 순방향 스캔해 가장 마지막 절기(節) 확인
+  const inputMs = Date.UTC(y, m - 1, d);
+  let jiIndex = -1;
+
+  for (let offset = 35; offset >= 0; offset--) {
+    const ms   = inputMs - offset * 86400000;
+    const date = new Date(ms);
+    const name = getJieQiName(
+      date.getUTCFullYear(),
+      date.getUTCMonth() + 1,
+      date.getUTCDate(),
+    );
+    if (Object.prototype.hasOwnProperty.call(JEOLGI_JI, name)) {
+      jiIndex = JEOLGI_JI[name];
+    }
+  }
+
+  if (jiIndex === -1) throw new Error(`절기 탐색 실패: ${y}-${m}-${d}`);
+  return jiIndex;
+}
+
+export function getMonthPillar(y: number, m: number, d: number, yearGan: string): Pillar {
+  const monthJiIndex  = getMonthJiIndex(y, m, d);
+  const yearGanIndex  = GAN.indexOf(yearGan as (typeof GAN)[number]);
+  const inGanStart    = OHODUN[yearGanIndex % 5];          // 인월 시작 月干 인덱스
+  const monthOffset   = (monthJiIndex - 2 + 12) % 12;     // 인월로부터 오프셋
+  const monthGanIndex = (inGanStart + monthOffset) % 10;
+
+  const gan = GAN[monthGanIndex];
+  const ji  = JI[monthJiIndex];
+  return { gan, ji, ganElement: GAN_OHAENG[gan], jiElement: JI_OHAENG[ji] };
+}
 
 const DAY_REF_MS    = Date.UTC(1900, 0, 31);
 const DAY_REF_INDEX = 10;

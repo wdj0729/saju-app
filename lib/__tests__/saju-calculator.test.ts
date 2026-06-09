@@ -93,3 +93,33 @@ describe('getYearPillar', () => {
     expect(p.ji).toBe('子');
   });
 });
+
+describe('getMonthPillar', () => {
+  // 2024년 甲辰년, 인월 시작 月干=丙 (OHODUN[0]=2)
+  it('2024-02-10 (입춘 2/4 이후) → 寅月, 甲辰년 → 丙寅월', () => {
+    const p = getMonthPillar(2024, 2, 10, '甲');
+    expect(p.ji).toBe('寅');
+    expect(p.gan).toBe('丙');
+  });
+
+  it('2024-04-06 (청명 4/4 이후) → 辰月, 甲辰년 → 戊辰월', () => {
+    // 辰月: offset=(4-2+12)%12=2, ganIndex=(2+2)%10=4 → GAN[4]=戊
+    const p = getMonthPillar(2024, 4, 6, '甲');
+    expect(p.ji).toBe('辰');
+    expect(p.gan).toBe('戊');
+  });
+
+  it('2024-01-10 (소한 1/6 이후) → 丑月, 甲辰년 → 丁丑월', () => {
+    // 丑月: offset=(1-2+12)%12=11, ganIndex=(2+11)%10=3 → 丁
+    const p = getMonthPillar(2024, 1, 10, '甲');
+    expect(p.ji).toBe('丑');
+    expect(p.gan).toBe('丁');
+  });
+
+  it('2024-01-03 (소한 이전) → 子月, 甲辰년 → 丙子월', () => {
+    // 大雪(12/6) 이후 소한 이전 → 子月: offset=(0-2+12)%12=10, ganIndex=(2+10)%10=2 → 丙
+    const p = getMonthPillar(2024, 1, 3, '甲');
+    expect(p.ji).toBe('子');
+    expect(p.gan).toBe('丙');
+  });
+});
