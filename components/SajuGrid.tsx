@@ -18,10 +18,10 @@ const OHAENG_BG: Record<Ohaeng, string> = {
 
 export default function SajuGrid({ year, month, day, hour }: SajuGridProps) {
   const data = [
-    { label: '년', pillar: year },
-    { label: '월', pillar: month },
-    { label: '일', pillar: day },
     { label: '시', pillar: hour },
+    { label: '일', pillar: day },
+    { label: '월', pillar: month },
+    { label: '년', pillar: year },
   ] as const;
 
   return (
