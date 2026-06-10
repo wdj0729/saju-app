@@ -1,10 +1,11 @@
+import { GAN, JI, GAN_OHAENG, JI_OHAENG, JIJANGGAN, OHODUN, OJADUN, JEOLGI_JI } from '../saju-data';
 import {
-  GAN, JI, GAN_OHAENG, JI_OHAENG, JIJANGGAN,
-  OHODUN, OJADUN, JEOLGI_JI,
-} from '../saju-data';
-import {
-  getYearPillar, getMonthPillar, getDayPillar, getHourPillar,
-  calcOhaeng, calculateSaju,
+  getYearPillar,
+  getMonthPillar,
+  getDayPillar,
+  getHourPillar,
+  calcOhaeng,
+  calculateSaju,
 } from '../saju-calculator';
 import type { Pillar } from '../saju-calculator';
 
@@ -19,33 +20,33 @@ describe('saju-data', () => {
 
   it('GAN_OHAENG는 모든 천간을 포함', () => {
     const validOhaeng = new Set(['목', '화', '토', '금', '수']);
-    GAN.forEach(g => {
+    GAN.forEach((g) => {
       expect(validOhaeng.has(GAN_OHAENG[g])).toBe(true);
     });
   });
 
   it('JI_OHAENG는 모든 지지를 포함', () => {
     const validOhaeng = new Set(['목', '화', '토', '금', '수']);
-    JI.forEach(j => {
+    JI.forEach((j) => {
       expect(validOhaeng.has(JI_OHAENG[j])).toBe(true);
     });
   });
 
   it('JIJANGGAN는 12개 지지 모두 보유, 길이 2 또는 3', () => {
-    JI.forEach(j => {
+    JI.forEach((j) => {
       expect(JIJANGGAN[j]).toBeDefined();
       expect([2, 3]).toContain(JIJANGGAN[j].length);
     });
   });
 
   it('중기 없는 지지(子卯午酉)는 길이 2', () => {
-    ['子', '卯', '午', '酉'].forEach(j => {
+    ['子', '卯', '午', '酉'].forEach((j) => {
       expect(JIJANGGAN[j]).toHaveLength(2);
     });
   });
 
   it('중기 있는 지지는 길이 3', () => {
-    ['丑', '寅', '辰', '巳', '未', '申', '戌', '亥'].forEach(j => {
+    ['丑', '寅', '辰', '巳', '未', '申', '戌', '亥'].forEach((j) => {
       expect(JIJANGGAN[j]).toHaveLength(3);
     });
   });
@@ -59,8 +60,21 @@ describe('saju-data', () => {
   });
 
   it('JEOLGI_JI는 12개 절기 모두 포함', () => {
-    const names = ['小寒','立春','惊蛰','清明','立夏','芒种','小暑','立秋','白露','寒露','立冬','大雪'];
-    names.forEach(n => {
+    const names = [
+      '小寒',
+      '立春',
+      '惊蛰',
+      '清明',
+      '立夏',
+      '芒种',
+      '小暑',
+      '立秋',
+      '白露',
+      '寒露',
+      '立冬',
+      '大雪',
+    ];
+    names.forEach((n) => {
       expect(JEOLGI_JI[n]).toBeDefined();
     });
   });
@@ -146,29 +160,35 @@ describe('getMonthPillar', () => {
 });
 
 describe('getDayPillar', () => {
-  it('1900-01-31 (기준일) → 甲戌', () => {
+  it('1900-01-31 (기준일) → 甲辰', () => {
     const p = getDayPillar(1900, 1, 31);
     expect(p.gan).toBe('甲');
-    expect(p.ji).toBe('戌');
+    expect(p.ji).toBe('辰');
   });
 
-  it('1900-02-01 (기준일+1) → 乙亥', () => {
+  it('1900-02-01 (기준일+1) → 乙巳', () => {
     const p = getDayPillar(1900, 2, 1);
     expect(p.gan).toBe('乙');
-    expect(p.ji).toBe('亥');
+    expect(p.ji).toBe('巳');
   });
 
-  it('1900-03-31 (기준일+59) → 癸酉', () => {
-    // daysDiff=59, index=(59+10)%60=9 → 癸(9), 酉(9)
+  it('1900-03-31 (기준일+59) → 癸卯', () => {
+    // daysDiff=59, index=(59+40)%60=39 → 癸(9), 卯(3)
     const p = getDayPillar(1900, 3, 31);
     expect(p.gan).toBe('癸');
-    expect(p.ji).toBe('酉');
+    expect(p.ji).toBe('卯');
   });
 
-  it('1900-04-01 (기준일+60) → 甲戌 (60갑자 순환)', () => {
+  it('1900-04-01 (기준일+60) → 甲辰 (60갑자 순환)', () => {
     const p = getDayPillar(1900, 4, 1);
     expect(p.gan).toBe('甲');
-    expect(p.ji).toBe('戌');
+    expect(p.ji).toBe('辰');
+  });
+
+  it('1993-07-29 → 辛亥', () => {
+    const p = getDayPillar(1993, 7, 29);
+    expect(p.gan).toBe('辛');
+    expect(p.ji).toBe('亥');
   });
 });
 
@@ -229,14 +249,14 @@ describe('getHourPillar', () => {
 
 describe('calcOhaeng', () => {
   it('甲子 기둥 하나 → 목1.0, 수2.5', () => {
-    const pillar: Pillar = { gan:'甲', ji:'子', ganElement:'목', jiElement:'수' };
+    const pillar: Pillar = { gan: '甲', ji: '子', ganElement: '목', jiElement: '수' };
     const result = calcOhaeng([pillar]);
     expect(result['목']).toBeCloseTo(1.0);
     expect(result['수']).toBeCloseTo(2.5); // 子:수1 + 壬(여기):수0.5 + 癸(정기):수1
   });
 
   it('null 기둥은 건너뜀', () => {
-    const pillar: Pillar = { gan:'甲', ji:'子', ganElement:'목', jiElement:'수' };
+    const pillar: Pillar = { gan: '甲', ji: '子', ganElement: '목', jiElement: '수' };
     const r1 = calcOhaeng([pillar, null]);
     const r2 = calcOhaeng([pillar]);
     expect(r1).toEqual(r2);
@@ -248,7 +268,7 @@ describe('calcOhaeng', () => {
   });
 
   it('丑 지장간(癸辛己) — 여기0.5 + 중기0.5 + 정기1', () => {
-    const pillar: Pillar = { gan:'甲', ji:'丑', ganElement:'목', jiElement:'토' };
+    const pillar: Pillar = { gan: '甲', ji: '丑', ganElement: '목', jiElement: '토' };
     const result = calcOhaeng([pillar]);
     // 甲:목1, 丑표면:토1, 癸여기:수0.5, 辛중기:금0.5, 己정기:토1
     expect(result['목']).toBeCloseTo(1.0);
@@ -260,7 +280,7 @@ describe('calcOhaeng', () => {
 
 describe('calculateSaju', () => {
   it('양력 1984-02-05 시간없음 → 4기둥 + ilgan + ohaeng 반환', () => {
-    const result = calculateSaju({ year:1984, month:2, day:5, hour:null, isLunar:false });
+    const result = calculateSaju({ year: 1984, month: 2, day: 5, hour: null, isLunar: false });
     expect(result.year.gan).toBe('甲');
     expect(result.year.ji).toBe('子');
     expect(result.day).toBeDefined();
@@ -271,29 +291,35 @@ describe('calculateSaju', () => {
   });
 
   it('시간 있음 → hour 기둥이 null이 아님', () => {
-    const result = calculateSaju({ year:2024, month:6, day:15, hour:10, isLunar:false });
+    const result = calculateSaju({ year: 2024, month: 6, day: 15, hour: 10, isLunar: false });
     expect(result.hour).not.toBeNull();
     expect(result.hour!.ji).toBe('巳'); // hour=10 → jiIndex=floor(11/2)=5 → 巳
   });
 
   it('음력 입력 → 양력 변환 후 계산', () => {
     // 음력 2024-01-01 = 양력 2024-02-10
-    const resultLunar = calculateSaju({ year:2024, month:1, day:1, hour:null, isLunar:true });
-    const resultSolar = calculateSaju({ year:2024, month:2, day:10, hour:null, isLunar:false });
+    const resultLunar = calculateSaju({ year: 2024, month: 1, day: 1, hour: null, isLunar: true });
+    const resultSolar = calculateSaju({
+      year: 2024,
+      month: 2,
+      day: 10,
+      hour: null,
+      isLunar: false,
+    });
     expect(resultLunar.year.gan).toBe(resultSolar.year.gan);
     expect(resultLunar.day.gan).toBe(resultSolar.day.gan);
   });
 
   it('ohaeng 합계가 시주 없을 때 예상 범위 (10.5~12)', () => {
-    const result = calculateSaju({ year:1984, month:2, day:5, hour:null, isLunar:false });
-    const total  = Object.values(result.ohaeng).reduce((a, b) => a + b, 0);
+    const result = calculateSaju({ year: 1984, month: 2, day: 5, hour: null, isLunar: false });
+    const total = Object.values(result.ohaeng).reduce((a, b) => a + b, 0);
     expect(total).toBeGreaterThanOrEqual(10.5);
     expect(total).toBeLessThanOrEqual(12);
   });
 
   it('ohaeng 합계가 시주 있을 때 예상 범위 (14~16)', () => {
-    const result = calculateSaju({ year:1984, month:2, day:5, hour:10, isLunar:false });
-    const total  = Object.values(result.ohaeng).reduce((a, b) => a + b, 0);
+    const result = calculateSaju({ year: 1984, month: 2, day: 5, hour: 10, isLunar: false });
+    const total = Object.values(result.ohaeng).reduce((a, b) => a + b, 0);
     expect(total).toBeGreaterThanOrEqual(14);
     expect(total).toBeLessThanOrEqual(16);
   });

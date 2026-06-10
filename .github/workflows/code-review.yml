@@ -1,0 +1,55 @@
+name: Automated Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  code-review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Claude Code Review
+        uses: anthropics/claude-code-action@beta
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          model: claude-sonnet-4-5
+          allowed_tools: 'Bash,Read,Write,Edit,Glob,Grep'
+          direct_prompt: |
+            /code-review --comment
+
+            After writing the code review, run the following quality checks using the Bash tool and append the results to the PR comment:
+
+            1. Run `npm run lint 2>&1` and add a `### ESLint` section:
+               - If no output and exit code 0: "No issues found."
+               - Otherwise: list errors/warnings in format `` - `file:line` — rule: message ``
+
+            2. Run `npx tsc --noEmit 2>&1` and add a `### TypeScript` section:
+               - If no output and exit code 0: "No type errors found."
+               - Otherwise: list up to 10 errors in format `` - `file:line:col` — TSxxxx: message ``
+
+            3. Run `npm run format:check 2>&1` and add a `### Prettier` section:
+               - If exit code 0: "No issues found."
+               - Otherwise: list files needing formatting (up to 10), then "Run `npx prettier --write .` to fix."
+
+            4. Run `npm test -- --passWithNoTests 2>&1` and add a `### Tests` section:
+               - If all pass: "N passed (M suites)"
+               - If failures: "**X failed**, Y passed (M suites):" then list failed test names (up to 10)

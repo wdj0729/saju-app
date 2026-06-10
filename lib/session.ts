@@ -7,6 +7,7 @@ export interface SajuSessionInput {
   day: number;
   hour: number | null;
   isLunar: boolean;
+  gender: 'M' | 'F';
 }
 
 export interface SajuSession {
@@ -21,14 +22,27 @@ export function saveSession(data: SajuSession): void {
   sessionStorage.setItem(KEY, JSON.stringify(data));
 }
 
+function isSajuSession(v: unknown): v is SajuSession {
+  if (typeof v !== 'object' || v === null) return false;
+  const r = v as Record<string, unknown>;
+  if (typeof r.input !== 'object' || r.input === null) return false;
+  if (typeof r.result !== 'object' || r.result === null) return false;
+  const input = r.input as Record<string, unknown>;
+  return (
+    typeof input.year === 'number' &&
+    typeof input.month === 'number' &&
+    typeof input.day === 'number' &&
+    typeof input.isLunar === 'boolean'
+  );
+}
+
 export function loadSession(): SajuSession | null {
   if (typeof window === 'undefined') return null;
   const raw = sessionStorage.getItem(KEY);
   if (!raw) return null;
   try {
-    const parsed = JSON.parse(raw);
-    if (typeof parsed !== 'object' || !parsed?.input || !parsed?.result) return null;
-    return parsed as SajuSession;
+    const parsed: unknown = JSON.parse(raw);
+    return isSajuSession(parsed) ? parsed : null;
   } catch {
     return null;
   }
