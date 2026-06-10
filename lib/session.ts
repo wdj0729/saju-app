@@ -52,3 +52,8 @@ export function clearSession(): void {
   if (typeof window === 'undefined') return;
   sessionStorage.removeItem(KEY);
 }
+
+export function hasSession(): boolean {
+  if (typeof window === 'undefined') return false;
+  return sessionStorage.getItem(KEY) !== null;
+}
