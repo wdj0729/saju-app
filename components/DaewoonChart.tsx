@@ -7,16 +7,18 @@ interface DaewoonChartProps {
 }
 
 const OHAENG_HANJA: Record<Ohaeng, string> = {
-  목: '木', 화: '火', 토: '土', 금: '金', 수: '水',
+  목: '木',
+  화: '火',
+  토: '土',
+  금: '金',
+  수: '水',
 };
 
 export default function DaewoonChart({ result, currentAge }: DaewoonChartProps) {
   const { pillars, daewoonSu, direction } = result;
 
   // 현재 대운 인덱스 (대운 시작 전이면 -1)
-  const currentIdx = pillars.findIndex(
-    p => currentAge >= p.startAge && currentAge <= p.endAge,
-  );
+  const currentIdx = pillars.findIndex((p) => currentAge >= p.startAge && currentAge <= p.endAge);
 
   return (
     <div className="bg-card rounded-2xl p-4">
@@ -26,14 +28,10 @@ export default function DaewoonChart({ result, currentAge }: DaewoonChartProps) 
       <div className="flex flex-col gap-2">
         {pillars.map((pillar, i) => {
           const isCurrent = i === currentIdx;
-          const isPast    = currentIdx !== -1 ? i < currentIdx : false;
+          const isPast = currentIdx !== -1 ? i < currentIdx : false;
           // 미래 대운: currentIdx 이후부터 점차 투명
           const futureSteps = currentIdx === -1 ? i : i - currentIdx;
-          const opacity = isPast
-            ? 0.35
-            : isCurrent
-            ? 1
-            : Math.max(0.45, 1 - futureSteps * 0.1);
+          const opacity = isPast ? 0.35 : isCurrent ? 1 : Math.max(0.45, 1 - futureSteps * 0.1);
 
           return (
             <div
@@ -44,7 +42,8 @@ export default function DaewoonChart({ result, currentAge }: DaewoonChartProps) 
               style={
                 isCurrent
                   ? {
-                      background: 'linear-gradient(135deg, rgba(102,126,234,0.15), rgba(118,75,162,0.15))',
+                      background:
+                        'linear-gradient(135deg, rgba(102,126,234,0.15), rgba(118,75,162,0.15))',
                       borderColor: 'rgba(102,126,234,0.5)',
                       opacity,
                     }
@@ -54,7 +53,9 @@ export default function DaewoonChart({ result, currentAge }: DaewoonChartProps) 
               {/* 간지 */}
               <div className="text-center min-w-[28px]">
                 <div className="text-xl font-bold text-primary leading-none">{pillar.gan}</div>
-                <div className="text-xl font-bold text-primary leading-none mt-0.5">{pillar.ji}</div>
+                <div className="text-xl font-bold text-primary leading-none mt-0.5">
+                  {pillar.ji}
+                </div>
               </div>
 
               {/* 나이 + 오행 */}
@@ -63,7 +64,8 @@ export default function DaewoonChart({ result, currentAge }: DaewoonChartProps) 
                   {pillar.startAge} ~ {pillar.endAge}세
                 </div>
                 <div className="text-xs text-muted mt-0.5">
-                  {pillar.ganElement}({OHAENG_HANJA[pillar.ganElement]}) · {pillar.jiElement}({OHAENG_HANJA[pillar.jiElement]})
+                  {pillar.ganElement}({OHAENG_HANJA[pillar.ganElement]}) · {pillar.jiElement}(
+                  {OHAENG_HANJA[pillar.jiElement]})
                 </div>
               </div>
 

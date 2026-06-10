@@ -13,9 +13,13 @@ beforeAll(() => {
   });
   Object.defineProperty(global, 'sessionStorage', {
     value: {
-      getItem:    (k: string) => store[k] ?? null,
-      setItem:    (k: string, v: string) => { store[k] = v; },
-      removeItem: (k: string) => { delete store[k]; },
+      getItem: (k: string) => store[k] ?? null,
+      setItem: (k: string, v: string) => {
+        store[k] = v;
+      },
+      removeItem: (k: string) => {
+        delete store[k];
+      },
     },
     writable: true,
     configurable: true,
@@ -27,10 +31,10 @@ beforeEach(() => {
 });
 
 const DUMMY_RESULT: SajuResult = {
-  year:  { gan: '甲', ji: '子', ganElement: '목', jiElement: '수' },
+  year: { gan: '甲', ji: '子', ganElement: '목', jiElement: '수' },
   month: { gan: '丙', ji: '寅', ganElement: '화', jiElement: '목' },
-  day:   { gan: '戊', ji: '辰', ganElement: '토', jiElement: '토' },
-  hour:  null,
+  day: { gan: '戊', ji: '辰', ganElement: '토', jiElement: '토' },
+  hour: null,
   ilgan: '戊',
   ohaeng: { 목: 3, 화: 1, 토: 4, 금: 0, 수: 0.5 },
 };

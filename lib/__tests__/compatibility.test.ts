@@ -1,20 +1,25 @@
-import { calcCompatibility, saveCompatSession, loadCompatSession, clearCompatSession } from '../compatibility';
+import {
+  calcCompatibility,
+  saveCompatSession,
+  loadCompatSession,
+  clearCompatSession,
+} from '../compatibility';
 import type { CompatibilitySession } from '../compatibility';
 import type { SajuResult } from '../saju-calculator';
 
-function makeSaju(ohaeng: Record<'목'|'화'|'토'|'금'|'수', number>): SajuResult {
+function makeSaju(ohaeng: Record<'목' | '화' | '토' | '금' | '수', number>): SajuResult {
   return {
-    year:  { gan: '甲', ji: '子', ganElement: '목', jiElement: '수' },
+    year: { gan: '甲', ji: '子', ganElement: '목', jiElement: '수' },
     month: { gan: '丙', ji: '午', ganElement: '화', jiElement: '화' },
-    day:   { gan: '甲', ji: '子', ganElement: '목', jiElement: '수' },
-    hour:  null,
+    day: { gan: '甲', ji: '子', ganElement: '목', jiElement: '수' },
+    hour: null,
     ilgan: '甲',
     ohaeng,
   };
 }
 
-const pureWood  = makeSaju({ 목: 5, 화: 0, 토: 0, 금: 0, 수: 0 });
-const pureFire  = makeSaju({ 목: 0, 화: 5, 토: 0, 금: 0, 수: 0 });
+const pureWood = makeSaju({ 목: 5, 화: 0, 토: 0, 금: 0, 수: 0 });
+const pureFire = makeSaju({ 목: 0, 화: 5, 토: 0, 금: 0, 수: 0 });
 const pureMetal = makeSaju({ 목: 0, 화: 0, 토: 0, 금: 5, 수: 0 });
 const pureWater = makeSaju({ 목: 0, 화: 0, 토: 0, 금: 0, 수: 5 });
 
@@ -77,14 +82,21 @@ beforeAll(() => {
   Object.defineProperty(global, 'window', { value: {}, writable: true, configurable: true });
   Object.defineProperty(global, 'sessionStorage', {
     value: {
-      getItem:    (k: string) => store[k] ?? null,
-      setItem:    (k: string, v: string) => { store[k] = v; },
-      removeItem: (k: string) => { delete store[k]; },
+      getItem: (k: string) => store[k] ?? null,
+      setItem: (k: string, v: string) => {
+        store[k] = v;
+      },
+      removeItem: (k: string) => {
+        delete store[k];
+      },
     },
-    writable: true, configurable: true,
+    writable: true,
+    configurable: true,
   });
 });
-beforeEach(() => { Object.keys(store).forEach(k => delete store[k]); });
+beforeEach(() => {
+  Object.keys(store).forEach((k) => delete store[k]);
+});
 
 describe('CompatibilitySession 스토리지', () => {
   const dummy: CompatibilitySession = {

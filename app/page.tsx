@@ -63,7 +63,7 @@ export default function Home() {
 
   function handleDelete(id: string) {
     deleteProfile(id);
-    setProfiles(prev => prev.filter(p => p.id !== id));
+    setProfiles((prev) => prev.filter((p) => p.id !== id));
   }
 
   return (

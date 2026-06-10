@@ -16,7 +16,9 @@ export function useAiStream(): UseAiStreamReturn {
   const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
-    return () => { abortRef.current?.abort(); };
+    return () => {
+      abortRef.current?.abort();
+    };
   }, []);
 
   async function request(url: string, body: unknown) {

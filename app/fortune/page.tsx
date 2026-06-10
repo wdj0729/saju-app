@@ -46,10 +46,10 @@ export default function FortunePage() {
       ilgan,
       ohaeng: session.result.ohaeng,
       pillars: {
-        year:  session.result.year,
+        year: session.result.year,
         month: session.result.month,
-        day:   session.result.day,
-        hour:  session.result.hour ?? null,
+        day: session.result.day,
+        hour: session.result.hour ?? null,
       },
     });
   }
@@ -104,9 +104,7 @@ export default function FortunePage() {
             <p className="text-xs text-muted mb-2">
               💫 {activeTab}의 운세 · {ilgan} 일간
             </p>
-            <p className="text-sm text-primary leading-relaxed">
-              {currentPeriod.summary}
-            </p>
+            <p className="text-sm text-primary leading-relaxed">{currentPeriod.summary}</p>
           </div>
 
           {/* 아코디언 토글 */}
@@ -121,14 +119,10 @@ export default function FortunePage() {
           {/* 상세 내용 */}
           {isExpanded && (
             <div className="px-4 pb-4 pt-3 flex flex-col gap-3">
-              {(
-                Object.entries(currentPeriod.details) as [string, string][]
-              ).map(([key, value]) => (
+              {(Object.entries(currentPeriod.details) as [string, string][]).map(([key, value]) => (
                 <div key={key}>
                   <span className="text-xs text-muted font-medium">{key}</span>
-                  <p className="text-sm text-primary leading-relaxed mt-0.5">
-                    {value}
-                  </p>
+                  <p className="text-sm text-primary leading-relaxed mt-0.5">{value}</p>
                 </div>
               ))}
             </div>
@@ -155,11 +149,7 @@ export default function FortunePage() {
         >
           💑 궁합 보러 가기
         </button>
-        <ShareButton
-          cardRef={cardRef}
-          filename="fortune.png"
-          shareTitle={`${activeTab} 운세`}
-        />
+        <ShareButton cardRef={cardRef} filename="fortune.png" shareTitle={`${activeTab} 운세`} />
       </div>
     </div>
   );
