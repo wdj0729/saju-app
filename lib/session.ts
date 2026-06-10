@@ -15,7 +15,7 @@ export interface SajuSession {
   result: SajuResult;
 }
 
-const KEY = 'saju-session';
+const KEY = 'saju-session-v1';
 
 export function saveSession(data: SajuSession): void {
   if (typeof window === 'undefined') return;
