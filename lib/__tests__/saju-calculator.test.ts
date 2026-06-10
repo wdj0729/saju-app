@@ -146,29 +146,35 @@ describe('getMonthPillar', () => {
 });
 
 describe('getDayPillar', () => {
-  it('1900-01-31 (기준일) → 甲戌', () => {
+  it('1900-01-31 (기준일) → 甲辰', () => {
     const p = getDayPillar(1900, 1, 31);
     expect(p.gan).toBe('甲');
-    expect(p.ji).toBe('戌');
+    expect(p.ji).toBe('辰');
   });
 
-  it('1900-02-01 (기준일+1) → 乙亥', () => {
+  it('1900-02-01 (기준일+1) → 乙巳', () => {
     const p = getDayPillar(1900, 2, 1);
     expect(p.gan).toBe('乙');
-    expect(p.ji).toBe('亥');
+    expect(p.ji).toBe('巳');
   });
 
-  it('1900-03-31 (기준일+59) → 癸酉', () => {
-    // daysDiff=59, index=(59+10)%60=9 → 癸(9), 酉(9)
+  it('1900-03-31 (기준일+59) → 癸卯', () => {
+    // daysDiff=59, index=(59+40)%60=39 → 癸(9), 卯(3)
     const p = getDayPillar(1900, 3, 31);
     expect(p.gan).toBe('癸');
-    expect(p.ji).toBe('酉');
+    expect(p.ji).toBe('卯');
   });
 
-  it('1900-04-01 (기준일+60) → 甲戌 (60갑자 순환)', () => {
+  it('1900-04-01 (기준일+60) → 甲辰 (60갑자 순환)', () => {
     const p = getDayPillar(1900, 4, 1);
     expect(p.gan).toBe('甲');
-    expect(p.ji).toBe('戌');
+    expect(p.ji).toBe('辰');
+  });
+
+  it('1993-07-29 → 辛亥', () => {
+    const p = getDayPillar(1993, 7, 29);
+    expect(p.gan).toBe('辛');
+    expect(p.ji).toBe('亥');
   });
 });
 

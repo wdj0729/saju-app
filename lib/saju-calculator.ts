@@ -93,7 +93,7 @@ export function getMonthPillar(y: number, m: number, d: number, yearGan: string)
 }
 
 const DAY_REF_MS    = Date.UTC(1900, 0, 31); // 1900-01-31 UTC 자정
-const DAY_REF_INDEX = 10;                     // 甲戌 = 60갑자 인덱스 10
+const DAY_REF_INDEX = 40;                     // 甲辰 = 60갑자 인덱스 40
 
 export function getDayPillar(y: number, m: number, d: number): Pillar {
   const inputMs  = Date.UTC(y, m - 1, d);
