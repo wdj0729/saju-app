@@ -35,10 +35,16 @@ export default function SajuResultPage() {
 
   const daewoon = input.gender
     ? calculateDaewoon(
-        { year: input.year, month: input.month, day: input.day, hour: input.hour, isLunar: input.isLunar },
+        {
+          year: input.year,
+          month: input.month,
+          day: input.day,
+          hour: input.hour,
+          isLunar: input.isLunar,
+        },
         input.gender,
         result.year,
-        result.month,
+        result.month
       )
     : null;
   const currentAge = calcMadeAge(input.year, input.month, input.day);
@@ -56,10 +62,10 @@ export default function SajuResultPage() {
         name={input.name}
         ilgan={result.ilgan}
         pillars={{
-          year:  result.year.gan  + result.year.ji,
+          year: result.year.gan + result.year.ji,
           month: result.month.gan + result.month.ji,
-          day:   result.day.gan   + result.day.ji,
-          hour:  result.hour ? result.hour.gan + result.hour.ji : undefined,
+          day: result.day.gan + result.day.ji,
+          hour: result.hour ? result.hour.gan + result.hour.ji : undefined,
         }}
         ohaeng={result.ohaeng}
       />
@@ -75,12 +81,7 @@ export default function SajuResultPage() {
 
       <div className="flex flex-col gap-6 px-4 py-6 flex-1">
         {/* 사주 4기둥 그리드 */}
-        <SajuGrid
-          year={result.year}
-          month={result.month}
-          day={result.day}
-          hour={result.hour}
-        />
+        <SajuGrid year={result.year} month={result.month} day={result.day} hour={result.hour} />
 
         {/* 일간 기질 */}
         <div className="bg-card rounded-2xl p-4">
@@ -97,9 +98,7 @@ export default function SajuResultPage() {
         </div>
 
         {/* 대운 */}
-        {daewoon && (
-          <DaewoonChart result={daewoon} currentAge={currentAge} />
-        )}
+        {daewoon && <DaewoonChart result={daewoon} currentAge={currentAge} />}
       </div>
 
       <div className="flex gap-3 px-4 pb-8">
@@ -123,11 +122,7 @@ export default function SajuResultPage() {
         >
           {isSaved ? '✓' : '💾'}
         </button>
-        <ShareButton
-          cardRef={cardRef}
-          filename="saju-result.png"
-          shareTitle="내 사주 결과"
-        />
+        <ShareButton cardRef={cardRef} filename="saju-result.png" shareTitle="내 사주 결과" />
       </div>
     </div>
   );

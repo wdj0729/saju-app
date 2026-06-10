@@ -71,7 +71,7 @@ describe('calculateDaewoon', () => {
 
   it('각 대운의 endAge === startAge + 9', () => {
     const result = calculateDaewoon(input1984M, 'M', saju1984.year, saju1984.month);
-    result.pillars.forEach(p => {
+    result.pillars.forEach((p) => {
       expect(p.endAge).toBe(p.startAge + 9);
     });
   });
@@ -84,10 +84,23 @@ describe('calculateDaewoon', () => {
   });
 
   it('모든 대운 간지가 유효한 GAN/JI', () => {
-    const validGan = new Set(['甲','乙','丙','丁','戊','己','庚','辛','壬','癸']);
-    const validJi  = new Set(['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥']);
+    const validGan = new Set(['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸']);
+    const validJi = new Set([
+      '子',
+      '丑',
+      '寅',
+      '卯',
+      '辰',
+      '巳',
+      '午',
+      '未',
+      '申',
+      '酉',
+      '戌',
+      '亥',
+    ]);
     const result = calculateDaewoon(input1984M, 'M', saju1984.year, saju1984.month);
-    result.pillars.forEach(p => {
+    result.pillars.forEach((p) => {
       expect(validGan.has(p.gan)).toBe(true);
       expect(validJi.has(p.ji)).toBe(true);
     });
@@ -95,17 +108,17 @@ describe('calculateDaewoon', () => {
 
   it('음력 입력도 처리 (8개 대운, 대운수 ≥ 1)', () => {
     const lunarInput = { year: 1984, month: 2, day: 15, hour: null as null, isLunar: true };
-    const lunarSaju  = calculateSaju(lunarInput);
+    const lunarSaju = calculateSaju(lunarInput);
     const result = calculateDaewoon(lunarInput, 'M', lunarSaju.year, lunarSaju.month);
     expect(result.pillars).toHaveLength(8);
     expect(result.daewoonSu).toBeGreaterThanOrEqual(1);
   });
 
   it('역행 시 순행과 다른 기둥을 반환', () => {
-    const forward  = calculateDaewoon(input1984M, 'M', saju1984.year, saju1984.month);
+    const forward = calculateDaewoon(input1984M, 'M', saju1984.year, saju1984.month);
     const backward = calculateDaewoon(input1984M, 'F', saju1984.year, saju1984.month);
     expect(forward.pillars[0].gan + forward.pillars[0].ji).not.toBe(
-      backward.pillars[0].gan + backward.pillars[0].ji,
+      backward.pillars[0].gan + backward.pillars[0].ji
     );
   });
 });

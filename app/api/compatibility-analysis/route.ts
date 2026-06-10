@@ -18,9 +18,11 @@ interface CompatibilityAnalysisRequest {
 
 function isPersonData(v: unknown): v is PersonData {
   return (
-    typeof v === 'object' && v !== null &&
+    typeof v === 'object' &&
+    v !== null &&
     typeof (v as Record<string, unknown>).ilgan === 'string' &&
-    typeof (v as Record<string, unknown>).ohaeng === 'object' && (v as Record<string, unknown>).ohaeng !== null
+    typeof (v as Record<string, unknown>).ohaeng === 'object' &&
+    (v as Record<string, unknown>).ohaeng !== null
   );
 }
 
@@ -52,8 +54,12 @@ export async function POST(req: NextRequest): Promise<Response> {
   const nameA = personA.name || '첫 번째 분';
   const nameB = personB.name || '두 번째 분';
 
-  const ohaengTextA = Object.entries(personA.ohaeng).map(([k, v]) => `${k} ${Number(v).toFixed(1)}`).join(' / ');
-  const ohaengTextB = Object.entries(personB.ohaeng).map(([k, v]) => `${k} ${Number(v).toFixed(1)}`).join(' / ');
+  const ohaengTextA = Object.entries(personA.ohaeng)
+    .map(([k, v]) => `${k} ${Number(v).toFixed(1)}`)
+    .join(' / ');
+  const ohaengTextB = Object.entries(personB.ohaeng)
+    .map(([k, v]) => `${k} ${Number(v).toFixed(1)}`)
+    .join(' / ');
 
   try {
     const stream = client.messages.stream({
@@ -78,10 +84,7 @@ ${nameB}: 일간 ${personB.ilgan}, 오행 분포 ${ohaengTextB}
         const encoder = new TextEncoder();
         try {
           for await (const event of stream) {
-            if (
-              event.type === 'content_block_delta' &&
-              event.delta.type === 'text_delta'
-            ) {
+            if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
               controller.enqueue(encoder.encode(event.delta.text));
             }
           }

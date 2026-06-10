@@ -65,14 +65,22 @@ export default function CompatibilityResultPage() {
       <div className="flex flex-col gap-4 px-4 py-6 flex-1">
         {/* 점수 카드 */}
         <div className="bg-card rounded-2xl p-5 flex flex-col items-center gap-2">
-          <p className="text-sm text-muted">{nameA} ♡ {nameB}</p>
+          <p className="text-sm text-muted">
+            {nameA} ♡ {nameB}
+          </p>
           <p
             className="text-6xl font-bold"
-            style={{ background: 'linear-gradient(to right, #667eea, #764ba2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
+            style={{
+              background: 'linear-gradient(to right, #667eea, #764ba2)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
           >
             {score}
           </p>
-          <p className="text-sm font-semibold text-primary">{grade} · {gradeLabel}</p>
+          <p className="text-sm font-semibold text-primary">
+            {grade} · {gradeLabel}
+          </p>
         </div>
 
         {/* 오행 비교 카드 */}
@@ -92,7 +100,9 @@ export default function CompatibilityResultPage() {
                   />
                 </div>
               </div>
-              <span className="text-xs text-muted w-4 text-center shrink-0">{OHAENG_LABEL[key]}</span>
+              <span className="text-xs text-muted w-4 text-center shrink-0">
+                {OHAENG_LABEL[key]}
+              </span>
               <div className="flex-1">
                 <div className="w-full bg-border rounded-full h-3 overflow-hidden">
                   <div
@@ -131,11 +141,7 @@ export default function CompatibilityResultPage() {
         >
           다시 분석하기
         </button>
-        <ShareButton
-          cardRef={cardRef}
-          filename="compatibility-result.png"
-          shareTitle="궁합 결과"
-        />
+        <ShareButton cardRef={cardRef} filename="compatibility-result.png" shareTitle="궁합 결과" />
       </div>
     </div>
   );

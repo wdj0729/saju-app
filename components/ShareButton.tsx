@@ -21,7 +21,7 @@ export default function ShareButton({ cardRef, filename, shareTitle }: ShareButt
         scale: window.devicePixelRatio || 2,
       });
       const blob = await new Promise<Blob>((resolve, reject) => {
-        canvas.toBlob(b => (b ? resolve(b) : reject(new Error('캡처 실패'))), 'image/png');
+        canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('캡처 실패'))), 'image/png');
       });
       const file = new File([blob], filename, { type: 'image/png' });
       if (navigator.canShare?.({ files: [file] })) {

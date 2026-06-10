@@ -47,7 +47,7 @@ function persist(profiles: Profile[]): void {
 
 export function isProfileSaved(input: SajuSessionInput): boolean {
   return loadProfiles().some(
-    p =>
+    (p) =>
       p.name === input.name &&
       p.year === input.year &&
       p.month === input.month &&
@@ -78,5 +78,5 @@ export function saveProfile(input: SajuSessionInput, ilgan: string): void {
 
 export function deleteProfile(id: string): void {
   if (typeof window === 'undefined') return;
-  persist(loadProfiles().filter(p => p.id !== id));
+  persist(loadProfiles().filter((p) => p.id !== id));
 }

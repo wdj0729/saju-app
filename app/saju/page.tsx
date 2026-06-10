@@ -8,20 +8,20 @@ import { loadProfiles } from '@/lib/profiles';
 import type { Profile } from '@/lib/profiles';
 import { SIJIN } from '@/lib/constants';
 
-const YEARS  = Array.from({ length: 201 }, (_, i) => 1900 + i);
-const MONTHS = Array.from({ length: 12 },  (_, i) => i + 1);
+const YEARS = Array.from({ length: 201 }, (_, i) => 1900 + i);
+const MONTHS = Array.from({ length: 12 }, (_, i) => i + 1);
 
 export default function SajuInputPage() {
   const router = useRouter();
   const [profiles] = useState<Profile[]>(() => loadProfiles());
-  const [name,       setName]       = useState('');
-  const [isLunar,    setIsLunar]    = useState(false);
-  const [year,       setYear]       = useState(1990);
-  const [month,      setMonth]      = useState(1);
-  const [day,        setDay]        = useState(1);
-  const [hourValue,  setHourValue]  = useState<number | null>(null);
-  const [gender,     setGender]     = useState<'M' | 'F'>('M');
-  const [error,      setError]      = useState('');
+  const [name, setName] = useState('');
+  const [isLunar, setIsLunar] = useState(false);
+  const [year, setYear] = useState(1990);
+  const [month, setMonth] = useState(1);
+  const [day, setDay] = useState(1);
+  const [hourValue, setHourValue] = useState<number | null>(null);
+  const [gender, setGender] = useState<'M' | 'F'>('M');
+  const [error, setError] = useState('');
 
   function loadFromProfile(profile: Profile) {
     setName(profile.name);
@@ -33,7 +33,7 @@ export default function SajuInputPage() {
     setGender(profile.gender ?? 'M');
   }
 
-  const maxDay     = isLunar ? 30 : new Date(year, month, 0).getDate();
+  const maxDay = isLunar ? 30 : new Date(year, month, 0).getDate();
   const clampedDay = Math.min(day, maxDay);
 
   function handleSubmit() {
@@ -50,7 +50,8 @@ export default function SajuInputPage() {
     }
   }
 
-  const inputClass = 'w-full bg-card border border-border rounded-xl px-4 py-3 text-primary text-sm appearance-none';
+  const inputClass =
+    'w-full bg-card border border-border rounded-xl px-4 py-3 text-primary text-sm appearance-none';
   const labelClass = 'block text-xs text-muted mb-1.5';
 
   return (
@@ -80,9 +81,12 @@ export default function SajuInputPage() {
                       {profile.name || '이름 없음'}
                     </span>
                     <span className="text-xs text-muted ml-2">
-                      {profile.year}.{String(profile.month).padStart(2, '0')}.{String(profile.day).padStart(2, '0')}
-                      {' · '}{profile.isLunar ? '음력' : '양력'}
-                      {' · '}{profile.ilgan}
+                      {profile.year}.{String(profile.month).padStart(2, '0')}.
+                      {String(profile.day).padStart(2, '0')}
+                      {' · '}
+                      {profile.isLunar ? '음력' : '양력'}
+                      {' · '}
+                      {profile.ilgan}
                     </span>
                   </div>
                   <button
@@ -121,9 +125,7 @@ export default function SajuInputPage() {
                 key={g}
                 onClick={() => setGender(g)}
                 className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                  gender === g
-                    ? 'bg-primary-gradient text-white'
-                    : 'bg-card text-muted'
+                  gender === g ? 'bg-primary-gradient text-white' : 'bg-card text-muted'
                 }`}
               >
                 {g === 'M' ? '남성' : '여성'}
@@ -141,9 +143,7 @@ export default function SajuInputPage() {
                 key={String(lunar)}
                 onClick={() => setIsLunar(lunar)}
                 className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                  isLunar === lunar
-                    ? 'bg-primary-gradient text-white'
-                    : 'bg-card text-muted'
+                  isLunar === lunar ? 'bg-primary-gradient text-white' : 'bg-card text-muted'
                 }`}
               >
                 {lunar ? '음력' : '양력'}
@@ -161,7 +161,9 @@ export default function SajuInputPage() {
             className={inputClass}
           >
             {YEARS.map((y) => (
-              <option key={y} value={y}>{y}년</option>
+              <option key={y} value={y}>
+                {y}년
+              </option>
             ))}
           </select>
         </div>
@@ -175,7 +177,9 @@ export default function SajuInputPage() {
             className={inputClass}
           >
             {MONTHS.map((m) => (
-              <option key={m} value={m}>{m}월</option>
+              <option key={m} value={m}>
+                {m}월
+              </option>
             ))}
           </select>
         </div>
@@ -189,7 +193,9 @@ export default function SajuInputPage() {
             className={inputClass}
           >
             {Array.from({ length: maxDay }, (_, i) => i + 1).map((d) => (
-              <option key={d} value={d}>{d}일</option>
+              <option key={d} value={d}>
+                {d}일
+              </option>
             ))}
           </select>
         </div>
@@ -199,21 +205,19 @@ export default function SajuInputPage() {
           <label className={labelClass}>태어난 시 (선택)</label>
           <select
             value={hourValue ?? ''}
-            onChange={(e) =>
-              setHourValue(e.target.value === '' ? null : Number(e.target.value))
-            }
+            onChange={(e) => setHourValue(e.target.value === '' ? null : Number(e.target.value))}
             className={inputClass}
           >
             <option value="">모름</option>
             {SIJIN.map((s) => (
-              <option key={s.value} value={s.value}>{s.label}</option>
+              <option key={s.value} value={s.value}>
+                {s.label}
+              </option>
             ))}
           </select>
         </div>
 
-        {error && (
-          <p className="text-sm text-hwa text-center">{error}</p>
-        )}
+        {error && <p className="text-sm text-hwa text-center">{error}</p>}
       </div>
 
       <div className="px-4 pb-8">

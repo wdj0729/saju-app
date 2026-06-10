@@ -1,4 +1,4 @@
-import { Solar, Lunar } from 'lunar-javascript';
+import { Lunar } from 'lunar-javascript';
 import { GAN, JI, GAN_OHAENG, JI_OHAENG, JEOLGI_JI } from './saju-data';
 import type { Ohaeng } from './saju-data';
 import type { Pillar, SajuInput } from './saju-calculator';
@@ -49,8 +49,8 @@ function findPrevJeolgiDays(y: number, m: number, d: number): number {
 }
 
 function pillarToIndex(gan: string, ji: string): number {
-  const g = GAN.indexOf(gan as typeof GAN[number]);
-  const j = JI.indexOf(ji as typeof JI[number]);
+  const g = GAN.indexOf(gan as (typeof GAN)[number]);
+  const j = JI.indexOf(ji as (typeof JI)[number]);
   for (let i = 0; i < 60; i++) {
     if (i % 10 === g && i % 12 === j) return i;
   }
@@ -61,14 +61,21 @@ function indexToDaewoonPillar(index: number, startAge: number): DaewoonPillar {
   const i = ((index % 60) + 60) % 60;
   const gan = GAN[i % 10];
   const ji = JI[i % 12];
-  return { gan, ji, ganElement: GAN_OHAENG[gan], jiElement: JI_OHAENG[ji], startAge, endAge: startAge + 9 };
+  return {
+    gan,
+    ji,
+    ganElement: GAN_OHAENG[gan],
+    jiElement: JI_OHAENG[ji],
+    startAge,
+    endAge: startAge + 9,
+  };
 }
 
 export function calcMadeAge(
   birthYear: number,
   birthMonth: number,
   birthDay: number,
-  today: Date = new Date(),
+  today: Date = new Date()
 ): number {
   const age = today.getFullYear() - birthYear;
   const hasBirthdayPassed =
@@ -81,7 +88,7 @@ export function calculateDaewoon(
   input: SajuInput,
   gender: 'M' | 'F',
   yearPillar: Pillar,
-  monthPillar: Pillar,
+  monthPillar: Pillar
 ): DaewoonResult {
   let { year, month, day } = input;
   const { isLunar } = input;

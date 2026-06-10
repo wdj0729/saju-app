@@ -48,17 +48,18 @@ const CARD: React.CSSProperties = {
   boxSizing: 'border-box',
 };
 
-
 function Badge() {
   return (
-    <div style={{
-      background: 'linear-gradient(to right, #667eea, #764ba2)',
-      color: 'white',
-      padding: '4px 14px',
-      borderRadius: 20,
-      fontSize: 11,
-      fontWeight: 600,
-    }}>
+    <div
+      style={{
+        background: 'linear-gradient(to right, #667eea, #764ba2)',
+        color: 'white',
+        padding: '4px 14px',
+        borderRadius: 20,
+        fontSize: 11,
+        fontWeight: 600,
+      }}
+    >
       사주팔자
     </div>
   );
@@ -71,7 +72,7 @@ function SajuInner({ name, ilgan, pillars, ohaeng }: SajuCardProps) {
     { label: '日', value: pillars.day, highlight: true },
     { label: '時', value: pillars.hour ?? '?', highlight: false },
   ];
-  const max = Math.max(...OHAENG_ORDER.map(k => ohaeng[k] ?? 0), 1);
+  const max = Math.max(...OHAENG_ORDER.map((k) => ohaeng[k] ?? 0), 1);
   return (
     <>
       <div style={{ fontSize: 28, marginBottom: 8 }}>🔮</div>
@@ -80,77 +81,112 @@ function SajuInner({ name, ilgan, pillars, ohaeng }: SajuCardProps) {
       </div>
       <div style={{ fontSize: 11, color: '#9090a8', marginBottom: 16 }}>{ilgan} 일간</div>
       <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
-        {cols.map(c => (
-          <div key={c.label} style={{
-            background: c.highlight ? 'rgba(102,126,234,0.15)' : '#32324a',
-            border: c.highlight ? '1px solid #667eea' : '1px solid transparent',
-            borderRadius: 10,
-            padding: '8px 10px',
-            textAlign: 'center',
-            minWidth: 52,
-          }}>
+        {cols.map((c) => (
+          <div
+            key={c.label}
+            style={{
+              background: c.highlight ? 'rgba(102,126,234,0.15)' : '#32324a',
+              border: c.highlight ? '1px solid #667eea' : '1px solid transparent',
+              borderRadius: 10,
+              padding: '8px 10px',
+              textAlign: 'center',
+              minWidth: 52,
+            }}
+          >
             <div style={{ fontSize: 9, color: '#9090a8', marginBottom: 4 }}>{c.label}</div>
             <div style={{ fontSize: 14 }}>{c.value}</div>
           </div>
         ))}
       </div>
       <div style={{ width: '100%', marginBottom: 20 }}>
-        {OHAENG_ORDER.map(k => (
+        {OHAENG_ORDER.map((k) => (
           <div key={k} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
             <div style={{ fontSize: 10, color: '#9090a8', width: 14 }}>{OHAENG_LABEL[k]}</div>
-            <div style={{ flex: 1, background: '#32324a', borderRadius: 4, height: 8, overflow: 'hidden' }}>
-              <div style={{
-                height: '100%',
-                width: `${((ohaeng[k] ?? 0) / max) * 100}%`,
-                background: OHAENG_COLORS[k],
+            <div
+              style={{
+                flex: 1,
+                background: '#32324a',
                 borderRadius: 4,
-              }} />
+                height: 8,
+                overflow: 'hidden',
+              }}
+            >
+              <div
+                style={{
+                  height: '100%',
+                  width: `${((ohaeng[k] ?? 0) / max) * 100}%`,
+                  background: OHAENG_COLORS[k],
+                  borderRadius: 4,
+                }}
+              />
             </div>
           </div>
         ))}
       </div>
-      <div style={{ marginTop: 'auto' }}><Badge /></div>
+      <div style={{ marginTop: 'auto' }}>
+        <Badge />
+      </div>
     </>
   );
 }
 
-function CompatibilityInner({ nameA, nameB, score, grade, gradeLabel, summary }: CompatibilityCardProps) {
-  const GRADE_STARS: Record<string, string> = { 최상: '★★★★★', 상: '★★★★☆', 중: '★★★☆☆', 하: '★★☆☆☆' };
+function CompatibilityInner({
+  nameA,
+  nameB,
+  score,
+  grade,
+  gradeLabel,
+  summary,
+}: CompatibilityCardProps) {
+  const GRADE_STARS: Record<string, string> = {
+    최상: '★★★★★',
+    상: '★★★★☆',
+    중: '★★★☆☆',
+    하: '★★☆☆☆',
+  };
   const stars = GRADE_STARS[grade] ?? '★★☆☆☆';
   return (
     <>
       <div style={{ fontSize: 28, marginBottom: 8 }}>💑</div>
-      <div style={{ fontSize: 13, color: '#9090a8', marginBottom: 8 }}>{nameA} ♡ {nameB}</div>
-      <div style={{
-        fontSize: 56,
-        fontWeight: 800,
-        background: 'linear-gradient(to right, #667eea, #764ba2)',
-        WebkitBackgroundClip: 'text',
-        WebkitTextFillColor: 'transparent',
-        lineHeight: 1,
-        marginBottom: 8,
-      }}>
+      <div style={{ fontSize: 13, color: '#9090a8', marginBottom: 8 }}>
+        {nameA} ♡ {nameB}
+      </div>
+      <div
+        style={{
+          fontSize: 56,
+          fontWeight: 800,
+          background: 'linear-gradient(to right, #667eea, #764ba2)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          lineHeight: 1,
+          marginBottom: 8,
+        }}
+      >
         {score}
       </div>
       <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 4 }}>{stars}</div>
       <div style={{ fontSize: 13, fontWeight: 600, color: '#c8c8e0', marginBottom: 16 }}>
         {grade} · {gradeLabel}
       </div>
-      <div style={{
-        background: '#32324a',
-        borderRadius: 10,
-        padding: '12px 16px',
-        fontSize: 11,
-        lineHeight: 1.7,
-        color: '#c8c8e0',
-        textAlign: 'center',
-        width: '100%',
-        boxSizing: 'border-box',
-        marginBottom: 16,
-      }}>
+      <div
+        style={{
+          background: '#32324a',
+          borderRadius: 10,
+          padding: '12px 16px',
+          fontSize: 11,
+          lineHeight: 1.7,
+          color: '#c8c8e0',
+          textAlign: 'center',
+          width: '100%',
+          boxSizing: 'border-box',
+          marginBottom: 16,
+        }}
+      >
         {summary.length > 80 ? summary.slice(0, 80) + '…' : summary}
       </div>
-      <div style={{ marginTop: 'auto' }}><Badge /></div>
+      <div style={{ marginTop: 'auto' }}>
+        <Badge />
+      </div>
     </>
   );
 }
@@ -164,24 +200,28 @@ function FortuneInner({ name, ilgan, period, summary, date }: FortuneCardProps) 
       </div>
       <div style={{ fontSize: 11, color: '#9090a8', marginBottom: 4 }}>{ilgan} 일간</div>
       <div style={{ fontSize: 10, color: '#9090a8', marginBottom: 20 }}>{date}</div>
-      <div style={{
-        background: '#32324a',
-        borderRadius: 10,
-        padding: 16,
-        fontSize: 12,
-        lineHeight: 1.8,
-        color: '#c8c8e0',
-        textAlign: 'center',
-        width: '100%',
-        boxSizing: 'border-box',
-        flex: 1,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}>
+      <div
+        style={{
+          background: '#32324a',
+          borderRadius: 10,
+          padding: 16,
+          fontSize: 12,
+          lineHeight: 1.8,
+          color: '#c8c8e0',
+          textAlign: 'center',
+          width: '100%',
+          boxSizing: 'border-box',
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         {summary.length > 120 ? summary.slice(0, 120) + '…' : summary}
       </div>
-      <div style={{ marginTop: 16 }}><Badge /></div>
+      <div style={{ marginTop: 16 }}>
+        <Badge />
+      </div>
     </>
   );
 }
@@ -189,9 +229,9 @@ function FortuneInner({ name, ilgan, period, summary, date }: FortuneCardProps) 
 const ShareCard = React.forwardRef<HTMLDivElement, ShareCardProps>((props, ref) => (
   <div aria-hidden="true" style={{ position: 'fixed', left: -9999, top: 0 }}>
     <div ref={ref} style={CARD}>
-      {props.type === 'saju'          && <SajuInner          {...props} />}
+      {props.type === 'saju' && <SajuInner {...props} />}
       {props.type === 'compatibility' && <CompatibilityInner {...props} />}
-      {props.type === 'fortune'       && <FortuneInner       {...props} />}
+      {props.type === 'fortune' && <FortuneInner {...props} />}
     </div>
   </div>
 ));

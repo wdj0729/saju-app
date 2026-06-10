@@ -7,9 +7,13 @@ beforeAll(() => {
   Object.defineProperty(global, 'window', { value: {}, writable: true, configurable: true });
   Object.defineProperty(global, 'localStorage', {
     value: {
-      getItem:    (k: string) => store[k] ?? null,
-      setItem:    (k: string, v: string) => { store[k] = v; },
-      removeItem: (k: string) => { delete store[k]; },
+      getItem: (k: string) => store[k] ?? null,
+      setItem: (k: string, v: string) => {
+        store[k] = v;
+      },
+      removeItem: (k: string) => {
+        delete store[k];
+      },
     },
     writable: true,
     configurable: true,
@@ -17,7 +21,7 @@ beforeAll(() => {
 });
 
 beforeEach(() => {
-  Object.keys(store).forEach(k => delete store[k]);
+  Object.keys(store).forEach((k) => delete store[k]);
 });
 
 const INPUT: SajuSessionInput = {
