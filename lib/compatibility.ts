@@ -60,14 +60,23 @@ export function saveCompatSession(data: CompatibilitySession): void {
   sessionStorage.setItem(COMPAT_KEY, JSON.stringify(data));
 }
 
+function isCompatibilitySession(v: unknown): v is CompatibilitySession {
+  if (typeof v !== 'object' || v === null) return false;
+  const r = v as Record<string, unknown>;
+  return (
+    typeof r.personA === 'object' && r.personA !== null &&
+    typeof r.personB === 'object' && r.personB !== null &&
+    typeof r.compatibility === 'object' && r.compatibility !== null
+  );
+}
+
 export function loadCompatSession(): CompatibilitySession | null {
   if (typeof window === 'undefined') return null;
   const raw = sessionStorage.getItem(COMPAT_KEY);
   if (!raw) return null;
   try {
-    const parsed = JSON.parse(raw);
-    if (!parsed?.personA || !parsed?.personB || !parsed?.compatibility) return null;
-    return parsed as CompatibilitySession;
+    const parsed: unknown = JSON.parse(raw);
+    return isCompatibilitySession(parsed) ? parsed : null;
   } catch {
     return null;
   }

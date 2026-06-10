@@ -19,7 +19,28 @@ interface AiAnalysisRequest {
   };
 }
 
-export async function POST(req: NextRequest) {
+function isPillarData(v: unknown): v is PillarData {
+  return (
+    typeof v === 'object' && v !== null &&
+    typeof (v as Record<string, unknown>).gan === 'string' &&
+    typeof (v as Record<string, unknown>).ji === 'string'
+  );
+}
+
+function isAiAnalysisRequest(v: unknown): v is AiAnalysisRequest {
+  if (typeof v !== 'object' || v === null) return false;
+  const r = v as Record<string, unknown>;
+  return (
+    typeof r.ilgan === 'string' &&
+    typeof r.ohaeng === 'object' && r.ohaeng !== null &&
+    typeof r.pillars === 'object' && r.pillars !== null &&
+    isPillarData((r.pillars as Record<string, unknown>).year) &&
+    isPillarData((r.pillars as Record<string, unknown>).month) &&
+    isPillarData((r.pillars as Record<string, unknown>).day)
+  );
+}
+
+export async function POST(req: NextRequest): Promise<Response> {
   let body: unknown;
   try {
     body = await req.json();
@@ -27,10 +48,11 @@ export async function POST(req: NextRequest) {
     return new Response('요청 형식이 잘못되었습니다.', { status: 400 });
   }
 
-  const { ilgan, ohaeng, pillars } = body as AiAnalysisRequest;
-  if (!ilgan || !ohaeng || !pillars?.year || !pillars?.month || !pillars?.day) {
+  if (!isAiAnalysisRequest(body)) {
     return new Response('필수 파라미터가 누락되었습니다.', { status: 400 });
   }
+
+  const { ilgan, ohaeng, pillars } = body;
 
   const pillarText = [
     `${pillars.year.gan}${pillars.year.ji}`,
