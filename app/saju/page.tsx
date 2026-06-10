@@ -4,34 +4,34 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { calculateSaju } from '@/lib/saju-calculator';
 import { saveSession } from '@/lib/session';
+import { loadProfiles } from '@/lib/profiles';
+import type { Profile } from '@/lib/profiles';
+import { SIJIN } from '@/lib/constants';
 
-const SIJIN = [
-  { label: '자시 (23·0시)',  value: 0  },
-  { label: '축시 (1·2시)',   value: 1  },
-  { label: '인시 (3·4시)',   value: 3  },
-  { label: '묘시 (5·6시)',   value: 5  },
-  { label: '진시 (7·8시)',   value: 7  },
-  { label: '사시 (9·10시)',  value: 9  },
-  { label: '오시 (11·12시)', value: 11 },
-  { label: '미시 (13·14시)', value: 13 },
-  { label: '신시 (15·16시)', value: 15 },
-  { label: '유시 (17·18시)', value: 17 },
-  { label: '술시 (19·20시)', value: 19 },
-  { label: '해시 (21·22시)', value: 21 },
-] as const;
-
-const YEARS  = Array.from({ length: 201 }, (_, i) => 1900 + i);
-const MONTHS = Array.from({ length: 12 },  (_, i) => i + 1);
+const YEARS = Array.from({ length: 201 }, (_, i) => 1900 + i);
+const MONTHS = Array.from({ length: 12 }, (_, i) => i + 1);
 
 export default function SajuInputPage() {
   const router = useRouter();
-  const [name,      setName]      = useState('');
-  const [isLunar,   setIsLunar]   = useState(false);
-  const [year,      setYear]      = useState(1990);
-  const [month,     setMonth]     = useState(1);
-  const [day,       setDay]       = useState(1);
+  const [profiles] = useState<Profile[]>(() => loadProfiles());
+  const [name, setName] = useState('');
+  const [isLunar, setIsLunar] = useState(false);
+  const [year, setYear] = useState(1990);
+  const [month, setMonth] = useState(1);
+  const [day, setDay] = useState(1);
   const [hourValue, setHourValue] = useState<number | null>(null);
-  const [error,     setError]     = useState('');
+  const [gender, setGender] = useState<'M' | 'F'>('M');
+  const [error, setError] = useState('');
+
+  function loadFromProfile(profile: Profile) {
+    setName(profile.name);
+    setYear(profile.year);
+    setMonth(profile.month);
+    setDay(profile.day);
+    setHourValue(profile.hour);
+    setIsLunar(profile.isLunar);
+    setGender(profile.gender ?? 'M');
+  }
 
   const maxDay = isLunar ? 30 : new Date(year, month, 0).getDate();
   const clampedDay = Math.min(day, maxDay);
@@ -40,7 +40,10 @@ export default function SajuInputPage() {
     setError('');
     try {
       const result = calculateSaju({ year, month, day: clampedDay, hour: hourValue, isLunar });
-      saveSession({ input: { name, year, month, day: clampedDay, hour: hourValue, isLunar }, result });
+      saveSession({
+        input: { name, year, month, day: clampedDay, hour: hourValue, isLunar, gender },
+        result,
+      });
       router.push('/saju/result');
     } catch {
       setError('입력한 날짜를 확인해주세요.');
@@ -55,7 +58,7 @@ export default function SajuInputPage() {
     <div className="flex flex-col min-h-screen">
       <header className="flex items-center gap-3 px-4 py-4 border-b border-border">
         <button
-          onClick={() => router.back()}
+          onClick={() => router.push('/')}
           className="text-muted text-sm hover:text-primary transition-colors"
         >
           ← 뒤로
@@ -64,6 +67,43 @@ export default function SajuInputPage() {
       </header>
 
       <div className="flex flex-col gap-5 px-4 py-6 flex-1">
+        {profiles.length > 0 && (
+          <div className="bg-card rounded-2xl px-4 py-3">
+            <p className="text-xs text-muted mb-2 font-medium">저장된 프로필 불러오기</p>
+            <div className="flex flex-col gap-2">
+              {profiles.map((profile) => (
+                <div
+                  key={profile.id}
+                  className="flex justify-between items-center bg-card-hover rounded-xl px-3 py-2"
+                >
+                  <div className="min-w-0 truncate">
+                    <span className="text-sm text-primary font-medium">
+                      {profile.name || '이름 없음'}
+                    </span>
+                    <span className="text-xs text-muted ml-2">
+                      {profile.year}.{String(profile.month).padStart(2, '0')}.
+                      {String(profile.day).padStart(2, '0')}
+                      {' · '}
+                      {profile.isLunar ? '음력' : '양력'}
+                      {' · '}
+                      {profile.ilgan}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => loadFromProfile(profile)}
+                    className="text-xs text-primary hover:opacity-70 transition-opacity ml-3 flex-shrink-0"
+                    aria-label={`${profile.name || '이름 없음'} 선택`}
+                  >
+                    선택
+                  </button>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-muted mt-3 text-center">또는 새로 입력하기 ↓</p>
+          </div>
+        )}
+
         {/* 이름 */}
         <div>
           <label className={labelClass}>이름 (선택)</label>
@@ -76,6 +116,24 @@ export default function SajuInputPage() {
           />
         </div>
 
+        {/* 성별 */}
+        <div>
+          <label className={labelClass}>성별</label>
+          <div className="flex gap-2">
+            {(['M', 'F'] as const).map((g) => (
+              <button
+                key={g}
+                onClick={() => setGender(g)}
+                className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                  gender === g ? 'bg-primary-gradient text-white' : 'bg-card text-muted'
+                }`}
+              >
+                {g === 'M' ? '남성' : '여성'}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* 양력/음력 토글 */}
         <div>
           <label className={labelClass}>양력 / 음력</label>
@@ -85,9 +143,7 @@ export default function SajuInputPage() {
                 key={String(lunar)}
                 onClick={() => setIsLunar(lunar)}
                 className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                  isLunar === lunar
-                    ? 'bg-primary-gradient text-white'
-                    : 'bg-card text-muted'
+                  isLunar === lunar ? 'bg-primary-gradient text-white' : 'bg-card text-muted'
                 }`}
               >
                 {lunar ? '음력' : '양력'}
@@ -105,7 +161,9 @@ export default function SajuInputPage() {
             className={inputClass}
           >
             {YEARS.map((y) => (
-              <option key={y} value={y}>{y}년</option>
+              <option key={y} value={y}>
+                {y}년
+              </option>
             ))}
           </select>
         </div>
@@ -119,7 +177,9 @@ export default function SajuInputPage() {
             className={inputClass}
           >
             {MONTHS.map((m) => (
-              <option key={m} value={m}>{m}월</option>
+              <option key={m} value={m}>
+                {m}월
+              </option>
             ))}
           </select>
         </div>
@@ -133,7 +193,9 @@ export default function SajuInputPage() {
             className={inputClass}
           >
             {Array.from({ length: maxDay }, (_, i) => i + 1).map((d) => (
-              <option key={d} value={d}>{d}일</option>
+              <option key={d} value={d}>
+                {d}일
+              </option>
             ))}
           </select>
         </div>
@@ -143,21 +205,19 @@ export default function SajuInputPage() {
           <label className={labelClass}>태어난 시 (선택)</label>
           <select
             value={hourValue ?? ''}
-            onChange={(e) =>
-              setHourValue(e.target.value === '' ? null : Number(e.target.value))
-            }
+            onChange={(e) => setHourValue(e.target.value === '' ? null : Number(e.target.value))}
             className={inputClass}
           >
             <option value="">모름</option>
             {SIJIN.map((s) => (
-              <option key={s.value} value={s.value}>{s.label}</option>
+              <option key={s.value} value={s.value}>
+                {s.label}
+              </option>
             ))}
           </select>
         </div>
 
-        {error && (
-          <p className="text-sm text-hwa text-center">{error}</p>
-        )}
+        {error && <p className="text-sm text-hwa text-center">{error}</p>}
       </div>
 
       <div className="px-4 pb-8">

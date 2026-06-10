@@ -13,9 +13,13 @@ beforeAll(() => {
   });
   Object.defineProperty(global, 'sessionStorage', {
     value: {
-      getItem:    (k: string) => store[k] ?? null,
-      setItem:    (k: string, v: string) => { store[k] = v; },
-      removeItem: (k: string) => { delete store[k]; },
+      getItem: (k: string) => store[k] ?? null,
+      setItem: (k: string, v: string) => {
+        store[k] = v;
+      },
+      removeItem: (k: string) => {
+        delete store[k];
+      },
     },
     writable: true,
     configurable: true,
@@ -27,16 +31,16 @@ beforeEach(() => {
 });
 
 const DUMMY_RESULT: SajuResult = {
-  year:  { gan: '甲', ji: '子', ganElement: '목', jiElement: '수' },
+  year: { gan: '甲', ji: '子', ganElement: '목', jiElement: '수' },
   month: { gan: '丙', ji: '寅', ganElement: '화', jiElement: '목' },
-  day:   { gan: '戊', ji: '辰', ganElement: '토', jiElement: '토' },
-  hour:  null,
+  day: { gan: '戊', ji: '辰', ganElement: '토', jiElement: '토' },
+  hour: null,
   ilgan: '戊',
   ohaeng: { 목: 3, 화: 1, 토: 4, 금: 0, 수: 0.5 },
 };
 
 const DUMMY_SESSION: SajuSession = {
-  input: { name: '홍길동', year: 1990, month: 6, day: 15, hour: null, isLunar: false },
+  input: { name: '홍길동', year: 1990, month: 6, day: 15, hour: null, isLunar: false, gender: 'M' },
   result: DUMMY_RESULT,
 };
 
@@ -61,6 +65,11 @@ describe('session', () => {
 
   it('손상된 JSON이면 loadSession은 null 반환', () => {
     store['saju-session'] = '{bad json';
+    expect(loadSession()).toBeNull();
+  });
+
+  it('유효하지 않은 구조면 loadSession은 null 반환', () => {
+    store['saju-session'] = JSON.stringify({ input: null, result: {} });
     expect(loadSession()).toBeNull();
   });
 });

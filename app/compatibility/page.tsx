@@ -4,43 +4,50 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { calculateSaju } from '@/lib/saju-calculator';
 import { calcCompatibility, saveCompatSession } from '@/lib/compatibility';
+import { SIJIN } from '@/lib/constants';
 
-const SIJIN = [
-  { label: '자시 (23·0시)',  value: 0  },
-  { label: '축시 (1·2시)',   value: 1  },
-  { label: '인시 (3·4시)',   value: 3  },
-  { label: '묘시 (5·6시)',   value: 5  },
-  { label: '진시 (7·8시)',   value: 7  },
-  { label: '사시 (9·10시)',  value: 9  },
-  { label: '오시 (11·12시)', value: 11 },
-  { label: '미시 (13·14시)', value: 13 },
-  { label: '신시 (15·16시)', value: 15 },
-  { label: '유시 (17·18시)', value: 17 },
-  { label: '술시 (19·20시)', value: 19 },
-  { label: '해시 (21·22시)', value: 21 },
-] as const;
+const YEARS = Array.from({ length: 201 }, (_, i) => 1900 + i);
+const MONTHS = Array.from({ length: 12 }, (_, i) => i + 1);
 
-const YEARS  = Array.from({ length: 201 }, (_, i) => 1900 + i);
-const MONTHS = Array.from({ length: 12  }, (_, i) => i + 1);
-
-const inputClass = 'w-full bg-card border border-border rounded-xl px-4 py-3 text-primary text-sm appearance-none';
+const inputClass =
+  'w-full bg-card border border-border rounded-xl px-4 py-3 text-primary text-sm appearance-none';
 const labelClass = 'block text-xs text-muted mb-1.5';
 
 interface PersonFormProps {
   label: string;
-  name: string; setName: (v: string) => void;
-  isLunar: boolean; setIsLunar: (v: boolean) => void;
-  year: number; setYear: (v: number) => void;
-  month: number; setMonth: (v: number) => void;
-  day: number; setDay: (v: number) => void;
+  name: string;
+  setName: (v: string) => void;
+  gender: 'M' | 'F';
+  setGender: (v: 'M' | 'F') => void;
+  isLunar: boolean;
+  setIsLunar: (v: boolean) => void;
+  year: number;
+  setYear: (v: number) => void;
+  month: number;
+  setMonth: (v: number) => void;
+  day: number;
+  setDay: (v: number) => void;
   clampedDay: number;
-  hourValue: number | null; setHourValue: (v: number | null) => void;
+  hourValue: number | null;
+  setHourValue: (v: number | null) => void;
 }
 
 function PersonForm({
-  label, name, setName, isLunar, setIsLunar,
-  year, setYear, month, setMonth, setDay,
-  clampedDay, hourValue, setHourValue,
+  label,
+  name,
+  setName,
+  gender,
+  setGender,
+  isLunar,
+  setIsLunar,
+  year,
+  setYear,
+  month,
+  setMonth,
+  setDay,
+  clampedDay,
+  hourValue,
+  setHourValue,
 }: PersonFormProps) {
   const maxDay = isLunar ? 30 : new Date(year, month, 0).getDate();
 
@@ -57,6 +64,23 @@ function PersonForm({
           onChange={(e) => setName(e.target.value)}
           className={inputClass}
         />
+      </div>
+
+      <div>
+        <label className={labelClass}>성별</label>
+        <div className="flex gap-2">
+          {(['M', 'F'] as const).map((g) => (
+            <button
+              key={g}
+              onClick={() => setGender(g)}
+              className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                gender === g ? 'bg-primary-gradient text-white' : 'bg-card text-muted'
+              }`}
+            >
+              {g === 'M' ? '남성' : '여성'}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div>
@@ -78,23 +102,45 @@ function PersonForm({
 
       <div>
         <label className={labelClass}>생년</label>
-        <select value={year} onChange={(e) => setYear(Number(e.target.value))} className={inputClass}>
-          {YEARS.map((y) => <option key={y} value={y}>{y}년</option>)}
+        <select
+          value={year}
+          onChange={(e) => setYear(Number(e.target.value))}
+          className={inputClass}
+        >
+          {YEARS.map((y) => (
+            <option key={y} value={y}>
+              {y}년
+            </option>
+          ))}
         </select>
       </div>
 
       <div>
         <label className={labelClass}>생월</label>
-        <select value={month} onChange={(e) => setMonth(Number(e.target.value))} className={inputClass}>
-          {MONTHS.map((m) => <option key={m} value={m}>{m}월</option>)}
+        <select
+          value={month}
+          onChange={(e) => setMonth(Number(e.target.value))}
+          className={inputClass}
+        >
+          {MONTHS.map((m) => (
+            <option key={m} value={m}>
+              {m}월
+            </option>
+          ))}
         </select>
       </div>
 
       <div>
         <label className={labelClass}>생일</label>
-        <select value={clampedDay} onChange={(e) => setDay(Number(e.target.value))} className={inputClass}>
+        <select
+          value={clampedDay}
+          onChange={(e) => setDay(Number(e.target.value))}
+          className={inputClass}
+        >
           {Array.from({ length: maxDay }, (_, i) => i + 1).map((d) => (
-            <option key={d} value={d}>{d}일</option>
+            <option key={d} value={d}>
+              {d}일
+            </option>
           ))}
         </select>
       </div>
@@ -107,7 +153,11 @@ function PersonForm({
           className={inputClass}
         >
           <option value="">모름</option>
-          {SIJIN.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+          {SIJIN.map((s) => (
+            <option key={s.value} value={s.value}>
+              {s.label}
+            </option>
+          ))}
         </select>
       </div>
     </div>
@@ -117,18 +167,20 @@ function PersonForm({
 export default function CompatibilityPage() {
   const router = useRouter();
 
-  const [nameA, setNameA]           = useState('');
-  const [isLunarA, setIsLunarA]     = useState(false);
-  const [yearA, setYearA]           = useState(1990);
-  const [monthA, setMonthA]         = useState(1);
-  const [dayA, setDayA]             = useState(1);
+  const [nameA, setNameA] = useState('');
+  const [genderA, setGenderA] = useState<'M' | 'F'>('M');
+  const [isLunarA, setIsLunarA] = useState(false);
+  const [yearA, setYearA] = useState(1990);
+  const [monthA, setMonthA] = useState(1);
+  const [dayA, setDayA] = useState(1);
   const [hourValueA, setHourValueA] = useState<number | null>(null);
 
-  const [nameB, setNameB]           = useState('');
-  const [isLunarB, setIsLunarB]     = useState(false);
-  const [yearB, setYearB]           = useState(1990);
-  const [monthB, setMonthB]         = useState(1);
-  const [dayB, setDayB]             = useState(1);
+  const [nameB, setNameB] = useState('');
+  const [genderB, setGenderB] = useState<'M' | 'F'>('M');
+  const [isLunarB, setIsLunarB] = useState(false);
+  const [yearB, setYearB] = useState(1990);
+  const [monthB, setMonthB] = useState(1);
+  const [dayB, setDayB] = useState(1);
   const [hourValueB, setHourValueB] = useState<number | null>(null);
 
   const [error, setError] = useState('');
@@ -139,12 +191,24 @@ export default function CompatibilityPage() {
   function handleSubmit() {
     setError('');
     try {
-      const resultA = calculateSaju({ year: yearA, month: monthA, day: clampedDayA, hour: hourValueA, isLunar: isLunarA });
-      const resultB = calculateSaju({ year: yearB, month: monthB, day: clampedDayB, hour: hourValueB, isLunar: isLunarB });
+      const resultA = calculateSaju({
+        year: yearA,
+        month: monthA,
+        day: clampedDayA,
+        hour: hourValueA,
+        isLunar: isLunarA,
+      });
+      const resultB = calculateSaju({
+        year: yearB,
+        month: monthB,
+        day: clampedDayB,
+        hour: hourValueB,
+        isLunar: isLunarB,
+      });
       const compatibility = calcCompatibility(resultA, resultB);
       saveCompatSession({
-        personA: { name: nameA, result: resultA },
-        personB: { name: nameB, result: resultB },
+        personA: { name: nameA, gender: genderA, result: resultA },
+        personB: { name: nameB, gender: genderB, result: resultB },
         compatibility,
       });
       router.push('/compatibility/result');
@@ -157,7 +221,7 @@ export default function CompatibilityPage() {
     <div className="flex flex-col min-h-screen">
       <header className="flex items-center gap-3 px-4 py-4 border-b border-border">
         <button
-          onClick={() => router.back()}
+          onClick={() => router.push('/')}
           className="text-muted text-sm hover:text-primary transition-colors"
         >
           ← 뒤로
@@ -168,13 +232,21 @@ export default function CompatibilityPage() {
       <div className="flex flex-col gap-4 px-4 py-6 flex-1">
         <PersonForm
           label="💑 나의 정보"
-          name={nameA} setName={setNameA}
-          isLunar={isLunarA} setIsLunar={setIsLunarA}
-          year={yearA} setYear={setYearA}
-          month={monthA} setMonth={setMonthA}
-          day={dayA} setDay={setDayA}
+          name={nameA}
+          setName={setNameA}
+          gender={genderA}
+          setGender={setGenderA}
+          isLunar={isLunarA}
+          setIsLunar={setIsLunarA}
+          year={yearA}
+          setYear={setYearA}
+          month={monthA}
+          setMonth={setMonthA}
+          day={dayA}
+          setDay={setDayA}
           clampedDay={clampedDayA}
-          hourValue={hourValueA} setHourValue={setHourValueA}
+          hourValue={hourValueA}
+          setHourValue={setHourValueA}
         />
 
         <div className="flex items-center justify-center py-1">
@@ -183,13 +255,21 @@ export default function CompatibilityPage() {
 
         <PersonForm
           label="💑 상대방 정보"
-          name={nameB} setName={setNameB}
-          isLunar={isLunarB} setIsLunar={setIsLunarB}
-          year={yearB} setYear={setYearB}
-          month={monthB} setMonth={setMonthB}
-          day={dayB} setDay={setDayB}
+          name={nameB}
+          setName={setNameB}
+          gender={genderB}
+          setGender={setGenderB}
+          isLunar={isLunarB}
+          setIsLunar={setIsLunarB}
+          year={yearB}
+          setYear={setYearB}
+          month={monthB}
+          setMonth={setMonthB}
+          day={dayB}
+          setDay={setDayB}
           clampedDay={clampedDayB}
-          hourValue={hourValueB} setHourValue={setHourValueB}
+          hourValue={hourValueB}
+          setHourValue={setHourValueB}
         />
 
         {error && <p className="text-sm text-hwa text-center">{error}</p>}
