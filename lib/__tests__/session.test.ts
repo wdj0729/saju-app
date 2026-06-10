@@ -72,4 +72,9 @@ describe('session', () => {
     store['saju-session'] = JSON.stringify({ input: null, result: {} });
     expect(loadSession()).toBeNull();
   });
+
+  it('숫자 필드가 누락된 구조면 loadSession은 null 반환', () => {
+    store['saju-session'] = JSON.stringify({ input: { name: '홍길동' }, result: {} });
+    expect(loadSession()).toBeNull();
+  });
 });
