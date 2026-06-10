@@ -88,8 +88,8 @@ beforeEach(() => { Object.keys(store).forEach(k => delete store[k]); });
 
 describe('CompatibilitySession 스토리지', () => {
   const dummy: CompatibilitySession = {
-    personA: { name: '홍길동', result: pureWood },
-    personB: { name: '김순이', result: pureFire },
+    personA: { name: '홍길동', gender: 'M' as const, result: pureWood },
+    personB: { name: '김순이', gender: 'F' as const, result: pureFire },
     compatibility: calcCompatibility(pureWood, pureFire),
   };
 
