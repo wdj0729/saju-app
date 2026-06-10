@@ -67,4 +67,9 @@ describe('session', () => {
     store['saju-session'] = '{bad json';
     expect(loadSession()).toBeNull();
   });
+
+  it('유효하지 않은 구조면 loadSession은 null 반환', () => {
+    store['saju-session'] = JSON.stringify({ input: null, result: {} });
+    expect(loadSession()).toBeNull();
+  });
 });
