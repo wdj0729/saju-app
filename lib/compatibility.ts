@@ -12,8 +12,8 @@ export interface CompatibilityResult {
 }
 
 export interface CompatibilitySession {
-  personA: { name: string; result: SajuResult };
-  personB: { name: string; result: SajuResult };
+  personA: { name: string; gender: 'M' | 'F'; result: SajuResult };
+  personB: { name: string; gender: 'M' | 'F'; result: SajuResult };
   compatibility: CompatibilityResult;
 }
 

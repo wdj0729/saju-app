@@ -15,6 +15,7 @@ const labelClass = 'block text-xs text-muted mb-1.5';
 interface PersonFormProps {
   label: string;
   name: string; setName: (v: string) => void;
+  gender: 'M' | 'F'; setGender: (v: 'M' | 'F') => void;
   isLunar: boolean; setIsLunar: (v: boolean) => void;
   year: number; setYear: (v: number) => void;
   month: number; setMonth: (v: number) => void;
@@ -24,7 +25,7 @@ interface PersonFormProps {
 }
 
 function PersonForm({
-  label, name, setName, isLunar, setIsLunar,
+  label, name, setName, gender, setGender, isLunar, setIsLunar,
   year, setYear, month, setMonth, setDay,
   clampedDay, hourValue, setHourValue,
 }: PersonFormProps) {
@@ -43,6 +44,23 @@ function PersonForm({
           onChange={(e) => setName(e.target.value)}
           className={inputClass}
         />
+      </div>
+
+      <div>
+        <label className={labelClass}>성별</label>
+        <div className="flex gap-2">
+          {(['M', 'F'] as const).map((g) => (
+            <button
+              key={g}
+              onClick={() => setGender(g)}
+              className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                gender === g ? 'bg-primary-gradient text-white' : 'bg-card text-muted'
+              }`}
+            >
+              {g === 'M' ? '남성' : '여성'}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div>
@@ -104,6 +122,7 @@ export default function CompatibilityPage() {
   const router = useRouter();
 
   const [nameA, setNameA]           = useState('');
+  const [genderA, setGenderA]       = useState<'M' | 'F'>('M');
   const [isLunarA, setIsLunarA]     = useState(false);
   const [yearA, setYearA]           = useState(1990);
   const [monthA, setMonthA]         = useState(1);
@@ -111,6 +130,7 @@ export default function CompatibilityPage() {
   const [hourValueA, setHourValueA] = useState<number | null>(null);
 
   const [nameB, setNameB]           = useState('');
+  const [genderB, setGenderB]       = useState<'M' | 'F'>('M');
   const [isLunarB, setIsLunarB]     = useState(false);
   const [yearB, setYearB]           = useState(1990);
   const [monthB, setMonthB]         = useState(1);
@@ -129,8 +149,8 @@ export default function CompatibilityPage() {
       const resultB = calculateSaju({ year: yearB, month: monthB, day: clampedDayB, hour: hourValueB, isLunar: isLunarB });
       const compatibility = calcCompatibility(resultA, resultB);
       saveCompatSession({
-        personA: { name: nameA, result: resultA },
-        personB: { name: nameB, result: resultB },
+        personA: { name: nameA, gender: genderA, result: resultA },
+        personB: { name: nameB, gender: genderB, result: resultB },
         compatibility,
       });
       router.push('/compatibility/result');
@@ -155,6 +175,7 @@ export default function CompatibilityPage() {
         <PersonForm
           label="💑 나의 정보"
           name={nameA} setName={setNameA}
+          gender={genderA} setGender={setGenderA}
           isLunar={isLunarA} setIsLunar={setIsLunarA}
           year={yearA} setYear={setYearA}
           month={monthA} setMonth={setMonthA}
@@ -170,6 +191,7 @@ export default function CompatibilityPage() {
         <PersonForm
           label="💑 상대방 정보"
           name={nameB} setName={setNameB}
+          gender={genderB} setGender={setGenderB}
           isLunar={isLunarB} setIsLunar={setIsLunarB}
           year={yearB} setYear={setYearB}
           month={monthB} setMonth={setMonthB}
