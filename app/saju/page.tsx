@@ -6,21 +6,7 @@ import { calculateSaju } from '@/lib/saju-calculator';
 import { saveSession } from '@/lib/session';
 import { loadProfiles } from '@/lib/profiles';
 import type { Profile } from '@/lib/profiles';
-
-const SIJIN = [
-  { label: '자시 (23·0시)',  value: 0  },
-  { label: '축시 (1·2시)',   value: 1  },
-  { label: '인시 (3·4시)',   value: 3  },
-  { label: '묘시 (5·6시)',   value: 5  },
-  { label: '진시 (7·8시)',   value: 7  },
-  { label: '사시 (9·10시)',  value: 9  },
-  { label: '오시 (11·12시)', value: 11 },
-  { label: '미시 (13·14시)', value: 13 },
-  { label: '신시 (15·16시)', value: 15 },
-  { label: '유시 (17·18시)', value: 17 },
-  { label: '술시 (19·20시)', value: 19 },
-  { label: '해시 (21·22시)', value: 21 },
-] as const;
+import { SIJIN } from '@/lib/constants';
 
 const YEARS  = Array.from({ length: 201 }, (_, i) => 1900 + i);
 const MONTHS = Array.from({ length: 12 },  (_, i) => i + 1);

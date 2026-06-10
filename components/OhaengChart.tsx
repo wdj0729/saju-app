@@ -1,26 +1,9 @@
 import type { Ohaeng } from '@/lib/saju-data';
+import { OHAENG_ORDER, OHAENG_LABEL, OHAENG_BAR } from '@/lib/constants';
 
 interface OhaengChartProps {
   ohaeng: Record<Ohaeng, number>;
 }
-
-const OHAENG_ORDER: Ohaeng[] = ['목', '화', '토', '금', '수'];
-
-const OHAENG_BAR: Record<Ohaeng, string> = {
-  목: 'bg-mok',
-  화: 'bg-hwa',
-  토: 'bg-to',
-  금: 'bg-geum',
-  수: 'bg-su',
-};
-
-const OHAENG_LABEL: Record<Ohaeng, string> = {
-  목: '木',
-  화: '火',
-  토: '土',
-  금: '金',
-  수: '水',
-};
 
 export default function OhaengChart({ ohaeng }: OhaengChartProps) {
   const max = Math.max(...Object.values(ohaeng), 1);

@@ -7,6 +7,8 @@ import { FORTUNE_TEXT } from '@/lib/fortune-text';
 import type { SajuSession } from '@/lib/session';
 import ShareCard from '@/components/ShareCard';
 import ShareButton from '@/components/ShareButton';
+import AiContent from '@/components/AiContent';
+import { useAiStream } from '@/hooks/useAiStream';
 
 type Period = '오늘' | '이달' | '올해';
 
@@ -17,21 +19,12 @@ export default function FortunePage() {
   const [session] = useState<SajuSession | null>(() => loadSession());
   const [activeTab, setActiveTab] = useState<Period>('오늘');
   const [isExpanded, setIsExpanded] = useState(false);
-  const [aiText, setAiText] = useState('');
-  const [isStreaming, setIsStreaming] = useState(false);
-  const [aiError, setAiError] = useState('');
-  const abortRef = useRef<AbortController | null>(null);
+  const { aiText, isStreaming, aiError, request } = useAiStream();
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!session) router.replace('/saju');
   }, [session, router]);
-
-  useEffect(() => {
-    return () => {
-      abortRef.current?.abort();
-    };
-  }, []);
 
   if (!session) return null;
 
@@ -47,84 +40,18 @@ export default function FortunePage() {
     setIsExpanded(false);
   }
 
-  async function requestAiAnalysis() {
+  function handleAiRequest() {
     if (!session) return;
-    abortRef.current?.abort();
-    const controller = new AbortController();
-    abortRef.current = controller;
-    setIsStreaming(true);
-    setAiText('');
-    setAiError('');
-    try {
-      const res = await fetch('/api/ai-analysis', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        signal: controller.signal,
-        body: JSON.stringify({
-          ilgan,
-          ohaeng: session.result.ohaeng,
-          pillars: {
-            year:  session.result.year,
-            month: session.result.month,
-            day:   session.result.day,
-            hour:  session.result.hour ?? null,
-          },
-        }),
-      });
-      if (!res.ok) throw new Error('분석 요청에 실패했습니다.');
-      const reader = res.body!.getReader();
-      const decoder = new TextDecoder();
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        setAiText((prev) => prev + decoder.decode(value, { stream: true }));
-      }
-      setAiText((prev) => prev + decoder.decode());
-    } catch (err) {
-      if (err instanceof Error && err.name === 'AbortError') return;
-      setAiText('');
-      setAiError(err instanceof Error ? err.message : '오류가 발생했습니다.');
-    } finally {
-      setIsStreaming(false);
-    }
-  }
-
-  function renderAiContent() {
-    if (aiError && !aiText) return (
-      <div>
-        <p className="text-sm text-hwa mb-2">{aiError}</p>
-        <button onClick={requestAiAnalysis} className="text-xs text-muted underline">
-          다시 시도
-        </button>
-      </div>
-    );
-    if (isStreaming && !aiText) return (
-      <div className="flex items-center gap-2 text-sm text-muted">
-        <span className="animate-pulse">●</span>
-        <span>분석 중...</span>
-      </div>
-    );
-    if (aiText) return (
-      <>
-        <div className="text-sm text-primary leading-relaxed whitespace-pre-wrap">
-          {aiText}
-          {isStreaming && <span className="animate-pulse opacity-70">▌</span>}
-        </div>
-        {!isStreaming && (
-          <button onClick={requestAiAnalysis} className="mt-3 text-xs text-muted underline">
-            다시 요청
-          </button>
-        )}
-      </>
-    );
-    return (
-      <button
-        onClick={requestAiAnalysis}
-        className="w-full py-3 rounded-xl bg-primary-gradient text-white text-sm font-medium"
-      >
-        분석 요청하기
-      </button>
-    );
+    request('/api/ai-analysis', {
+      ilgan,
+      ohaeng: session.result.ohaeng,
+      pillars: {
+        year:  session.result.year,
+        month: session.result.month,
+        day:   session.result.day,
+        hour:  session.result.hour ?? null,
+      },
+    });
   }
 
   return (
@@ -211,7 +138,12 @@ export default function FortunePage() {
         {/* AI 심층 분석 카드 */}
         <div className="bg-card rounded-2xl p-4">
           <p className="text-xs text-muted mb-3">🤖 AI 심층 분석</p>
-          {renderAiContent()}
+          <AiContent
+            aiText={aiText}
+            isStreaming={isStreaming}
+            aiError={aiError}
+            onRequest={handleAiRequest}
+          />
         </div>
       </div>
 

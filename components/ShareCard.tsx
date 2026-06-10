@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import type { Ohaeng } from '@/lib/saju-data';
+import { OHAENG_ORDER, OHAENG_LABEL, OHAENG_COLORS } from '@/lib/constants';
 
 type SajuCardProps = {
   type: 'saju';
@@ -47,11 +48,6 @@ const CARD: React.CSSProperties = {
   boxSizing: 'border-box',
 };
 
-const OHAENG_COLORS: Record<Ohaeng, string> = {
-  목: '#4ade80', 화: '#f87171', 토: '#facc15', 금: '#e2e8f0', 수: '#60a5fa',
-};
-const OHAENG_ORDER: Ohaeng[] = ['목', '화', '토', '금', '수'];
-const OHAENG_LABEL: Record<Ohaeng, string> = { 목:'木', 화:'火', 토:'土', 금:'金', 수:'水' };
 
 function Badge() {
   return (
