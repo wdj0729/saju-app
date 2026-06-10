@@ -35,3 +35,21 @@ jobs:
           allowed_tools: 'Bash,Read,Write,Edit,Glob,Grep'
           direct_prompt: |
             /code-review --comment
+
+            After writing the code review, run the following quality checks using the Bash tool and append the results to the PR comment:
+
+            1. Run `npm run lint 2>&1` and add a `### ESLint` section:
+               - If no output and exit code 0: "No issues found."
+               - Otherwise: list errors/warnings in format `` - `file:line` — rule: message ``
+
+            2. Run `npx tsc --noEmit 2>&1` and add a `### TypeScript` section:
+               - If no output and exit code 0: "No type errors found."
+               - Otherwise: list up to 10 errors in format `` - `file:line:col` — TSxxxx: message ``
+
+            3. Run `npm run format:check 2>&1` and add a `### Prettier` section:
+               - If exit code 0: "No issues found."
+               - Otherwise: list files needing formatting (up to 10), then "Run `npx prettier --write .` to fix."
+
+            4. Run `npm test -- --passWithNoTests 2>&1` and add a `### Tests` section:
+               - If all pass: "N passed (M suites)"
+               - If failures: "**X failed**, Y passed (M suites):" then list failed test names (up to 10)
