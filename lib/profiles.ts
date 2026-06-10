@@ -15,14 +15,26 @@ export interface Profile {
   createdAt: number;
 }
 
+function isProfile(v: unknown): v is Profile {
+  if (typeof v !== 'object' || v === null) return false;
+  const r = v as Record<string, unknown>;
+  return (
+    typeof r.id === 'string' &&
+    typeof r.year === 'number' &&
+    typeof r.month === 'number' &&
+    typeof r.day === 'number' &&
+    typeof r.ilgan === 'string'
+  );
+}
+
 export function loadProfiles(): Profile[] {
   if (typeof window === 'undefined') return [];
   try {
     const raw = localStorage.getItem(KEY);
     if (!raw) return [];
-    const parsed = JSON.parse(raw);
+    const parsed: unknown = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
-    return parsed as Profile[];
+    return parsed.filter(isProfile);
   } catch {
     return [];
   }

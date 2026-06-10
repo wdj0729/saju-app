@@ -16,7 +16,26 @@ interface CompatibilityAnalysisRequest {
   grade: string;
 }
 
-export async function POST(req: NextRequest) {
+function isPersonData(v: unknown): v is PersonData {
+  return (
+    typeof v === 'object' && v !== null &&
+    typeof (v as Record<string, unknown>).ilgan === 'string' &&
+    typeof (v as Record<string, unknown>).ohaeng === 'object' && (v as Record<string, unknown>).ohaeng !== null
+  );
+}
+
+function isCompatibilityAnalysisRequest(v: unknown): v is CompatibilityAnalysisRequest {
+  if (typeof v !== 'object' || v === null) return false;
+  const r = v as Record<string, unknown>;
+  return (
+    isPersonData(r.personA) &&
+    isPersonData(r.personB) &&
+    typeof r.score === 'number' &&
+    typeof r.grade === 'string'
+  );
+}
+
+export async function POST(req: NextRequest): Promise<Response> {
   let body: unknown;
   try {
     body = await req.json();
@@ -24,10 +43,11 @@ export async function POST(req: NextRequest) {
     return new Response('요청 형식이 잘못되었습니다.', { status: 400 });
   }
 
-  const { personA, personB, score, grade } = body as CompatibilityAnalysisRequest;
-  if (!personA?.ilgan || !personB?.ilgan || score == null || !grade) {
+  if (!isCompatibilityAnalysisRequest(body)) {
     return new Response('필수 파라미터가 누락되었습니다.', { status: 400 });
   }
+
+  const { personA, personB, score, grade } = body;
 
   const nameA = personA.name || '첫 번째 분';
   const nameB = personB.name || '두 번째 분';
