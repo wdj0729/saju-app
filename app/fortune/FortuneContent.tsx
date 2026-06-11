@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadSession } from '@/lib/session';
 import { FORTUNE_TEXT } from '@/lib/fortune-text';
-import type { SajuSession } from '@/lib/session';
+import { useSessionOrRedirect } from '@/hooks/useSessionOrRedirect';
 import ShareCard from '@/components/ShareCard';
 import ShareButton from '@/components/ShareButton';
 import AiContent from '@/components/AiContent';
@@ -16,27 +16,18 @@ const PERIODS: Period[] = ['오늘', '이달', '올해'];
 
 export default function FortuneContent() {
   const router = useRouter();
-  const [session, setSession] = useState<SajuSession | null>(null);
+  const session = useSessionOrRedirect(loadSession, '/saju');
   const [activeTab, setActiveTab] = useState<Period>('오늘');
   const [isExpanded, setIsExpanded] = useState(false);
   const { aiText, isStreaming, aiError, request } = useAiStream();
   const cardRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const s = loadSession();
-    if (!s) {
-      router.replace('/saju');
-      return;
-    }
-    setSession(s);
-  }, [router]);
 
   if (!session) return null;
 
   const today = new Date();
   const dateStr = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`;
 
-  const { ilgan } = session.result;
+  const { ilgan, ohaeng, year, month, day, hour } = session.result;
   const fortune = FORTUNE_TEXT[ilgan] ?? FORTUNE_TEXT['甲'];
   const currentPeriod = fortune[activeTab];
 
@@ -46,16 +37,10 @@ export default function FortuneContent() {
   }
 
   function handleAiRequest() {
-    if (!session) return;
     request('/api/ai-analysis', {
       ilgan,
-      ohaeng: session.result.ohaeng,
-      pillars: {
-        year: session.result.year,
-        month: session.result.month,
-        day: session.result.day,
-        hour: session.result.hour ?? null,
-      },
+      ohaeng,
+      pillars: { year, month, day, hour: hour ?? null },
     });
   }
 

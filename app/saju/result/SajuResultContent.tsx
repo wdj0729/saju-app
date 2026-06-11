@@ -1,58 +1,57 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadSession } from '@/lib/session';
 import { ILGAN_TEXT } from '@/lib/ilgan-text';
 import { saveProfile, isProfileSaved } from '@/lib/profiles';
 import { calculateDaewoon, calcMadeAge } from '@/lib/daewoon';
+import { useSessionOrRedirect } from '@/hooks/useSessionOrRedirect';
 import SajuGrid from '@/components/SajuGrid';
 import OhaengChart from '@/components/OhaengChart';
 import DaewoonChart from '@/components/DaewoonChart';
-import type { SajuSession } from '@/lib/session';
 import ShareCard from '@/components/ShareCard';
 import ShareButton from '@/components/ShareButton';
 
 export default function SajuResultContent() {
   const router = useRouter();
-  const [session, setSession] = useState<SajuSession | null>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
   const [isSaved, setIsSaved] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const session = useSessionOrRedirect(
+    loadSession,
+    '/saju',
+    (s) => setIsSaved(isProfileSaved(s.input))
+  );
 
-  useEffect(() => {
-    const s = loadSession();
-    if (!s) {
-      router.replace('/saju');
-      return;
-    }
-    setSession(s);
-    setIsSaved(isProfileSaved(s.input));
-  }, [router]);
+  const daewoon = useMemo(() => {
+    if (!session?.input.gender) return null;
+    return calculateDaewoon(
+      {
+        year: session.input.year,
+        month: session.input.month,
+        day: session.input.day,
+        hour: session.input.hour,
+        isLunar: session.input.isLunar,
+      },
+      session.input.gender,
+      session.result.year,
+      session.result.month
+    );
+  }, [session]);
 
   if (!session) return null;
 
   const { input, result } = session;
   const displayName = input.name ? `${input.name}의 사주` : '사주 결과';
-
-  const daewoon = input.gender
-    ? calculateDaewoon(
-        {
-          year: input.year,
-          month: input.month,
-          day: input.day,
-          hour: input.hour,
-          isLunar: input.isLunar,
-        },
-        input.gender,
-        result.year,
-        result.month
-      )
-    : null;
   const currentAge = calcMadeAge(input.year, input.month, input.day);
 
   function handleSave() {
-    saveProfile(input, result.ilgan);
-    setIsSaved(true);
+    try {
+      saveProfile(input, result.ilgan);
+      setIsSaved(true);
+    } catch {
+      // localStorage unavailable or quota exceeded — ignore silently
+    }
   }
 
   return (
