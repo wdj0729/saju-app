@@ -68,6 +68,9 @@ export async function POST(req: NextRequest): Promise<Response> {
     .map(([k, v]) => `${k} ${Number(v).toFixed(1)}`)
     .join(' / ');
 
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`;
+
   try {
     const stream = client.messages.stream({
       model: 'claude-sonnet-4-6',
@@ -77,6 +80,7 @@ export async function POST(req: NextRequest): Promise<Response> {
           role: 'user',
           content: `당신은 30년 경력의 명리학 전문가입니다. 아래 사주를 보고 오늘의 운세를 한국어로 해석해주세요.
 
+오늘 날짜: ${todayStr}
 사주 원국: ${pillarText}
 일간: ${ilgan}
 오행 분포: ${ohaengText}
