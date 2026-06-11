@@ -35,7 +35,18 @@ export interface SajuInput {
   isLunar: boolean;
 }
 
-function indexToPillar(index: number): Pillar {
+export function toSolarDate(
+  year: number,
+  month: number,
+  day: number,
+  isLunar: boolean
+): { year: number; month: number; day: number } {
+  if (!isLunar) return { year, month, day };
+  const solar = Lunar.fromYmd(year, month, day).getSolar();
+  return { year: solar.getYear(), month: solar.getMonth(), day: solar.getDay() };
+}
+
+export function indexToPillar(index: number): Pillar {
   const i = ((index % 60) + 60) % 60;
   const gan = GAN[i % 10];
   const ji = JI[i % 12];
@@ -139,15 +150,8 @@ export function calcOhaeng(pillars: (Pillar | null)[]): Record<Ohaeng, number> {
 }
 
 export function calculateSaju(input: SajuInput): SajuResult {
-  let { year, month, day } = input;
   const { hour, isLunar } = input;
-
-  if (isLunar) {
-    const solar = Lunar.fromYmd(year, month, day).getSolar();
-    year = solar.getYear();
-    month = solar.getMonth();
-    day = solar.getDay();
-  }
+  const { year, month, day } = toSolarDate(input.year, input.month, input.day, isLunar);
 
   const yearPillar = getYearPillar(year, month, day);
   const monthPillar = getMonthPillar(year, month, day, yearPillar.gan);
