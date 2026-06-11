@@ -77,6 +77,6 @@ export async function POST(req: NextRequest): Promise<Response> {
       ],
     });
   } catch {
-    return new Response('AI 분석 요청에 실패했습니다.', { status: 500 });
+    return new Response('AI 분석 요청에 실패했어요.', { status: 500 });
   }
 }
