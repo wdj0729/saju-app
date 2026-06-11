@@ -10,10 +10,10 @@ export async function parseBody<T>(
   try {
     body = await req.json();
   } catch {
-    return new Response('요청 형식이 잘못되었습니다.', { status: 400 });
+    return new Response('요청 형식이 잘못되었어요.', { status: 400 });
   }
   if (!validate(body)) {
-    return new Response('필수 파라미터가 누락되었습니다.', { status: 400 });
+    return new Response('필수 파라미터가 누락되었어요.', { status: 400 });
   }
   return { data: body };
 }
