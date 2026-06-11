@@ -71,9 +71,7 @@ export default function YearlySections({
             ) : (
               <p className="text-sm text-primary leading-relaxed whitespace-pre-wrap">
                 {text}
-                {activeSection === key && (
-                  <span className="animate-pulse opacity-70">▌</span>
-                )}
+                {activeSection === key && <span className="animate-pulse opacity-70">▌</span>}
               </p>
             )}
           </div>
