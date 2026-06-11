@@ -110,17 +110,18 @@ export function useYearlySections(): UseYearlySectionsReturn {
       }
       setSections(parseYearlySections(textRef.current));
       setActiveSection(null);
+      setIsStreaming(false);
     } catch (err) {
       if (err instanceof Error && err.name === 'AbortError') return;
       setSections(emptyYearlySections());
       setActiveSection(null);
       setAiError(err instanceof Error ? err.message : '오류가 발생했어요.');
+      setIsStreaming(false);
     } finally {
       if (rafRef.current !== null) {
         cancelAnimationFrame(rafRef.current);
         rafRef.current = null;
       }
-      setIsStreaming(false);
     }
   }
 
