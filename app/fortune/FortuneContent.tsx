@@ -14,6 +14,9 @@ type Period = '오늘' | '이달' | '올해';
 
 const PERIODS: Period[] = ['오늘', '이달', '올해'];
 
+const _today = new Date();
+const TODAY_DATE_STR = `${_today.getFullYear()}년 ${_today.getMonth() + 1}월 ${_today.getDate()}일`;
+
 function FortuneSkeleton() {
   return (
     <div className="flex flex-col min-h-screen">
@@ -63,9 +66,6 @@ export default function FortuneContent() {
   }, [session, activeTab]);
 
   if (!session) return <FortuneSkeleton />;
-
-  const today = new Date();
-  const dateStr = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`;
 
   const { ilgan, ohaeng, year, month, day, hour } = session.result;
   const fortune = FORTUNE_TEXT[ilgan] ?? FORTUNE_TEXT['甲'];
@@ -169,7 +169,7 @@ export default function FortuneContent() {
             ilgan,
             period: activeTab,
             summary: currentPeriod.summary,
-            date: dateStr,
+            date: TODAY_DATE_STR,
           }}
           filename="fortune.png"
           shareTitle={`${activeTab} 운세`}

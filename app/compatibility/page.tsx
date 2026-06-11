@@ -22,7 +22,6 @@ interface PersonFormProps {
   setYear: (v: number) => void;
   month: number;
   setMonth: (v: number) => void;
-  day: number;
   setDay: (v: number) => void;
   clampedDay: number;
   hourValue: number | null;
@@ -284,7 +283,6 @@ export default function CompatibilityPage() {
           setYear={setYearA}
           month={monthA}
           setMonth={setMonthA}
-          day={dayA}
           setDay={setDayA}
           clampedDay={clampedDayA}
           hourValue={hourValueA}
@@ -309,7 +307,6 @@ export default function CompatibilityPage() {
           setYear={setYearB}
           month={monthB}
           setMonth={setMonthB}
-          day={dayB}
           setDay={setDayB}
           clampedDay={clampedDayB}
           hourValue={hourValueB}
