@@ -107,6 +107,7 @@ export function useAiSections(): UseAiSectionsReturn {
     } catch (err) {
       if (err instanceof Error && err.name === 'AbortError') return;
       setSections(emptySections());
+      setActiveSection(null);
       setAiError(err instanceof Error ? err.message : '오류가 발생했습니다.');
     } finally {
       if (rafRef.current !== null) {
