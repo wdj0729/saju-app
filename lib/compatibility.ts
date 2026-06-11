@@ -1,5 +1,6 @@
 import type { SajuResult } from './saju-calculator';
 import type { Ohaeng } from './saju-data';
+import { createSessionStore } from './session-store';
 
 export interface CompatibilityResult {
   score: number;
@@ -57,13 +58,6 @@ const GRADE_INFO: Record<'최상' | '상' | '중' | '하', { label: string; summ
   },
 };
 
-const COMPAT_KEY = 'compatibility-session';
-
-export function saveCompatSession(data: CompatibilitySession): void {
-  if (typeof window === 'undefined') return;
-  sessionStorage.setItem(COMPAT_KEY, JSON.stringify(data));
-}
-
 function isCompatibilitySession(v: unknown): v is CompatibilitySession {
   if (typeof v !== 'object' || v === null) return false;
   const r = v as Record<string, unknown>;
@@ -77,22 +71,11 @@ function isCompatibilitySession(v: unknown): v is CompatibilitySession {
   );
 }
 
-export function loadCompatSession(): CompatibilitySession | null {
-  if (typeof window === 'undefined') return null;
-  const raw = sessionStorage.getItem(COMPAT_KEY);
-  if (!raw) return null;
-  try {
-    const parsed: unknown = JSON.parse(raw);
-    return isCompatibilitySession(parsed) ? parsed : null;
-  } catch {
-    return null;
-  }
-}
+const compatStore = createSessionStore('compatibility-session', isCompatibilitySession);
 
-export function clearCompatSession(): void {
-  if (typeof window === 'undefined') return;
-  sessionStorage.removeItem(COMPAT_KEY);
-}
+export const saveCompatSession = compatStore.save;
+export const loadCompatSession = compatStore.load;
+export const clearCompatSession = compatStore.clear;
 
 export function calcCompatibility(a: SajuResult, b: SajuResult): CompatibilityResult {
   const ohaengA = a.ohaeng;

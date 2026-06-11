@@ -45,31 +45,25 @@ function persist(profiles: Profile[]): void {
   localStorage.setItem(KEY, JSON.stringify(profiles));
 }
 
-export function isProfileSaved(input: SajuSessionInput): boolean {
-  return loadProfiles().some(
-    (p) =>
-      p.name === input.name &&
-      p.year === input.year &&
-      p.month === input.month &&
-      p.day === input.day &&
-      p.hour === input.hour &&
-      p.isLunar === input.isLunar
+function isSameProfile(p: Profile, input: SajuSessionInput): boolean {
+  return (
+    p.name === input.name &&
+    p.year === input.year &&
+    p.month === input.month &&
+    p.day === input.day &&
+    p.hour === input.hour &&
+    p.isLunar === input.isLunar
   );
+}
+
+export function isProfileSaved(input: SajuSessionInput): boolean {
+  return loadProfiles().some((p) => isSameProfile(p, input));
 }
 
 export function saveProfile(input: SajuSessionInput, ilgan: string): void {
   if (typeof window === 'undefined') return;
   const profiles = loadProfiles();
-  const exists = profiles.some(
-    (p) =>
-      p.name === input.name &&
-      p.year === input.year &&
-      p.month === input.month &&
-      p.day === input.day &&
-      p.hour === input.hour &&
-      p.isLunar === input.isLunar
-  );
-  if (exists) return;
+  if (profiles.some((p) => isSameProfile(p, input))) return;
   profiles.push({
     id: crypto.randomUUID(),
     name: input.name,

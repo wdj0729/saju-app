@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { streamAnthropicResponse } from '@/lib/stream-anthropic';
+import { streamAnthropicResponse, formatOhaeng } from '@/lib/stream-anthropic';
 
 interface PillarData {
   gan: string;
@@ -62,9 +62,7 @@ export async function POST(req: NextRequest): Promise<Response> {
     pillars.hour ? `${pillars.hour.gan}${pillars.hour.ji}` : '시주 미상',
   ].join(' / ');
 
-  const ohaengText = Object.entries(ohaeng)
-    .map(([k, v]) => `${k} ${Number(v).toFixed(1)}`)
-    .join(' / ');
+  const ohaengText = formatOhaeng(ohaeng);
 
   const today = new Date();
   const todayStr = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`;
