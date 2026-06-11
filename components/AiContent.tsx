@@ -1,5 +1,7 @@
 'use client';
 
+import { SkeletonBox } from './Skeleton';
+
 interface AiContentProps {
   aiText: string;
   isStreaming: boolean;
@@ -28,9 +30,10 @@ export default function AiContent({
 
   if (isStreaming && !aiText) {
     return (
-      <div className="flex items-center gap-2 text-sm text-muted">
-        <span className="animate-pulse">●</span>
-        <span>분석 중...</span>
+      <div className="flex flex-col gap-2">
+        <SkeletonBox className="h-4 w-full" />
+        <SkeletonBox className="h-4 w-[85%]" />
+        <SkeletonBox className="h-4 w-[60%]" />
       </div>
     );
   }
