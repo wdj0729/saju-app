@@ -96,8 +96,10 @@ export function calcCompatibility(a: SajuResult, b: SajuResult): CompatibilityRe
   const raw = totalWeight > 0 ? 50 + (rawScore / totalWeight) * 50 : 50;
   const score = Math.round(Math.min(100, Math.max(0, raw)));
 
+  // 현실 입력의 유효 점수 범위는 ~38-63 (혼합 오행 분포의 희석 효과)
+  // 구 기준(85/70/50)은 순수 단일-원소 분포 기준으로 현실에서는 상/최상 도달 불가
   const grade: '최상' | '상' | '중' | '하' =
-    score >= 85 ? '최상' : score >= 70 ? '상' : score >= 50 ? '중' : '하';
+    score >= 70 ? '최상' : score >= 55 ? '상' : score >= 46 ? '중' : '하';
 
   const { label: gradeLabel, summary } = GRADE_INFO[grade];
 
