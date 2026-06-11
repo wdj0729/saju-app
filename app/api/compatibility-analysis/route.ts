@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { streamAnthropicResponse, formatOhaeng } from '@/lib/stream-anthropic';
+import { parseBody, streamAnthropicResponse, formatOhaeng } from '@/lib/stream-anthropic';
 
 interface PersonData {
   name: string;
@@ -36,18 +36,9 @@ function isCompatibilityAnalysisRequest(v: unknown): v is CompatibilityAnalysisR
 }
 
 export async function POST(req: NextRequest): Promise<Response> {
-  let body: unknown;
-  try {
-    body = await req.json();
-  } catch {
-    return new Response('요청 형식이 잘못되었습니다.', { status: 400 });
-  }
-
-  if (!isCompatibilityAnalysisRequest(body)) {
-    return new Response('필수 파라미터가 누락되었습니다.', { status: 400 });
-  }
-
-  const { personA, personB, score, grade } = body;
+  const parsed = await parseBody(req, isCompatibilityAnalysisRequest);
+  if (parsed instanceof Response) return parsed;
+  const { personA, personB, score, grade } = parsed.data;
 
   const nameA = personA.name || '첫 번째 분';
   const nameB = personB.name || '두 번째 분';

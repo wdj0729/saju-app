@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { loadCompatSession } from '@/lib/compatibility';
 import { useSessionOrRedirect } from '@/hooks/useSessionOrRedirect';
 import ShareButton from '@/components/ShareButton';
+import BackButton from '@/components/BackButton';
 import AiContent from '@/components/AiContent';
 import { useAiStream } from '@/hooks/useAiStream';
 import { OHAENG_ORDER, OHAENG_LABEL, OHAENG_BAR } from '@/lib/constants';
@@ -93,12 +94,7 @@ export default function CompatibilityResultContent() {
   return (
     <div className="flex flex-col min-h-screen">
       <header className="flex items-center gap-3 px-4 py-4 border-b border-border">
-        <button
-          onClick={() => router.push('/compatibility')}
-          className="text-muted text-sm hover:text-primary transition-colors"
-        >
-          ← 다시 입력
-        </button>
+        <BackButton href="/compatibility" label="다시 입력" />
         <h1 className="text-sm font-semibold text-primary">궁합 결과</h1>
       </header>
 

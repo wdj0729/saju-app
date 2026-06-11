@@ -17,6 +17,7 @@ import OhaengChart from '@/components/OhaengChart';
 import DaewoonChart from '@/components/DaewoonChart';
 import AiContent from '@/components/AiContent';
 import ShareButton from '@/components/ShareButton';
+import BackButton from '@/components/BackButton';
 import { SkeletonBox } from '@/components/Skeleton';
 
 const SEUN_RELATION: Record<string, { label: string; desc: string }> = {
@@ -167,12 +168,7 @@ export default function SajuResultContent() {
   return (
     <div className="flex flex-col min-h-screen">
       <header className="flex items-center gap-3 px-4 py-4 border-b border-border">
-        <button
-          onClick={() => router.push('/saju')}
-          className="text-muted text-sm hover:text-primary transition-colors"
-        >
-          ← 다시 입력
-        </button>
+        <BackButton href="/saju" label="다시 입력" />
         <h1 className="text-sm font-semibold text-primary">{displayName}</h1>
       </header>
 

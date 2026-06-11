@@ -1,5 +1,22 @@
+import type { NextRequest } from 'next/server';
 import type { MessageStreamParams } from '@anthropic-ai/sdk/resources/messages/messages';
 import { anthropic } from './anthropic';
+
+export async function parseBody<T>(
+  req: NextRequest,
+  validate: (v: unknown) => v is T
+): Promise<{ data: T } | Response> {
+  let body: unknown;
+  try {
+    body = await req.json();
+  } catch {
+    return new Response('요청 형식이 잘못되었습니다.', { status: 400 });
+  }
+  if (!validate(body)) {
+    return new Response('필수 파라미터가 누락되었습니다.', { status: 400 });
+  }
+  return { data: body };
+}
 
 export function formatOhaeng(ohaeng: Record<string, number>): string {
   return Object.entries(ohaeng)
