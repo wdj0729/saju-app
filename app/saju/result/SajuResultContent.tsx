@@ -188,7 +188,7 @@ export default function SajuResultContent() {
   return (
     <div className="flex flex-col min-h-screen">
       <header className="flex items-center gap-3 px-4 py-4 border-b border-border">
-        <BackButton href="/saju" label="다시 입력" />
+        <BackButton href="/saju" label="다시 입력하기" />
         <h1 className="text-sm font-semibold text-primary">{displayName}</h1>
       </header>
 

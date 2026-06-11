@@ -156,7 +156,7 @@ export default function FortuneContent() {
           onClick={() => router.push('/compatibility')}
           className="flex-1 py-3 rounded-2xl bg-card text-muted text-sm font-medium hover:bg-card-hover transition-colors"
         >
-          💑 궁합 보러 가기
+          💑 궁합 보기
         </button>
         <ShareButton
           cardProps={{

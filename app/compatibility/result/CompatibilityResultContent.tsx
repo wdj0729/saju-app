@@ -94,7 +94,7 @@ export default function CompatibilityResultContent() {
   return (
     <div className="flex flex-col min-h-screen">
       <header className="flex items-center gap-3 px-4 py-4 border-b border-border">
-        <BackButton href="/compatibility" label="다시 입력" />
+        <BackButton href="/compatibility" label="다시 입력하기" />
         <h1 className="text-sm font-semibold text-primary">궁합 결과</h1>
       </header>
 
