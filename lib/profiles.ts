@@ -59,8 +59,17 @@ export function isProfileSaved(input: SajuSessionInput): boolean {
 
 export function saveProfile(input: SajuSessionInput, ilgan: string): void {
   if (typeof window === 'undefined') return;
-  if (isProfileSaved(input)) return;
   const profiles = loadProfiles();
+  const exists = profiles.some(
+    (p) =>
+      p.name === input.name &&
+      p.year === input.year &&
+      p.month === input.month &&
+      p.day === input.day &&
+      p.hour === input.hour &&
+      p.isLunar === input.isLunar
+  );
+  if (exists) return;
   profiles.push({
     id: crypto.randomUUID(),
     name: input.name,

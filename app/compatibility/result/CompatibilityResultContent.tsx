@@ -1,10 +1,9 @@
 'use client';
 
-import { useMemo, useRef } from 'react';
+import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadCompatSession } from '@/lib/compatibility';
 import { useSessionOrRedirect } from '@/hooks/useSessionOrRedirect';
-import ShareCard from '@/components/ShareCard';
 import ShareButton from '@/components/ShareButton';
 import AiContent from '@/components/AiContent';
 import { useAiStream } from '@/hooks/useAiStream';
@@ -56,7 +55,6 @@ export default function CompatibilityResultContent() {
   const router = useRouter();
   const session = useSessionOrRedirect(loadCompatSession, '/compatibility');
   const { aiText, isStreaming, aiError, request } = useAiStream();
-  const cardRef = useRef<HTMLDivElement>(null);
 
   const maxA = useMemo(
     () => (session ? Math.max(...Object.values(session.compatibility.ohaengA), 1) : 1),
@@ -86,16 +84,6 @@ export default function CompatibilityResultContent() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <ShareCard
-        ref={cardRef}
-        type="compatibility"
-        nameA={nameA}
-        nameB={nameB}
-        score={score}
-        grade={grade}
-        gradeLabel={gradeLabel}
-        summary={summary}
-      />
       <header className="flex items-center gap-3 px-4 py-4 border-b border-border">
         <button
           onClick={() => router.push('/compatibility')}
@@ -181,7 +169,19 @@ export default function CompatibilityResultContent() {
         >
           다시 분석하기
         </button>
-        <ShareButton cardRef={cardRef} filename="compatibility-result.png" shareTitle="궁합 결과" />
+        <ShareButton
+          cardProps={{
+            type: 'compatibility',
+            nameA,
+            nameB,
+            score,
+            grade,
+            gradeLabel,
+            summary,
+          }}
+          filename="compatibility-result.png"
+          shareTitle="궁합 결과"
+        />
       </div>
     </div>
   );

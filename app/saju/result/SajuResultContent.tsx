@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadSession } from '@/lib/session';
 import { ILJU_TEXT } from '@/lib/ilju-text';
@@ -16,7 +16,6 @@ import SajuGrid from '@/components/SajuGrid';
 import OhaengChart from '@/components/OhaengChart';
 import DaewoonChart from '@/components/DaewoonChart';
 import AiContent from '@/components/AiContent';
-import ShareCard from '@/components/ShareCard';
 import ShareButton from '@/components/ShareButton';
 import { SkeletonBox } from '@/components/Skeleton';
 
@@ -31,6 +30,11 @@ const SEUN_RELATION: Record<string, { label: string; desc: string }> = {
 const OHAENG_GENERATES: Record<Ohaeng, Ohaeng> = { 목: '화', 화: '토', 토: '금', 금: '수', 수: '목' };
 const OHAENG_CONTROLS:  Record<Ohaeng, Ohaeng> = { 목: '토', 화: '금', 토: '수', 금: '목', 수: '화' };
 
+const _today = new Date();
+const TODAY_YEAR  = _today.getFullYear();
+const TODAY_MONTH = _today.getMonth() + 1;
+const TODAY_DATE  = _today.getDate();
+
 function getSeunRelation(ilganEl: Ohaeng, ganEl: Ohaeng) {
   if (ganEl === ilganEl)                 return SEUN_RELATION.same;
   if (OHAENG_GENERATES[ganEl] === ilganEl) return SEUN_RELATION.gen_me;
@@ -40,14 +44,12 @@ function getSeunRelation(ilganEl: Ohaeng, ganEl: Ohaeng) {
 }
 
 function SeunSection({ ilganElement }: { ilganElement: Ohaeng }) {
-  const today = new Date();
-  const thisYear = today.getFullYear();
-  const seun = getYearPillar(thisYear, today.getMonth() + 1, today.getDate());
+  const seun = getYearPillar(TODAY_YEAR, TODAY_MONTH, TODAY_DATE);
   const relation = getSeunRelation(ilganElement, GAN_OHAENG[seun.gan]);
 
   return (
     <div className="bg-card rounded-2xl p-4">
-      <p className="text-xs text-muted mb-3">세운 (歲運) · {thisYear}년</p>
+      <p className="text-xs text-muted mb-3">세운 (歲運) · {TODAY_YEAR}년</p>
       <div className="flex items-center gap-4">
         <div className="text-center">
           <div className={`font-serif text-3xl font-bold leading-none ${OHAENG_TEXT[GAN_OHAENG[seun.gan]]}`}>
@@ -109,7 +111,6 @@ function SajuResultSkeleton() {
 export default function SajuResultContent() {
   const router = useRouter();
   const [isSaved, setIsSaved] = useState(false);
-  const cardRef = useRef<HTMLDivElement>(null);
   const { aiText, isStreaming, aiError, request } = useAiStream();
   const session = useSessionOrRedirect(
     loadSession,
@@ -158,19 +159,6 @@ export default function SajuResultContent() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <ShareCard
-        ref={cardRef}
-        type="saju"
-        name={input.name}
-        ilgan={result.ilgan}
-        pillars={{
-          year: result.year.gan + result.year.ji,
-          month: result.month.gan + result.month.ji,
-          day: result.day.gan + result.day.ji,
-          hour: result.hour ? result.hour.gan + result.hour.ji : undefined,
-        }}
-        ohaeng={result.ohaeng}
-      />
       <header className="flex items-center gap-3 px-4 py-4 border-b border-border">
         <button
           onClick={() => router.push('/saju')}
@@ -234,7 +222,22 @@ export default function SajuResultContent() {
         >
           {isSaved ? '✓' : '💾'}
         </button>
-        <ShareButton cardRef={cardRef} filename="saju-result.png" shareTitle="내 사주 결과" />
+        <ShareButton
+          cardProps={{
+            type: 'saju',
+            name: input.name,
+            ilgan: result.ilgan,
+            pillars: {
+              year: result.year.gan + result.year.ji,
+              month: result.month.gan + result.month.ji,
+              day: result.day.gan + result.day.ji,
+              hour: result.hour ? result.hour.gan + result.hour.ji : undefined,
+            },
+            ohaeng: result.ohaeng,
+          }}
+          filename="saju-result.png"
+          shareTitle="내 사주 결과"
+        />
       </div>
     </div>
   );

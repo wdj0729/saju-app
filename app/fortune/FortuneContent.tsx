@@ -1,11 +1,10 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadSession } from '@/lib/session';
 import { FORTUNE_TEXT } from '@/lib/fortune-text';
 import { useSessionOrRedirect } from '@/hooks/useSessionOrRedirect';
-import ShareCard from '@/components/ShareCard';
 import ShareButton from '@/components/ShareButton';
 import AiContent from '@/components/AiContent';
 import { useAiStream } from '@/hooks/useAiStream';
@@ -55,7 +54,6 @@ export default function FortuneContent() {
   const [activeTab, setActiveTab] = useState<Period>('오늘');
   const [isExpanded, setIsExpanded] = useState(false);
   const { aiText, isStreaming, aiError, request } = useAiStream();
-  const cardRef = useRef<HTMLDivElement>(null);
 
   if (!session) return <FortuneSkeleton />;
 
@@ -81,15 +79,6 @@ export default function FortuneContent() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <ShareCard
-        ref={cardRef}
-        type="fortune"
-        name={session.input.name}
-        ilgan={ilgan}
-        period={activeTab}
-        summary={currentPeriod.summary}
-        date={dateStr}
-      />
       <header className="flex items-center gap-3 px-4 py-4 border-b border-border">
         <button
           onClick={() => router.push('/saju/result')}
@@ -166,7 +155,18 @@ export default function FortuneContent() {
         >
           💑 궁합 보러 가기
         </button>
-        <ShareButton cardRef={cardRef} filename="fortune.png" shareTitle={`${activeTab} 운세`} />
+        <ShareButton
+          cardProps={{
+            type: 'fortune',
+            name: session.input.name,
+            ilgan,
+            period: activeTab,
+            summary: currentPeriod.summary,
+            date: dateStr,
+          }}
+          filename="fortune.png"
+          shareTitle={`${activeTab} 운세`}
+        />
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { DaewoonResult } from '@/lib/daewoon';
 import { OHAENG_TEXT, OHAENG_LABEL } from '@/lib/constants';
 
@@ -6,7 +7,7 @@ interface DaewoonChartProps {
   currentAge: number;
 }
 
-export default function DaewoonChart({ result, currentAge }: DaewoonChartProps) {
+function DaewoonChart({ result, currentAge }: DaewoonChartProps) {
   const { pillars, daewoonSu, direction } = result;
 
   // 현재 대운 인덱스 (대운 시작 전이면 -1)
@@ -77,3 +78,5 @@ export default function DaewoonChart({ result, currentAge }: DaewoonChartProps) 
     </div>
   );
 }
+
+export default memo(DaewoonChart);

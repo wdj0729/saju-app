@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { Ohaeng } from '@/lib/saju-data';
 import { OHAENG_ORDER, OHAENG_LABEL, OHAENG_BAR } from '@/lib/constants';
 
@@ -5,7 +6,7 @@ interface OhaengChartProps {
   ohaeng: Record<Ohaeng, number>;
 }
 
-export default function OhaengChart({ ohaeng }: OhaengChartProps) {
+function OhaengChart({ ohaeng }: OhaengChartProps) {
   const max = Math.max(...Object.values(ohaeng), 1);
   const total = Object.values(ohaeng).reduce((s, v) => s + v, 0);
 
@@ -31,3 +32,5 @@ export default function OhaengChart({ ohaeng }: OhaengChartProps) {
     </div>
   );
 }
+
+export default memo(OhaengChart);
