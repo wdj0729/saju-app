@@ -148,7 +148,7 @@ export default function SajuResultContent() {
   const displayName = input.name ? `${input.name}의 사주` : '사주 결과';
   const currentAge = calcMadeAge(input.year, input.month, input.day);
   const currentDaewoon = daewoon?.pillars.find(
-    (p) => p.startAge <= currentAge && currentAge < p.endAge
+    (p) => p.startAge <= currentAge && currentAge <= p.endAge
   );
 
   function handleAiRequest() {
