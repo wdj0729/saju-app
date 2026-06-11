@@ -9,21 +9,18 @@ export function useSessionOrRedirect<T>(
   onLoaded?: (session: T) => void
 ): T | null {
   const router = useRouter();
-  const [session, setSession] = useState<T | null>(null);
-  const loaderRef = useRef(loader);
   const onLoadedRef = useRef(onLoaded);
-  loaderRef.current = loader;
   onLoadedRef.current = onLoaded;
 
+  const [session] = useState<T | null>(() => loader());
+
   useEffect(() => {
-    const s = loaderRef.current();
-    if (!s) {
+    if (!session) {
       router.replace(redirectPath);
       return;
     }
-    setSession(s);
-    onLoadedRef.current?.(s);
-  }, [router, redirectPath]);
+    onLoadedRef.current?.(session);
+  }, [session, router, redirectPath]);
 
   return session;
 }
