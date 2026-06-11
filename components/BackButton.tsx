@@ -1,6 +1,4 @@
-'use client';
-
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 interface BackButtonProps {
   href: string;
@@ -8,13 +6,12 @@ interface BackButtonProps {
 }
 
 export default function BackButton({ href, label }: BackButtonProps) {
-  const router = useRouter();
   return (
-    <button
-      onClick={() => router.push(href)}
+    <Link
+      href={href}
       className="text-muted text-sm hover:text-primary transition-colors"
     >
       ← {label}
-    </button>
+    </Link>
   );
 }
