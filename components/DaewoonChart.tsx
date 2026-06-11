@@ -1,19 +1,10 @@
 import type { DaewoonResult } from '@/lib/daewoon';
-import type { Ohaeng } from '@/lib/saju-data';
-import { OHAENG_TEXT } from '@/lib/constants';
+import { OHAENG_TEXT, OHAENG_LABEL } from '@/lib/constants';
 
 interface DaewoonChartProps {
   result: DaewoonResult;
   currentAge: number;
 }
-
-const OHAENG_HANJA: Record<Ohaeng, string> = {
-  목: '木',
-  화: '火',
-  토: '土',
-  금: '金',
-  수: '水',
-};
 
 export default function DaewoonChart({ result, currentAge }: DaewoonChartProps) {
   const { pillars, daewoonSu, direction } = result;
@@ -65,8 +56,8 @@ export default function DaewoonChart({ result, currentAge }: DaewoonChartProps) 
                   {pillar.startAge} ~ {pillar.endAge}세
                 </div>
                 <div className="text-xs text-muted mt-0.5">
-                  {pillar.ganElement}({OHAENG_HANJA[pillar.ganElement]}) · {pillar.jiElement}(
-                  {OHAENG_HANJA[pillar.jiElement]})
+                  {pillar.ganElement}({OHAENG_LABEL[pillar.ganElement]}) · {pillar.jiElement}(
+                  {OHAENG_LABEL[pillar.jiElement]})
                 </div>
               </div>
 
