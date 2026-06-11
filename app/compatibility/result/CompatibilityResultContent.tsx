@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadCompatSession } from '@/lib/compatibility';
-import type { CompatibilitySession } from '@/lib/compatibility';
+import { useSessionOrRedirect } from '@/hooks/useSessionOrRedirect';
 import ShareCard from '@/components/ShareCard';
 import ShareButton from '@/components/ShareButton';
 import AiContent from '@/components/AiContent';
@@ -12,18 +12,18 @@ import { OHAENG_ORDER, OHAENG_LABEL, OHAENG_BAR } from '@/lib/constants';
 
 export default function CompatibilityResultContent() {
   const router = useRouter();
-  const [session, setSession] = useState<CompatibilitySession | null>(null);
+  const session = useSessionOrRedirect(loadCompatSession, '/compatibility');
   const { aiText, isStreaming, aiError, request } = useAiStream();
   const cardRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const s = loadCompatSession();
-    if (!s) {
-      router.replace('/compatibility');
-      return;
-    }
-    setSession(s);
-  }, [router]);
+  const maxA = useMemo(
+    () => (session ? Math.max(...Object.values(session.compatibility.ohaengA), 1) : 1),
+    [session]
+  );
+  const maxB = useMemo(
+    () => (session ? Math.max(...Object.values(session.compatibility.ohaengB), 1) : 1),
+    [session]
+  );
 
   if (!session) return null;
 
@@ -33,13 +33,10 @@ export default function CompatibilityResultContent() {
   const nameA = personA.name || '나';
   const nameB = personB.name || '상대';
 
-  const maxA = Math.max(...Object.values(ohaengA), 1);
-  const maxB = Math.max(...Object.values(ohaengB), 1);
-
   function handleAiRequest() {
     request('/api/compatibility-analysis', {
-      personA: { name: personA.name, ilgan: personA.result.ilgan, ohaeng: ohaengA },
-      personB: { name: personB.name, ilgan: personB.result.ilgan, ohaeng: ohaengB },
+      personA: { name: nameA, ilgan: personA.result.ilgan, ohaeng: ohaengA },
+      personB: { name: nameB, ilgan: personB.result.ilgan, ohaeng: ohaengB },
       score,
       grade,
     });
