@@ -16,7 +16,7 @@ export default function SajuInputPage() {
   const [profiles] = useState<Profile[]>(() => loadProfiles());
   const [name, setName] = useState('');
   const [isLunar, setIsLunar] = useState(false);
-  const [year, setYear] = useState(1990);
+  const [year, setYear] = useState(() => new Date().getFullYear() - 30);
   const [month, setMonth] = useState(1);
   const [day, setDay] = useState(1);
   const [hourValue, setHourValue] = useState<number | null>(null);

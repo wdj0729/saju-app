@@ -3,7 +3,11 @@
 import { useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadSession } from '@/lib/session';
-import { ILGAN_TEXT } from '@/lib/ilgan-text';
+import { ILJU_TEXT } from '@/lib/ilju-text';
+import { GAN_OHAENG, JI_OHAENG } from '@/lib/saju-data';
+import { OHAENG_TEXT } from '@/lib/constants';
+import { getYearPillar } from '@/lib/saju-calculator';
+import type { Ohaeng } from '@/lib/saju-data';
 import { saveProfile, isProfileSaved } from '@/lib/profiles';
 import { calculateDaewoon, calcMadeAge } from '@/lib/daewoon';
 import { useSessionOrRedirect } from '@/hooks/useSessionOrRedirect';
@@ -13,6 +17,52 @@ import DaewoonChart from '@/components/DaewoonChart';
 import ShareCard from '@/components/ShareCard';
 import ShareButton from '@/components/ShareButton';
 import { SkeletonBox } from '@/components/Skeleton';
+
+const SEUN_RELATION: Record<string, { label: string; desc: string }> = {
+  same:    { label: '비겁(比劫)', desc: '동등한 기운이 만나는 해 — 경쟁·협력·독립의 기운이 강합니다.' },
+  gen_me:  { label: '인성(印星)', desc: '세운이 나를 생(生)하는 해 — 학습·귀인·지원의 기운이 따릅니다.' },
+  i_gen:   { label: '식상(食傷)', desc: '내가 세운을 생(生)하는 해 — 표현·창작·발산의 기운이 강합니다.' },
+  ctrl_me: { label: '관성(官星)', desc: '세운이 나를 극(剋)하는 해 — 책임·규율·도전의 기운이 따릅니다.' },
+  i_ctrl:  { label: '재성(財星)', desc: '내가 세운을 극(剋)하는 해 — 재물·성취·활동의 기운이 강합니다.' },
+};
+
+const OHAENG_GENERATES: Record<Ohaeng, Ohaeng> = { 목: '화', 화: '토', 토: '금', 금: '수', 수: '목' };
+const OHAENG_CONTROLS:  Record<Ohaeng, Ohaeng> = { 목: '토', 화: '금', 토: '수', 금: '목', 수: '화' };
+
+function getSeunRelation(ilganEl: Ohaeng, ganEl: Ohaeng) {
+  if (ganEl === ilganEl)                 return SEUN_RELATION.same;
+  if (OHAENG_GENERATES[ganEl] === ilganEl) return SEUN_RELATION.gen_me;
+  if (OHAENG_GENERATES[ilganEl] === ganEl) return SEUN_RELATION.i_gen;
+  if (OHAENG_CONTROLS[ganEl] === ilganEl)  return SEUN_RELATION.ctrl_me;
+  return SEUN_RELATION.i_ctrl;
+}
+
+function SeunSection({ ilganElement }: { ilganElement: Ohaeng }) {
+  const today = new Date();
+  const thisYear = today.getFullYear();
+  const seun = getYearPillar(thisYear, today.getMonth() + 1, today.getDate());
+  const relation = getSeunRelation(ilganElement, GAN_OHAENG[seun.gan]);
+
+  return (
+    <div className="bg-card rounded-2xl p-4">
+      <p className="text-xs text-muted mb-3">세운 (歲運) · {thisYear}년</p>
+      <div className="flex items-center gap-4">
+        <div className="text-center">
+          <div className={`font-serif text-3xl font-bold leading-none ${OHAENG_TEXT[GAN_OHAENG[seun.gan]]}`}>
+            {seun.gan}
+          </div>
+          <div className={`font-serif text-3xl font-bold leading-none mt-1 ${OHAENG_TEXT[JI_OHAENG[seun.ji]]}`}>
+            {seun.ji}
+          </div>
+        </div>
+        <div className="flex-1">
+          <p className="text-xs font-semibold text-primary mb-0.5">{relation.label}</p>
+          <p className="text-xs text-muted leading-relaxed">{relation.desc}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function SajuResultSkeleton() {
   return (
@@ -124,9 +174,11 @@ export default function SajuResultContent() {
         <SajuGrid year={result.year} month={result.month} day={result.day} hour={result.hour} />
 
         <div className="bg-card rounded-2xl p-4">
-          <p className="text-xs text-muted mb-1">일간 {result.ilgan} · 기질</p>
+          <p className="text-xs text-muted mb-1">
+            일주 {result.day.gan}{result.day.ji} · 기질
+          </p>
           <p className="text-sm text-primary leading-relaxed">
-            {ILGAN_TEXT[result.ilgan] ?? '기질 정보를 불러올 수 없습니다.'}
+            {ILJU_TEXT[result.day.gan + result.day.ji] ?? '일주 정보를 불러올 수 없습니다.'}
           </p>
         </div>
 
@@ -134,6 +186,8 @@ export default function SajuResultContent() {
           <p className="text-xs text-muted mb-4">오행 분포</p>
           <OhaengChart ohaeng={result.ohaeng} />
         </div>
+
+        <SeunSection ilganElement={GAN_OHAENG[result.ilgan]} />
 
         {daewoon && <DaewoonChart result={daewoon} currentAge={currentAge} />}
       </div>
