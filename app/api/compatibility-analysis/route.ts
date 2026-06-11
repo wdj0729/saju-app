@@ -1,7 +1,5 @@
-import Anthropic from '@anthropic-ai/sdk';
 import { NextRequest } from 'next/server';
-
-const client = new Anthropic();
+import { streamAnthropicResponse } from '@/lib/stream-anthropic';
 
 interface PersonData {
   name: string;
@@ -62,7 +60,7 @@ export async function POST(req: NextRequest): Promise<Response> {
     .join(' / ');
 
   try {
-    const stream = client.messages.stream({
+    return streamAnthropicResponse({
       model: 'claude-sonnet-4-6',
       max_tokens: 1024,
       messages: [
@@ -77,27 +75,6 @@ ${nameB}: 일간 ${personB.ilgan}, 오행 분포 ${ohaengTextB}
 **연애·감정**, **결혼·생활**, **직업·사회** 측면에서 각 2~3문장씩 구체적이고 친근한 말투로 설명해주세요.`,
         },
       ],
-    });
-
-    const readable = new ReadableStream({
-      async start(controller) {
-        const encoder = new TextEncoder();
-        try {
-          for await (const event of stream) {
-            if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
-              controller.enqueue(encoder.encode(event.delta.text));
-            }
-          }
-        } catch (err) {
-          console.error('[compatibility-analysis] stream error:', err);
-        } finally {
-          controller.close();
-        }
-      },
-    });
-
-    return new Response(readable, {
-      headers: { 'Content-Type': 'text/plain; charset=utf-8' },
     });
   } catch {
     return new Response('AI 분석 요청에 실패했습니다.', { status: 500 });
