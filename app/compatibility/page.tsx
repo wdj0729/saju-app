@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { calculateSaju } from '@/lib/saju-calculator';
 import { calcCompatibility, saveCompatSession } from '@/lib/compatibility';
@@ -183,7 +183,8 @@ function PersonForm({
 
 export default function CompatibilityPage() {
   const router = useRouter();
-  const [profiles] = useState<Profile[]>(() => loadProfiles());
+  const [profiles, setProfiles] = useState<Profile[]>([]);
+  useEffect(() => { setProfiles(loadProfiles()); }, []);
 
   const defaultYear = new Date().getFullYear() - 30;
 
