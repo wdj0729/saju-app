@@ -40,3 +40,11 @@ export const OHAENG_COLORS: Record<Ohaeng, string> = {
   금: '#e2e8f0',
   수: '#60a5fa',
 };
+
+export const OHAENG_TEXT: Record<Ohaeng, string> = {
+  목: 'text-mok',
+  화: 'text-hwa',
+  토: 'text-to',
+  금: 'text-geum',
+  수: 'text-su',
+};

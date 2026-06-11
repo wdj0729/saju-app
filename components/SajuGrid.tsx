@@ -1,5 +1,6 @@
 import type { Pillar } from '@/lib/saju-calculator';
 import type { Ohaeng } from '@/lib/saju-data';
+import { OHAENG_TEXT } from '@/lib/constants';
 
 interface SajuGridProps {
   year: Pillar;
@@ -14,14 +15,6 @@ const OHAENG_BG: Record<Ohaeng, string> = {
   토: 'bg-to/10',
   금: 'bg-geum/10',
   수: 'bg-su/10',
-};
-
-const OHAENG_TEXT: Record<Ohaeng, string> = {
-  목: 'text-mok',
-  화: 'text-hwa',
-  토: 'text-to',
-  금: 'text-geum',
-  수: 'text-su',
 };
 
 export default function SajuGrid({ year, month, day, hour }: SajuGridProps) {
