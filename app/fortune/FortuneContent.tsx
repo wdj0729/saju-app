@@ -92,7 +92,7 @@ export default function FortuneContent() {
       />
       <header className="flex items-center gap-3 px-4 py-4 border-b border-border">
         <button
-          onClick={() => router.push('/')}
+          onClick={() => router.push('/saju/result')}
           className="text-muted text-sm hover:text-primary transition-colors"
         >
           ← 내 사주
