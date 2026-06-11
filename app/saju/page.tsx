@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { calculateSaju } from '@/lib/saju-calculator';
 import { saveSession } from '@/lib/session';
@@ -11,7 +11,8 @@ import BackButton from '@/components/BackButton';
 
 export default function SajuInputPage() {
   const router = useRouter();
-  const [profiles] = useState<Profile[]>(() => loadProfiles());
+  const [profiles, setProfiles] = useState<Profile[]>([]);
+  useEffect(() => { setProfiles(loadProfiles()); }, []);
   const [name, setName] = useState('');
   const [isLunar, setIsLunar] = useState(false);
   const [year, setYear] = useState(() => new Date().getFullYear() - 30);
