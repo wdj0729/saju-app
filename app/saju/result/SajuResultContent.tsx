@@ -11,9 +11,11 @@ import type { Ohaeng } from '@/lib/saju-data';
 import { saveProfile, isProfileSaved } from '@/lib/profiles';
 import { calculateDaewoon, calcMadeAge } from '@/lib/daewoon';
 import { useSessionOrRedirect } from '@/hooks/useSessionOrRedirect';
+import { useAiStream } from '@/hooks/useAiStream';
 import SajuGrid from '@/components/SajuGrid';
 import OhaengChart from '@/components/OhaengChart';
 import DaewoonChart from '@/components/DaewoonChart';
+import AiContent from '@/components/AiContent';
 import ShareCard from '@/components/ShareCard';
 import ShareButton from '@/components/ShareButton';
 import { SkeletonBox } from '@/components/Skeleton';
@@ -108,6 +110,7 @@ export default function SajuResultContent() {
   const router = useRouter();
   const [isSaved, setIsSaved] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+  const { aiText, isStreaming, aiError, request } = useAiStream();
   const session = useSessionOrRedirect(
     loadSession,
     '/saju',
@@ -135,6 +138,14 @@ export default function SajuResultContent() {
   const { input, result } = session;
   const displayName = input.name ? `${input.name}의 사주` : '사주 결과';
   const currentAge = calcMadeAge(input.year, input.month, input.day);
+
+  function handleAiRequest() {
+    request('/api/ai-analysis', {
+      ilgan: result.ilgan,
+      ohaeng: result.ohaeng,
+      pillars: { year: result.year, month: result.month, day: result.day, hour: result.hour ?? null },
+    });
+  }
 
   function handleSave() {
     try {
@@ -188,6 +199,16 @@ export default function SajuResultContent() {
         </div>
 
         <SeunSection ilganElement={GAN_OHAENG[result.ilgan]} />
+
+        <div className="bg-card rounded-2xl p-4">
+          <p className="text-xs text-muted mb-3">🤖 AI 심층 분석</p>
+          <AiContent
+            aiText={aiText}
+            isStreaming={isStreaming}
+            aiError={aiError}
+            onRequest={handleAiRequest}
+          />
+        </div>
 
         {daewoon && <DaewoonChart result={daewoon} currentAge={currentAge} />}
       </div>

@@ -93,7 +93,7 @@ export default function Home() {
                   disabled={isEditing}
                   className="bg-card-hover rounded-full px-3 py-1.5 text-xs text-primary disabled:cursor-default"
                 >
-                  🔮 {profile.name || '이름 없음'}
+                  🔮 {profile.name || '이름 없음'} · {profile.ilgan}
                 </button>
                 {isEditing && (
                   <button

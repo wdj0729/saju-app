@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { calculateSaju } from '@/lib/saju-calculator';
 import { calcCompatibility, saveCompatSession } from '@/lib/compatibility';
+import { loadProfiles } from '@/lib/profiles';
+import type { Profile } from '@/lib/profiles';
 import { SIJIN } from '@/lib/constants';
 
 const YEARS = Array.from({ length: 201 }, (_, i) => 1900 + i);
@@ -15,6 +17,8 @@ const labelClass = 'block text-xs text-muted mb-1.5';
 
 interface PersonFormProps {
   label: string;
+  profiles: Profile[];
+  onProfileSelect: (profile: Profile) => void;
   name: string;
   setName: (v: string) => void;
   gender: 'M' | 'F';
@@ -34,6 +38,8 @@ interface PersonFormProps {
 
 function PersonForm({
   label,
+  profiles,
+  onProfileSelect,
   name,
   setName,
   gender,
@@ -54,6 +60,24 @@ function PersonForm({
   return (
     <div className="bg-card rounded-2xl px-4 py-4 flex flex-col gap-4">
       <p className="text-xs font-semibold text-primary">{label}</p>
+
+      {profiles.length > 0 && (
+        <div>
+          <p className="text-xs text-muted mb-1.5">저장된 프로필 불러오기</p>
+          <div className="flex flex-wrap gap-2">
+            {profiles.map((profile) => (
+              <button
+                key={profile.id}
+                type="button"
+                onClick={() => onProfileSelect(profile)}
+                className="bg-card-hover rounded-full px-3 py-1.5 text-xs text-primary"
+              >
+                {profile.name || '이름 없음'} · {profile.ilgan}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div>
         <label className={labelClass}>이름 (선택)</label>
@@ -166,11 +190,14 @@ function PersonForm({
 
 export default function CompatibilityPage() {
   const router = useRouter();
+  const [profiles] = useState<Profile[]>(() => loadProfiles());
+
+  const defaultYear = new Date().getFullYear() - 30;
 
   const [nameA, setNameA] = useState('');
   const [genderA, setGenderA] = useState<'M' | 'F'>('M');
   const [isLunarA, setIsLunarA] = useState(false);
-  const [yearA, setYearA] = useState(1990);
+  const [yearA, setYearA] = useState(defaultYear);
   const [monthA, setMonthA] = useState(1);
   const [dayA, setDayA] = useState(1);
   const [hourValueA, setHourValueA] = useState<number | null>(null);
@@ -178,12 +205,32 @@ export default function CompatibilityPage() {
   const [nameB, setNameB] = useState('');
   const [genderB, setGenderB] = useState<'M' | 'F'>('M');
   const [isLunarB, setIsLunarB] = useState(false);
-  const [yearB, setYearB] = useState(1990);
+  const [yearB, setYearB] = useState(defaultYear);
   const [monthB, setMonthB] = useState(1);
   const [dayB, setDayB] = useState(1);
   const [hourValueB, setHourValueB] = useState<number | null>(null);
 
   const [error, setError] = useState('');
+
+  function loadProfileA(profile: Profile) {
+    setNameA(profile.name);
+    setYearA(profile.year);
+    setMonthA(profile.month);
+    setDayA(profile.day);
+    setHourValueA(profile.hour);
+    setIsLunarA(profile.isLunar);
+    setGenderA(profile.gender ?? 'M');
+  }
+
+  function loadProfileB(profile: Profile) {
+    setNameB(profile.name);
+    setYearB(profile.year);
+    setMonthB(profile.month);
+    setDayB(profile.day);
+    setHourValueB(profile.hour);
+    setIsLunarB(profile.isLunar);
+    setGenderB(profile.gender ?? 'M');
+  }
 
   const clampedDayA = Math.min(dayA, isLunarA ? 30 : new Date(yearA, monthA, 0).getDate());
   const clampedDayB = Math.min(dayB, isLunarB ? 30 : new Date(yearB, monthB, 0).getDate());
@@ -232,6 +279,8 @@ export default function CompatibilityPage() {
       <div className="flex flex-col gap-4 px-4 py-6 flex-1">
         <PersonForm
           label="💑 나의 정보"
+          profiles={profiles}
+          onProfileSelect={loadProfileA}
           name={nameA}
           setName={setNameA}
           gender={genderA}
@@ -255,6 +304,8 @@ export default function CompatibilityPage() {
 
         <PersonForm
           label="💑 상대방 정보"
+          profiles={profiles}
+          onProfileSelect={loadProfileB}
           name={nameB}
           setName={setNameB}
           gender={genderB}

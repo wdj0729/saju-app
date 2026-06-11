@@ -7,23 +7,27 @@ interface OhaengChartProps {
 
 export default function OhaengChart({ ohaeng }: OhaengChartProps) {
   const max = Math.max(...Object.values(ohaeng), 1);
+  const total = Object.values(ohaeng).reduce((s, v) => s + v, 0);
 
   return (
     <div className="flex flex-col gap-2 w-full">
-      {OHAENG_ORDER.map((key) => (
-        <div key={key} className="flex items-center gap-2">
-          <span className="text-sm text-muted w-4 shrink-0">{OHAENG_LABEL[key]}</span>
-          <div className="flex-1 bg-card rounded-full h-4 overflow-hidden">
-            <div
-              className={`h-full rounded-full transition-all ${OHAENG_BAR[key]}`}
-              style={{ width: `${(ohaeng[key] / max) * 100}%` }}
-            />
+      {OHAENG_ORDER.map((key) => {
+        const pct = total > 0 ? Math.round((ohaeng[key] / total) * 100) : 0;
+        return (
+          <div key={key} className="flex items-center gap-2">
+            <span className="text-sm text-muted w-4 shrink-0">{OHAENG_LABEL[key]}</span>
+            <div className="flex-1 bg-card rounded-full h-4 overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all ${OHAENG_BAR[key]}`}
+                style={{ width: `${(ohaeng[key] / max) * 100}%` }}
+              />
+            </div>
+            <span className="text-xs text-muted w-8 text-right shrink-0">
+              {pct > 0 ? `${pct}%` : '—'}
+            </span>
           </div>
-          <span className="text-xs text-muted w-8 text-right shrink-0">
-            {ohaeng[key].toFixed(1)}
-          </span>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
