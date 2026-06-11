@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { streamAnthropicResponse } from '@/lib/stream-anthropic';
+import { streamAnthropicResponse, formatOhaeng } from '@/lib/stream-anthropic';
 
 interface PersonData {
   name: string;
@@ -52,12 +52,8 @@ export async function POST(req: NextRequest): Promise<Response> {
   const nameA = personA.name || '첫 번째 분';
   const nameB = personB.name || '두 번째 분';
 
-  const ohaengTextA = Object.entries(personA.ohaeng)
-    .map(([k, v]) => `${k} ${Number(v).toFixed(1)}`)
-    .join(' / ');
-  const ohaengTextB = Object.entries(personB.ohaeng)
-    .map(([k, v]) => `${k} ${Number(v).toFixed(1)}`)
-    .join(' / ');
+  const ohaengTextA = formatOhaeng(personA.ohaeng);
+  const ohaengTextB = formatOhaeng(personB.ohaeng);
 
   try {
     return streamAnthropicResponse({

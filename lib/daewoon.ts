@@ -26,26 +26,15 @@ function isForward(yearGan: string, gender: 'M' | 'F'): boolean {
   return (isYangYear && gender === 'M') || (!isYangYear && gender === 'F');
 }
 
-function findNextJeolgiDays(y: number, m: number, d: number): number {
+function findJeolgiDays(y: number, m: number, d: number, direction: 1 | -1): number {
   const baseMs = Date.UTC(y, m - 1, d);
   for (let i = 1; i <= 35; i++) {
-    const ms = baseMs + i * 86400000;
+    const ms = baseMs + direction * i * 86400000;
     const date = new Date(ms);
     const name = getJieQiName(date.getUTCFullYear(), date.getUTCMonth() + 1, date.getUTCDate());
     if (Object.prototype.hasOwnProperty.call(JEOLGI_JI, name)) return i;
   }
-  throw new Error(`다음 절기 탐색 실패: ${y}-${m}-${d}`);
-}
-
-function findPrevJeolgiDays(y: number, m: number, d: number): number {
-  const baseMs = Date.UTC(y, m - 1, d);
-  for (let i = 1; i <= 35; i++) {
-    const ms = baseMs - i * 86400000;
-    const date = new Date(ms);
-    const name = getJieQiName(date.getUTCFullYear(), date.getUTCMonth() + 1, date.getUTCDate());
-    if (Object.prototype.hasOwnProperty.call(JEOLGI_JI, name)) return i;
-  }
-  throw new Error(`이전 절기 탐색 실패: ${y}-${m}-${d}`);
+  throw new Error(`절기 탐색 실패: ${y}-${m}-${d} direction=${direction}`);
 }
 
 function pillarToIndex(gan: string, ji: string): number {
@@ -101,9 +90,7 @@ export function calculateDaewoon(
   }
 
   const forward = isForward(yearPillar.gan, gender);
-  const days = forward
-    ? findNextJeolgiDays(year, month, day)
-    : findPrevJeolgiDays(year, month, day);
+  const days = findJeolgiDays(year, month, day, forward ? 1 : -1);
   const daewoonSu = Math.max(1, Math.round(days / 3));
 
   const monthIndex = pillarToIndex(monthPillar.gan, monthPillar.ji);

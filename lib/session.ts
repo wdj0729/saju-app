@@ -1,4 +1,5 @@
 import type { SajuResult } from './saju-calculator';
+import { createSessionStore } from './session-store';
 
 export interface SajuSessionInput {
   name: string;
@@ -15,13 +16,6 @@ export interface SajuSession {
   result: SajuResult;
 }
 
-const KEY = 'saju-session';
-
-export function saveSession(data: SajuSession): void {
-  if (typeof window === 'undefined') return;
-  sessionStorage.setItem(KEY, JSON.stringify(data));
-}
-
 function isSajuSession(v: unknown): v is SajuSession {
   if (typeof v !== 'object' || v === null) return false;
   const r = v as Record<string, unknown>;
@@ -36,19 +30,8 @@ function isSajuSession(v: unknown): v is SajuSession {
   );
 }
 
-export function loadSession(): SajuSession | null {
-  if (typeof window === 'undefined') return null;
-  const raw = sessionStorage.getItem(KEY);
-  if (!raw) return null;
-  try {
-    const parsed: unknown = JSON.parse(raw);
-    return isSajuSession(parsed) ? parsed : null;
-  } catch {
-    return null;
-  }
-}
+const store = createSessionStore('saju-session', isSajuSession);
 
-export function clearSession(): void {
-  if (typeof window === 'undefined') return;
-  sessionStorage.removeItem(KEY);
-}
+export const saveSession = store.save;
+export const loadSession = store.load;
+export const clearSession = store.clear;

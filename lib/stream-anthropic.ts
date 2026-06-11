@@ -1,6 +1,12 @@
 import type { MessageStreamParams } from '@anthropic-ai/sdk/resources/messages/messages';
 import { anthropic } from './anthropic';
 
+export function formatOhaeng(ohaeng: Record<string, number>): string {
+  return Object.entries(ohaeng)
+    .map(([k, v]) => `${k} ${Number(v).toFixed(1)}`)
+    .join(' / ');
+}
+
 export function streamAnthropicResponse(params: MessageStreamParams): Response {
   const stream = anthropic.messages.stream(params);
 
