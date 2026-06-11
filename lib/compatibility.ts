@@ -93,8 +93,9 @@ export function calcCompatibility(a: SajuResult, b: SajuResult): CompatibilityRe
     }
   }
 
-  const raw = totalWeight > 0 ? 50 + (rawScore / totalWeight) * 50 : 50;
-  const score = Math.round(Math.min(100, Math.max(0, raw)));
+  // 중심 60 + 증폭 2.5배: 중립→60, 상생 집중→85+, 상극 집중→35-
+  const ratio = totalWeight > 0 ? rawScore / totalWeight : 0;
+  const score = Math.round(Math.min(100, Math.max(0, 60 + ratio * 125)));
 
   const grade: '최상' | '상' | '중' | '하' =
     score >= 85 ? '최상' : score >= 70 ? '상' : score >= 50 ? '중' : '하';

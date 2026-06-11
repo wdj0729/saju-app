@@ -43,16 +43,38 @@ describe('calcCompatibility', () => {
     expect(score).toBeLessThan(50);
   });
 
-  it('score >= 85 → grade 최상, gradeLabel 천생연분', () => {
+  it('순수 상생(木→火): grade 최상, gradeLabel 천생연분', () => {
     const { grade, gradeLabel } = calcCompatibility(pureWood, pureFire);
     expect(grade).toBe('최상');
     expect(gradeLabel).toBe('천생연분');
   });
 
-  it('score < 50 → grade 하, gradeLabel 주의 필요', () => {
+  it('순수 상극(金↔木): grade 하, gradeLabel 주의 필요', () => {
     const { grade, gradeLabel } = calcCompatibility(pureWood, pureMetal);
     expect(grade).toBe('하');
     expect(gradeLabel).toBe('주의 필요');
+  });
+
+  it('현실적 상생(목 우세 vs 화 우세): grade 상 이상', () => {
+    const realisticWood = makeSaju({ 목: 5, 화: 1, 토: 1, 금: 1.5, 수: 1.5 });
+    const realisticFire = makeSaju({ 목: 1, 화: 5, 토: 1, 금: 1.5, 수: 1.5 });
+    const { grade, score } = calcCompatibility(realisticWood, realisticFire);
+    expect(score).toBeGreaterThanOrEqual(55);
+    expect(['상', '최상']).toContain(grade);
+  });
+
+  it('현실적 상극(목 우세 vs 토 우세): grade 하', () => {
+    const realisticWood = makeSaju({ 목: 5, 화: 1, 토: 1, 금: 1.5, 수: 1.5 });
+    const realisticEarth = makeSaju({ 목: 1, 화: 1, 토: 5, 금: 1.5, 수: 1.5 });
+    const { grade, score } = calcCompatibility(realisticWood, realisticEarth);
+    expect(score).toBeLessThan(46);
+    expect(grade).toBe('하');
+  });
+
+  it('균형 분포(비슷한 오행): grade 중', () => {
+    const balanced = makeSaju({ 목: 2, 화: 2, 토: 2, 금: 2, 수: 2 });
+    const { grade } = calcCompatibility(balanced, balanced);
+    expect(grade).toBe('중');
   });
 
   it('水→木 상생: score >= 50', () => {
