@@ -225,43 +225,53 @@ export default function SajuResultContent() {
         {daewoon && <DaewoonChart result={daewoon} currentAge={currentAge} />}
       </div>
 
-      <div className="flex gap-3 px-4 pb-8">
-        <button
-          onClick={() => router.push('/fortune')}
-          className="flex-1 py-3 rounded-2xl bg-primary-gradient text-white text-sm font-medium"
-        >
-          운세 보기
-        </button>
-        <button
-          onClick={() => router.push('/compatibility')}
-          className="flex-1 py-3 rounded-2xl bg-card text-muted text-sm font-medium hover:bg-card-hover transition-colors"
-        >
-          궁합 보기
-        </button>
-        <button
-          onClick={handleSave}
-          disabled={isSaved}
-          className="bg-card text-muted py-3 px-4 rounded-2xl hover:bg-card-hover transition-colors disabled:opacity-50"
-          aria-label="프로필 저장"
-        >
-          {isSaved ? '✓' : '💾'}
-        </button>
-        <ShareButton
-          cardProps={{
-            type: 'saju',
-            name: input.name,
-            ilgan: result.ilgan,
-            pillars: {
-              year: result.year.gan + result.year.ji,
-              month: result.month.gan + result.month.ji,
-              day: result.day.gan + result.day.ji,
-              hour: result.hour ? result.hour.gan + result.hour.ji : undefined,
-            },
-            ohaeng: result.ohaeng,
-          }}
-          filename="saju-result.png"
-          shareTitle="내 사주 결과"
-        />
+      <div className="flex flex-col gap-3 px-4 pb-8">
+        <div className="flex gap-3">
+          <button
+            onClick={() => router.push('/fortune/yearly')}
+            className="flex-1 py-3 rounded-2xl bg-primary-gradient text-white text-sm font-medium"
+          >
+            ✨ 신년운세
+          </button>
+          <button
+            onClick={() => router.push('/fortune')}
+            className="flex-1 py-3 rounded-2xl bg-card text-muted text-sm font-medium hover:bg-card-hover transition-colors"
+          >
+            💫 오늘 운세
+          </button>
+        </div>
+        <div className="flex gap-3">
+          <button
+            onClick={() => router.push('/compatibility')}
+            className="flex-1 py-3 rounded-2xl bg-card text-muted text-sm font-medium hover:bg-card-hover transition-colors"
+          >
+            💑 궁합 보기
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={isSaved}
+            className="bg-card text-muted py-3 px-4 rounded-2xl hover:bg-card-hover transition-colors disabled:opacity-50"
+            aria-label="프로필 저장"
+          >
+            {isSaved ? '✓' : '💾'}
+          </button>
+          <ShareButton
+            cardProps={{
+              type: 'saju',
+              name: input.name,
+              ilgan: result.ilgan,
+              pillars: {
+                year: result.year.gan + result.year.ji,
+                month: result.month.gan + result.month.ji,
+                day: result.day.gan + result.day.ji,
+                hour: result.hour ? result.hour.gan + result.hour.ji : undefined,
+              },
+              ohaeng: result.ohaeng,
+            }}
+            filename="saju-result.png"
+            shareTitle="내 사주 결과"
+          />
+        </div>
       </div>
     </div>
   );
