@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadSession } from '@/lib/session';
 import { FORTUNE_TEXT } from '@/lib/fortune-text';
@@ -54,6 +54,13 @@ export default function FortuneContent() {
   const [activeTab, setActiveTab] = useState<Period>('오늘');
   const [isExpanded, setIsExpanded] = useState(false);
   const { aiText, isStreaming, aiError, request } = useAiStream();
+
+  useEffect(() => {
+    if (!session) return;
+    const name = session.input.name ? `${session.input.name}의 ` : '';
+    document.title = `${name}${activeTab} 운세 · ${session.result.ilgan} 일간 — 사주팔자`;
+    return () => { document.title = '사주팔자'; };
+  }, [session, activeTab]);
 
   if (!session) return <FortuneSkeleton />;
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadSession } from '@/lib/session';
 import { ILJU_TEXT } from '@/lib/ilju-text';
@@ -132,6 +132,13 @@ export default function SajuResultContent() {
       session.result.year,
       session.result.month
     );
+  }, [session]);
+
+  useEffect(() => {
+    if (!session) return;
+    const name = session.input.name ? `${session.input.name}의 사주` : '사주 결과';
+    document.title = `${name} · ${session.result.ilgan} 일간 — 사주팔자`;
+    return () => { document.title = '사주팔자'; };
   }, [session]);
 
   if (!session) return <SajuResultSkeleton />;

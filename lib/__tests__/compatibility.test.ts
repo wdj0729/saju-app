@@ -123,3 +123,29 @@ describe('CompatibilitySession 스토리지', () => {
     expect(loadCompatSession()).toBeNull();
   });
 });
+
+describe('SSR 환경 (window 없음)', () => {
+  let saved: typeof globalThis.window;
+
+  beforeEach(() => {
+    saved = globalThis.window;
+    // @ts-expect-error
+    delete globalThis.window;
+  });
+
+  afterEach(() => {
+    globalThis.window = saved;
+  });
+
+  it('saveCompatSession은 아무것도 하지 않음', () => {
+    expect(() => saveCompatSession({} as CompatibilitySession)).not.toThrow();
+  });
+
+  it('loadCompatSession은 null 반환', () => {
+    expect(loadCompatSession()).toBeNull();
+  });
+
+  it('clearCompatSession은 아무것도 하지 않음', () => {
+    expect(() => clearCompatSession()).not.toThrow();
+  });
+});

@@ -122,3 +122,33 @@ describe('isProfileSaved', () => {
     expect(isProfileSaved({ ...INPUT, year: 1991 })).toBe(false);
   });
 });
+
+describe('SSR 환경 (window 없음)', () => {
+  let saved: typeof globalThis.window;
+
+  beforeEach(() => {
+    saved = globalThis.window;
+    // @ts-expect-error
+    delete globalThis.window;
+  });
+
+  afterEach(() => {
+    globalThis.window = saved;
+  });
+
+  it('loadProfiles는 [] 반환', () => {
+    expect(loadProfiles()).toEqual([]);
+  });
+
+  it('saveProfile은 아무것도 하지 않음', () => {
+    expect(() => saveProfile(INPUT, '甲')).not.toThrow();
+  });
+
+  it('deleteProfile은 아무것도 하지 않음', () => {
+    expect(() => deleteProfile('any-id')).not.toThrow();
+  });
+
+  it('isProfileSaved는 false 반환', () => {
+    expect(isProfileSaved(INPUT)).toBe(false);
+  });
+});

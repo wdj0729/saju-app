@@ -73,3 +73,29 @@ describe('session', () => {
     expect(loadSession()).toBeNull();
   });
 });
+
+describe('SSR 환경 (window 없음)', () => {
+  let saved: typeof globalThis.window;
+
+  beforeEach(() => {
+    saved = globalThis.window;
+    // @ts-expect-error
+    delete globalThis.window;
+  });
+
+  afterEach(() => {
+    globalThis.window = saved;
+  });
+
+  it('saveSession은 아무것도 하지 않음', () => {
+    expect(() => saveSession(DUMMY_SESSION)).not.toThrow();
+  });
+
+  it('loadSession은 null 반환', () => {
+    expect(loadSession()).toBeNull();
+  });
+
+  it('clearSession은 아무것도 하지 않음', () => {
+    expect(() => clearSession()).not.toThrow();
+  });
+});

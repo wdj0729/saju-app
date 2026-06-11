@@ -6,14 +6,7 @@ import { calculateSaju } from '@/lib/saju-calculator';
 import { calcCompatibility, saveCompatSession } from '@/lib/compatibility';
 import { loadProfiles } from '@/lib/profiles';
 import type { Profile } from '@/lib/profiles';
-import { SIJIN } from '@/lib/constants';
-
-const YEARS = Array.from({ length: 201 }, (_, i) => 1900 + i);
-const MONTHS = Array.from({ length: 12 }, (_, i) => i + 1);
-
-const inputClass =
-  'w-full bg-card border border-border rounded-xl px-4 py-3 text-primary text-sm appearance-none';
-const labelClass = 'block text-xs text-muted mb-1.5';
+import { SIJIN, YEARS, MONTHS, INPUT_CLASS, LABEL_CLASS } from '@/lib/constants';
 
 interface PersonFormProps {
   label: string;
@@ -80,18 +73,18 @@ function PersonForm({
       )}
 
       <div>
-        <label className={labelClass}>이름 (선택)</label>
+        <label className={LABEL_CLASS}>이름 (선택)</label>
         <input
           type="text"
           placeholder="이름을 입력하세요"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className={inputClass}
+          className={INPUT_CLASS}
         />
       </div>
 
       <div>
-        <label className={labelClass}>성별</label>
+        <label className={LABEL_CLASS}>성별</label>
         <div className="flex gap-2">
           {(['M', 'F'] as const).map((g) => (
             <button
@@ -108,7 +101,7 @@ function PersonForm({
       </div>
 
       <div>
-        <label className={labelClass}>양력 / 음력</label>
+        <label className={LABEL_CLASS}>양력 / 음력</label>
         <div className="flex gap-2">
           {([false, true] as const).map((lunar) => (
             <button
@@ -125,11 +118,11 @@ function PersonForm({
       </div>
 
       <div>
-        <label className={labelClass}>생년</label>
+        <label className={LABEL_CLASS}>생년</label>
         <select
           value={year}
           onChange={(e) => setYear(Number(e.target.value))}
-          className={inputClass}
+          className={INPUT_CLASS}
         >
           {YEARS.map((y) => (
             <option key={y} value={y}>
@@ -140,11 +133,11 @@ function PersonForm({
       </div>
 
       <div>
-        <label className={labelClass}>생월</label>
+        <label className={LABEL_CLASS}>생월</label>
         <select
           value={month}
           onChange={(e) => setMonth(Number(e.target.value))}
-          className={inputClass}
+          className={INPUT_CLASS}
         >
           {MONTHS.map((m) => (
             <option key={m} value={m}>
@@ -155,11 +148,11 @@ function PersonForm({
       </div>
 
       <div>
-        <label className={labelClass}>생일</label>
+        <label className={LABEL_CLASS}>생일</label>
         <select
           value={clampedDay}
           onChange={(e) => setDay(Number(e.target.value))}
-          className={inputClass}
+          className={INPUT_CLASS}
         >
           {Array.from({ length: maxDay }, (_, i) => i + 1).map((d) => (
             <option key={d} value={d}>
@@ -170,11 +163,11 @@ function PersonForm({
       </div>
 
       <div>
-        <label className={labelClass}>태어난 시 (선택)</label>
+        <label className={LABEL_CLASS}>태어난 시 (선택)</label>
         <select
           value={hourValue ?? ''}
           onChange={(e) => setHourValue(e.target.value === '' ? null : Number(e.target.value))}
-          className={inputClass}
+          className={INPUT_CLASS}
         >
           <option value="">모름</option>
           {SIJIN.map((s) => (

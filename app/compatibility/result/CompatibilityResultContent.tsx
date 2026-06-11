@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadCompatSession } from '@/lib/compatibility';
 import { useSessionOrRedirect } from '@/hooks/useSessionOrRedirect';
@@ -64,6 +64,14 @@ export default function CompatibilityResultContent() {
     () => (session ? Math.max(...Object.values(session.compatibility.ohaengB), 1) : 1),
     [session]
   );
+
+  useEffect(() => {
+    if (!session) return;
+    const a = session.personA.name || '나';
+    const b = session.personB.name || '상대';
+    document.title = `${a} ♡ ${b} 궁합 결과 — 사주팔자`;
+    return () => { document.title = '사주팔자'; };
+  }, [session]);
 
   if (!session) return <CompatibilityResultSkeleton />;
 
