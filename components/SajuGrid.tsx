@@ -16,6 +16,14 @@ const OHAENG_BG: Record<Ohaeng, string> = {
   수: 'bg-su/10',
 };
 
+const OHAENG_TEXT: Record<Ohaeng, string> = {
+  목: 'text-mok',
+  화: 'text-hwa',
+  토: 'text-to',
+  금: 'text-geum',
+  수: 'text-su',
+};
+
 export default function SajuGrid({ year, month, day, hour }: SajuGridProps) {
   const data = [
     { label: '시', pillar: hour },
@@ -36,10 +44,10 @@ export default function SajuGrid({ year, month, day, hour }: SajuGridProps) {
           <span className="text-xs text-muted mb-2">{label}</span>
           {pillar ? (
             <>
-              <span className="font-serif text-3xl font-bold text-primary leading-none mb-1">
+              <span className={`font-serif text-3xl font-bold leading-none mb-1 ${OHAENG_TEXT[pillar.ganElement]}`}>
                 {pillar.gan}
               </span>
-              <span className="font-serif text-3xl font-bold text-primary leading-none">
+              <span className={`font-serif text-3xl font-bold leading-none ${OHAENG_TEXT[pillar.jiElement]}`}>
                 {pillar.ji}
               </span>
             </>
