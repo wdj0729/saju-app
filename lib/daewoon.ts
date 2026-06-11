@@ -1,8 +1,7 @@
-import { Lunar } from 'lunar-javascript';
-import { GAN, JI, GAN_OHAENG, JI_OHAENG, JEOLGI_JI } from './saju-data';
+import { GAN, JI, JEOLGI_JI } from './saju-data';
 import type { Ohaeng } from './saju-data';
 import type { Pillar, SajuInput } from './saju-calculator';
-import { getJieQiName } from './saju-calculator';
+import { getJieQiName, toSolarDate, indexToPillar } from './saju-calculator';
 
 export interface DaewoonPillar {
   gan: string;
@@ -47,17 +46,7 @@ function pillarToIndex(gan: string, ji: string): number {
 }
 
 function indexToDaewoonPillar(index: number, startAge: number): DaewoonPillar {
-  const i = ((index % 60) + 60) % 60;
-  const gan = GAN[i % 10];
-  const ji = JI[i % 12];
-  return {
-    gan,
-    ji,
-    ganElement: GAN_OHAENG[gan],
-    jiElement: JI_OHAENG[ji],
-    startAge,
-    endAge: startAge + 9,
-  };
+  return { ...indexToPillar(index), startAge, endAge: startAge + 9 };
 }
 
 export function calcMadeAge(
@@ -79,15 +68,7 @@ export function calculateDaewoon(
   yearPillar: Pillar,
   monthPillar: Pillar
 ): DaewoonResult {
-  let { year, month, day } = input;
-  const { isLunar } = input;
-
-  if (isLunar) {
-    const solar = Lunar.fromYmd(year, month, day).getSolar();
-    year = solar.getYear();
-    month = solar.getMonth();
-    day = solar.getDay();
-  }
+  const { year, month, day } = toSolarDate(input.year, input.month, input.day, input.isLunar);
 
   const forward = isForward(yearPillar.gan, gender);
   const days = findJeolgiDays(year, month, day, forward ? 1 : -1);
