@@ -1,5 +1,6 @@
 import type { DaewoonResult } from '@/lib/daewoon';
 import type { Ohaeng } from '@/lib/saju-data';
+import { OHAENG_TEXT } from '@/lib/constants';
 
 interface DaewoonChartProps {
   result: DaewoonResult;
@@ -52,8 +53,8 @@ export default function DaewoonChart({ result, currentAge }: DaewoonChartProps) 
             >
               {/* 간지 */}
               <div className="text-center min-w-[28px]">
-                <div className="text-xl font-bold text-primary leading-none">{pillar.gan}</div>
-                <div className="text-xl font-bold text-primary leading-none mt-0.5">
+                <div className={`text-xl font-bold leading-none ${OHAENG_TEXT[pillar.ganElement]}`}>{pillar.gan}</div>
+                <div className={`text-xl font-bold leading-none mt-0.5 ${OHAENG_TEXT[pillar.jiElement]}`}>
                   {pillar.ji}
                 </div>
               </div>
