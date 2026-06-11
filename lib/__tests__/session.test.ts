@@ -1,34 +1,9 @@
 import type { SajuResult } from '../saju-calculator';
 import { saveSession, loadSession, clearSession } from '../session';
 import type { SajuSession } from '../session';
+import { setupStorageMock } from './test-utils';
 
-// Node test env에 window/sessionStorage 없으므로 file-scope 객체로 모킹
-const store: Record<string, string> = {};
-
-beforeAll(() => {
-  Object.defineProperty(global, 'window', {
-    value: {},
-    writable: true,
-    configurable: true,
-  });
-  Object.defineProperty(global, 'sessionStorage', {
-    value: {
-      getItem: (k: string) => store[k] ?? null,
-      setItem: (k: string, v: string) => {
-        store[k] = v;
-      },
-      removeItem: (k: string) => {
-        delete store[k];
-      },
-    },
-    writable: true,
-    configurable: true,
-  });
-});
-
-beforeEach(() => {
-  Object.keys(store).forEach((k) => delete store[k]);
-});
+const store = setupStorageMock('sessionStorage');
 
 const DUMMY_RESULT: SajuResult = {
   year: { gan: '甲', ji: '子', ganElement: '목', jiElement: '수' },

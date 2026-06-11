@@ -7,6 +7,7 @@ import { calcCompatibility, saveCompatSession } from '@/lib/compatibility';
 import { loadProfiles } from '@/lib/profiles';
 import type { Profile } from '@/lib/profiles';
 import { SIJIN, YEARS, MONTHS, INPUT_CLASS, LABEL_CLASS } from '@/lib/constants';
+import BackButton from '@/components/BackButton';
 
 interface PersonFormProps {
   label: string;
@@ -259,12 +260,7 @@ export default function CompatibilityPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <header className="flex items-center gap-3 px-4 py-4 border-b border-border">
-        <button
-          onClick={() => router.push('/')}
-          className="text-muted text-sm hover:text-primary transition-colors"
-        >
-          ← 뒤로
-        </button>
+        <BackButton href="/" label="뒤로" />
         <h1 className="text-sm font-semibold text-primary">궁합 보기</h1>
       </header>
 

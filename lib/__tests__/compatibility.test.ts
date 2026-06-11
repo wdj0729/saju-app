@@ -6,6 +6,9 @@ import {
 } from '../compatibility';
 import type { CompatibilitySession } from '../compatibility';
 import type { SajuResult } from '../saju-calculator';
+import { setupStorageMock } from './test-utils';
+
+const store = setupStorageMock('sessionStorage');
 
 function makeSaju(ohaeng: Record<'목' | '화' | '토' | '금' | '수', number>): SajuResult {
   return {
@@ -76,27 +79,6 @@ describe('calcCompatibility', () => {
   });
 });
 
-// sessionStorage 모킹
-const store: Record<string, string> = {};
-beforeAll(() => {
-  Object.defineProperty(global, 'window', { value: {}, writable: true, configurable: true });
-  Object.defineProperty(global, 'sessionStorage', {
-    value: {
-      getItem: (k: string) => store[k] ?? null,
-      setItem: (k: string, v: string) => {
-        store[k] = v;
-      },
-      removeItem: (k: string) => {
-        delete store[k];
-      },
-    },
-    writable: true,
-    configurable: true,
-  });
-});
-beforeEach(() => {
-  Object.keys(store).forEach((k) => delete store[k]);
-});
 
 describe('CompatibilitySession 스토리지', () => {
   const dummy: CompatibilitySession = {

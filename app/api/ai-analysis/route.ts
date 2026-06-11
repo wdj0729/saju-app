@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { streamAnthropicResponse, formatOhaeng } from '@/lib/stream-anthropic';
+import { parseBody, streamAnthropicResponse, formatOhaeng } from '@/lib/stream-anthropic';
 
 interface PillarData {
   gan: string;
@@ -42,18 +42,9 @@ function isAiAnalysisRequest(v: unknown): v is AiAnalysisRequest {
 }
 
 export async function POST(req: NextRequest): Promise<Response> {
-  let body: unknown;
-  try {
-    body = await req.json();
-  } catch {
-    return new Response('요청 형식이 잘못되었습니다.', { status: 400 });
-  }
-
-  if (!isAiAnalysisRequest(body)) {
-    return new Response('필수 파라미터가 누락되었습니다.', { status: 400 });
-  }
-
-  const { ilgan, ohaeng, pillars } = body;
+  const parsed = await parseBody(req, isAiAnalysisRequest);
+  if (parsed instanceof Response) return parsed;
+  const { ilgan, ohaeng, pillars } = parsed.data;
 
   const pillarText = [
     `${pillars.year.gan}${pillars.year.ji}`,

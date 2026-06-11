@@ -6,6 +6,7 @@ import { loadSession } from '@/lib/session';
 import { FORTUNE_TEXT } from '@/lib/fortune-text';
 import { useSessionOrRedirect } from '@/hooks/useSessionOrRedirect';
 import ShareButton from '@/components/ShareButton';
+import BackButton from '@/components/BackButton';
 import AiContent from '@/components/AiContent';
 import { useAiStream } from '@/hooks/useAiStream';
 import { SkeletonBox } from '@/components/Skeleton';
@@ -87,12 +88,7 @@ export default function FortuneContent() {
   return (
     <div className="flex flex-col min-h-screen">
       <header className="flex items-center gap-3 px-4 py-4 border-b border-border">
-        <button
-          onClick={() => router.push('/saju/result')}
-          className="text-muted text-sm hover:text-primary transition-colors"
-        >
-          ← 내 사주
-        </button>
+        <BackButton href="/saju/result" label="내 사주" />
         <h1 className="text-sm font-semibold text-primary">
           {session.input.name ? `${session.input.name} · ${ilgan} 일간` : `${ilgan} 일간`}
         </h1>
