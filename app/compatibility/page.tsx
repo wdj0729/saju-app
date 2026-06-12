@@ -7,8 +7,9 @@ import { calcCompatibility, saveCompatSession } from '@/lib/compatibility';
 import { loadProfiles } from '@/lib/profiles';
 import type { Profile } from '@/lib/profiles';
 import { getPrefillA, clearPrefillA } from '@/lib/compatibility-prefill';
-import { SIJIN, YEARS, MONTHS, INPUT_CLASS, LABEL_CLASS } from '@/lib/constants';
+import { SIJIN, INPUT_CLASS, LABEL_CLASS } from '@/lib/constants';
 import BackButton from '@/components/BackButton';
+import DateInput from '@/components/DateInput';
 
 interface PersonFormProps {
   label: string;
@@ -24,8 +25,8 @@ interface PersonFormProps {
   setYear: (v: number) => void;
   month: number;
   setMonth: (v: number) => void;
+  day: number;
   setDay: (v: number) => void;
-  clampedDay: number;
   hourValue: number | null;
   setHourValue: (v: number | null) => void;
 }
@@ -44,12 +45,13 @@ function PersonForm({
   setYear,
   month,
   setMonth,
+  day,
   setDay,
-  clampedDay,
   hourValue,
   setHourValue,
 }: PersonFormProps) {
   const maxDay = isLunar ? 30 : new Date(year, month, 0).getDate();
+  const clampedDay = Math.min(day, maxDay);
 
   return (
     <div className="bg-card rounded-2xl px-4 py-4 flex flex-col gap-4">
@@ -119,48 +121,16 @@ function PersonForm({
       </div>
 
       <div>
-        <label className={LABEL_CLASS}>생년</label>
-        <select
-          value={year}
-          onChange={(e) => setYear(Number(e.target.value))}
-          className={INPUT_CLASS}
-        >
-          {YEARS.map((y) => (
-            <option key={y} value={y}>
-              {y}년
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div>
-        <label className={LABEL_CLASS}>생월</label>
-        <select
-          value={month}
-          onChange={(e) => setMonth(Number(e.target.value))}
-          className={INPUT_CLASS}
-        >
-          {MONTHS.map((m) => (
-            <option key={m} value={m}>
-              {m}월
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div>
-        <label className={LABEL_CLASS}>생일</label>
-        <select
-          value={clampedDay}
-          onChange={(e) => setDay(Number(e.target.value))}
-          className={INPUT_CLASS}
-        >
-          {Array.from({ length: maxDay }, (_, i) => i + 1).map((d) => (
-            <option key={d} value={d}>
-              {d}일
-            </option>
-          ))}
-        </select>
+        <label className={LABEL_CLASS}>생년월일</label>
+        <DateInput
+          year={year}
+          month={month}
+          day={clampedDay}
+          maxDay={maxDay}
+          onYearChange={setYear}
+          onMonthChange={setMonth}
+          onDayChange={setDay}
+        />
       </div>
 
       <div>
@@ -292,8 +262,8 @@ export default function CompatibilityPage() {
           setYear={setYearA}
           month={monthA}
           setMonth={setMonthA}
+          day={dayA}
           setDay={setDayA}
-          clampedDay={clampedDayA}
           hourValue={hourValueA}
           setHourValue={setHourValueA}
         />
@@ -316,8 +286,8 @@ export default function CompatibilityPage() {
           setYear={setYearB}
           month={monthB}
           setMonth={setMonthB}
+          day={dayB}
           setDay={setDayB}
-          clampedDay={clampedDayB}
           hourValue={hourValueB}
           setHourValue={setHourValueB}
         />
