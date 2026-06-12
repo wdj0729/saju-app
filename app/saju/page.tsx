@@ -15,7 +15,6 @@ export default function SajuInputPage() {
   const [name, setName] = useState('');
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setProfiles(loadProfiles());
   }, []);
   const [isLunar, setIsLunar] = useState(false);

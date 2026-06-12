@@ -18,6 +18,7 @@ function isPersonData(v: unknown): v is PersonData {
   return (
     typeof v === 'object' &&
     v !== null &&
+    typeof (v as Record<string, unknown>).name === 'string' &&
     typeof (v as Record<string, unknown>).ilgan === 'string' &&
     typeof (v as Record<string, unknown>).ohaeng === 'object' &&
     (v as Record<string, unknown>).ohaeng !== null
@@ -63,7 +64,8 @@ ${nameB}: 일간 ${personB.ilgan}, 오행 분포 ${ohaengTextB}
         },
       ],
     });
-  } catch {
+  } catch (error) {
+    console.error('[compatibility-analysis] AI request failed:', error);
     return new Response('AI 분석 요청에 실패했어요.', { status: 500 });
   }
 }

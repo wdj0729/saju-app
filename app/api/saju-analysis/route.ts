@@ -1,10 +1,5 @@
 import { NextRequest } from 'next/server';
-import { parseBody, streamAnthropicResponse, formatOhaeng } from '@/lib/stream-anthropic';
-
-interface PillarData {
-  gan: string;
-  ji: string;
-}
+import { parseBody, streamAnthropicResponse, formatOhaeng, isPillarData, type PillarData } from '@/lib/stream-anthropic';
 
 interface CurrentDaewoon {
   gan: string;
@@ -27,15 +22,6 @@ interface SajuAnalysisRequest {
   birthYear: number;
   currentAge: number;
   currentDaewoon?: CurrentDaewoon;
-}
-
-function isPillarData(v: unknown): v is PillarData {
-  return (
-    typeof v === 'object' &&
-    v !== null &&
-    typeof (v as Record<string, unknown>).gan === 'string' &&
-    typeof (v as Record<string, unknown>).ji === 'string'
-  );
 }
 
 function isSajuAnalysisRequest(v: unknown): v is SajuAnalysisRequest {
@@ -118,7 +104,8 @@ export async function POST(req: NextRequest): Promise<Response> {
       max_tokens: 2048,
       messages: [{ role: 'user', content: lines }],
     });
-  } catch {
+  } catch (error) {
+    console.error('[saju-analysis] AI request failed:', error);
     return new Response('AI 분석 요청에 실패했어요.', { status: 500 });
   }
 }

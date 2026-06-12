@@ -14,6 +14,14 @@ const eslintConfig = defineConfig([
     'next-env.d.ts',
     'coverage/**',
   ]),
+  {
+    rules: {
+      // Disabled: this rule fires on the valid pattern of reading client-only
+      // storage (localStorage) inside a mount-only useEffect, which is the
+      // correct way to hydrate state from browser APIs in an SSR app.
+      'react-hooks/set-state-in-effect': 'off',
+    },
+  },
 ]);
 
 export default eslintConfig;

@@ -15,15 +15,17 @@ export function useSessionOrRedirect<T>(
     onLoadedRef.current = onLoaded;
   });
 
-  const [session] = useState<T | null>(() => loader());
+  const [session, setSession] = useState<T | null>(null);
 
   useEffect(() => {
-    if (!session) {
+    const s = loader();
+    if (!s) {
       router.replace(redirectPath);
       return;
     }
-    onLoadedRef.current?.(session);
-  }, [session, router, redirectPath]);
+    setSession(s);
+    onLoadedRef.current?.(s);
+  }, [loader, router, redirectPath]);
 
   return session;
 }

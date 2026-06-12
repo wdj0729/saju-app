@@ -2,6 +2,20 @@ import type { NextRequest } from 'next/server';
 import type { MessageStreamParams } from '@anthropic-ai/sdk/resources/messages/messages';
 import { anthropic } from './anthropic';
 
+export interface PillarData {
+  gan: string;
+  ji: string;
+}
+
+export function isPillarData(v: unknown): v is PillarData {
+  return (
+    typeof v === 'object' &&
+    v !== null &&
+    typeof (v as Record<string, unknown>).gan === 'string' &&
+    typeof (v as Record<string, unknown>).ji === 'string'
+  );
+}
+
 export async function parseBody<T>(
   req: NextRequest,
   validate: (v: unknown) => v is T

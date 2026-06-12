@@ -7,6 +7,7 @@ import { loadProfiles, deleteProfile } from '@/lib/profiles';
 import type { Profile } from '@/lib/profiles';
 import { calculateSaju } from '@/lib/saju-calculator';
 import { saveSession } from '@/lib/session';
+import { YEARLY_FORTUNE_YEAR } from '@/lib/constants';
 
 const CARDS = [
   {
@@ -17,8 +18,8 @@ const CARDS = [
   },
   {
     emoji: '✨',
-    title: '2026 신년운세',
-    subtitle: '병오년 총운·직업·재물·건강·연애',
+    title: `${YEARLY_FORTUNE_YEAR} 신년운세`,
+    subtitle: `${YEARLY_FORTUNE_YEAR}년 총운·직업·재물·건강·연애`,
     href: '/fortune/yearly',
   },
   {
@@ -33,7 +34,7 @@ const CARDS = [
     subtitle: '두 사람의 사주 궁합 분석',
     href: '/compatibility',
   },
-] as const;
+];
 
 export default function Home() {
   const router = useRouter();
