@@ -15,7 +15,7 @@ export interface Profile {
   createdAt: number;
 }
 
-function isProfile(v: unknown): v is Profile {
+export function isProfile(v: unknown): v is Profile {
   if (typeof v !== 'object' || v === null) return false;
   const r = v as Record<string, unknown>;
   return (

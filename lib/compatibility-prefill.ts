@@ -1,4 +1,5 @@
 import type { Profile } from './profiles';
+import { isProfile } from './profiles';
 
 const KEY = 'compat-prefill-a';
 
@@ -12,7 +13,9 @@ export function getPrefillA(): Profile | null {
   const raw = sessionStorage.getItem(KEY);
   if (!raw) return null;
   try {
-    return JSON.parse(raw) as Profile;
+    const parsed: unknown = JSON.parse(raw);
+    if (!isProfile(parsed)) return null;
+    return parsed;
   } catch {
     return null;
   }

@@ -33,10 +33,4 @@ describe('compatibility-prefill', () => {
     clearPrefillA();
     expect(getPrefillA()).toBeNull();
   });
-
-  test('getPrefillA returns null after clear', () => {
-    setPrefillA(mockProfile);
-    clearPrefillA();
-    expect(getPrefillA()).toBeNull();
-  });
 });
