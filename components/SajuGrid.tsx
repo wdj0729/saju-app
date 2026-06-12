@@ -37,10 +37,14 @@ export default function SajuGrid({ year, month, day, hour }: SajuGridProps) {
           <span className="text-xs text-muted mb-2">{label}</span>
           {pillar ? (
             <>
-              <span className={`font-serif text-3xl font-bold leading-none mb-1 ${OHAENG_TEXT[pillar.ganElement]}`}>
+              <span
+                className={`font-serif text-3xl font-bold leading-none mb-1 ${OHAENG_TEXT[pillar.ganElement]}`}
+              >
                 {pillar.gan}
               </span>
-              <span className={`font-serif text-3xl font-bold leading-none ${OHAENG_TEXT[pillar.jiElement]}`}>
+              <span
+                className={`font-serif text-3xl font-bold leading-none ${OHAENG_TEXT[pillar.jiElement]}`}
+              >
                 {pillar.ji}
               </span>
             </>

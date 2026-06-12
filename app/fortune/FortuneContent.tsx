@@ -63,7 +63,9 @@ export default function FortuneContent() {
     if (!session) return;
     const name = session.input.name ? `${session.input.name}의 ` : '';
     document.title = `${name}${activeTab} 운세 · ${session.result.ilgan} 일간 — 사주팔자`;
-    return () => { document.title = '사주팔자'; };
+    return () => {
+      document.title = '사주팔자';
+    };
   }, [session, activeTab]);
 
   if (!session) return <FortuneSkeleton />;

@@ -7,10 +7,7 @@ interface BackButtonProps {
 
 export default function BackButton({ href, label }: BackButtonProps) {
   return (
-    <Link
-      href={href}
-      className="text-muted text-sm hover:text-primary transition-colors"
-    >
+    <Link href={href} className="text-muted text-sm hover:text-primary transition-colors">
       ← {label}
     </Link>
   );

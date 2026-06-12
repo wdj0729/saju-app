@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { calculateSaju } from '@/lib/saju-calculator';
 import { saveSession } from '@/lib/session';
@@ -11,8 +11,7 @@ import BackButton from '@/components/BackButton';
 
 export default function SajuInputPage() {
   const router = useRouter();
-  const [profiles, setProfiles] = useState<Profile[]>([]);
-  useEffect(() => { setProfiles(loadProfiles()); }, []);
+  const [profiles] = useState<Profile[]>(() => loadProfiles());
   const [name, setName] = useState('');
   const [isLunar, setIsLunar] = useState(false);
   const [year, setYear] = useState(() => new Date().getFullYear() - 30);
@@ -48,7 +47,6 @@ export default function SajuInputPage() {
       setError('입력한 날짜를 확인해주세요.');
     }
   }
-
 
   return (
     <div className="flex flex-col min-h-screen">

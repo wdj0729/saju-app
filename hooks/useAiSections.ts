@@ -89,8 +89,7 @@ export function useAiSections(): UseAiSectionsReturn {
           rafRef.current = requestAnimationFrame(() => {
             const parsed = parseSections(textRef.current);
             setSections(parsed);
-            const active =
-              [...SECTION_KEYS].reverse().find((k) => parsed[k].length > 0) ?? null;
+            const active = [...SECTION_KEYS].reverse().find((k) => parsed[k].length > 0) ?? null;
             setActiveSection(active);
             rafRef.current = null;
           });

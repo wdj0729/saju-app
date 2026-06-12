@@ -45,8 +45,12 @@ function DaewoonChart({ result, currentAge }: DaewoonChartProps) {
             >
               {/* 간지 */}
               <div className="text-center min-w-[28px]">
-                <div className={`text-xl font-bold leading-none ${OHAENG_TEXT[pillar.ganElement]}`}>{pillar.gan}</div>
-                <div className={`text-xl font-bold leading-none mt-0.5 ${OHAENG_TEXT[pillar.jiElement]}`}>
+                <div className={`text-xl font-bold leading-none ${OHAENG_TEXT[pillar.ganElement]}`}>
+                  {pillar.gan}
+                </div>
+                <div
+                  className={`text-xl font-bold leading-none mt-0.5 ${OHAENG_TEXT[pillar.jiElement]}`}
+                >
                   {pillar.ji}
                 </div>
               </div>

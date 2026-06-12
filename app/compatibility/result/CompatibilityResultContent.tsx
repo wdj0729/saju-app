@@ -71,7 +71,9 @@ export default function CompatibilityResultContent() {
     const a = session.personA.name || '나';
     const b = session.personB.name || '상대';
     document.title = `${a} ♡ ${b} 궁합 결과 — 사주팔자`;
-    return () => { document.title = '사주팔자'; };
+    return () => {
+      document.title = '사주팔자';
+    };
   }, [session]);
 
   if (!session) return <CompatibilityResultSkeleton />;
