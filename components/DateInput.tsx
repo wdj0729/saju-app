@@ -64,12 +64,14 @@ export default function DateInput({
             onYearChange(clampYear(Number(v)));
             monthRef.current?.focus();
             monthRef.current?.select();
-          } else {
-            onYearChange(v ? Number(v) : year);
           }
         }}
         onBlur={() => {
-          const clamped = clampYear(Number(yearStr) || 1900);
+          if (yearStr.length < 4) {
+            setYearStr(String(year));
+            return;
+          }
+          const clamped = clampYear(Number(yearStr));
           setYearStr(String(clamped));
           onYearChange(clamped);
         }}
