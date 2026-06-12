@@ -13,10 +13,6 @@ export default function SajuInputPage() {
   const router = useRouter();
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [name, setName] = useState('');
-
-  useEffect(() => {
-    setProfiles(loadProfiles());
-  }, []);
   const [isLunar, setIsLunar] = useState(false);
   const [year, setYear] = useState(() => new Date().getFullYear() - 30);
   const [month, setMonth] = useState(1);
@@ -24,6 +20,10 @@ export default function SajuInputPage() {
   const [hourValue, setHourValue] = useState<number | null>(null);
   const [gender, setGender] = useState<'M' | 'F'>('M');
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    setProfiles(loadProfiles());
+  }, []);
 
   function loadFromProfile(profile: Profile) {
     setName(profile.name);

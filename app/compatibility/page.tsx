@@ -184,30 +184,27 @@ function PersonForm({
 export default function CompatibilityPage() {
   const router = useRouter();
   const [profiles, setProfiles] = useState<Profile[]>([]);
-
-  const defaultYear = new Date().getFullYear() - 30;
-
-  useEffect(() => {
-    setProfiles(loadProfiles());
-  }, []);
-
   const [nameA, setNameA] = useState('');
   const [genderA, setGenderA] = useState<'M' | 'F'>('M');
   const [isLunarA, setIsLunarA] = useState(false);
+  const [nameB, setNameB] = useState('');
+  const [genderB, setGenderB] = useState<'M' | 'F'>('M');
+  const [isLunarB, setIsLunarB] = useState(false);
+  const [error, setError] = useState('');
+
+  const defaultYear = new Date().getFullYear() - 30;
   const [yearA, setYearA] = useState(defaultYear);
   const [monthA, setMonthA] = useState(1);
   const [dayA, setDayA] = useState(1);
   const [hourValueA, setHourValueA] = useState<number | null>(null);
-
-  const [nameB, setNameB] = useState('');
-  const [genderB, setGenderB] = useState<'M' | 'F'>('M');
-  const [isLunarB, setIsLunarB] = useState(false);
   const [yearB, setYearB] = useState(defaultYear);
   const [monthB, setMonthB] = useState(1);
   const [dayB, setDayB] = useState(1);
   const [hourValueB, setHourValueB] = useState<number | null>(null);
 
-  const [error, setError] = useState('');
+  useEffect(() => {
+    setProfiles(loadProfiles());
+  }, []);
 
   function loadProfileA(profile: Profile) {
     setNameA(profile.name);

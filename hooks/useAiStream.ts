@@ -43,7 +43,7 @@ export function useAiStream(): UseAiStreamReturn {
         signal: controller.signal,
         body: JSON.stringify(body),
       });
-      if (!res.ok) throw new Error('분석 요청에 실패했습니다.');
+      if (!res.ok) throw new Error('분석 요청에 실패했어요.');
       const reader = res.body!.getReader();
       const decoder = new TextDecoder();
       while (true) {
@@ -67,7 +67,7 @@ export function useAiStream(): UseAiStreamReturn {
       if (err instanceof Error && err.name === 'AbortError') return;
       textRef.current = '';
       setAiText('');
-      setAiError(err instanceof Error ? err.message : '오류가 발생했습니다.');
+      setAiError(err instanceof Error ? err.message : '오류가 발생했어요.');
     } finally {
       if (rafRef.current !== null) {
         cancelAnimationFrame(rafRef.current);
