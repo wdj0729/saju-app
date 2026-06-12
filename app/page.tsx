@@ -53,11 +53,13 @@ function ProfileEditForm({ profile, onSave, onCancel }: ProfileEditFormProps) {
   const [month, setMonth] = useState(profile.month);
   const [day, setDay] = useState(profile.day);
   const [hourValue, setHourValue] = useState<number | null>(profile.hour);
+  const [saveError, setSaveError] = useState('');
 
   const maxDay = isLunar ? 30 : new Date(year, month, 0).getDate();
   const clampedDay = Math.min(day, maxDay);
 
   function handleSave() {
+    setSaveError('');
     try {
       const result = calculateSaju({ year, month, day: clampedDay, hour: hourValue, isLunar });
       onSave(profile.id, {
@@ -71,7 +73,7 @@ function ProfileEditForm({ profile, onSave, onCancel }: ProfileEditFormProps) {
         ilgan: result.ilgan,
       });
     } catch {
-      // 잘못된 날짜이면 저장하지 않음
+      setSaveError('입력한 날짜를 확인해주세요.');
     }
   }
 
@@ -136,6 +138,7 @@ function ProfileEditForm({ profile, onSave, onCancel }: ProfileEditFormProps) {
         <label className={LABEL_CLASS}>태어난 시</label>
         <HourInput value={hourValue} onChange={setHourValue} />
       </div>
+      {saveError && <p className="text-xs text-hwa text-center">{saveError}</p>}
       <div className="flex gap-2 pt-1">
         <button
           type="button"
@@ -212,6 +215,7 @@ export default function Home() {
     updateProfile(id, patch);
     setProfiles(loadProfiles());
     setExpandedProfileId(null);
+    setIsEditing(false);
   }
 
   return (
