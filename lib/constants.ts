@@ -1,5 +1,8 @@
 import type { Ohaeng } from '@/lib/saju-data';
 
+export const YEARLY_FORTUNE_YEAR = 2026;
+export const YEARLY_FORTUNE_GANJEE = '병오년(丙午年)';
+
 export const YEARS = Array.from({ length: 201 }, (_, i) => 1900 + i);
 export const MONTHS = Array.from({ length: 12 }, (_, i) => i + 1);
 

@@ -188,7 +188,6 @@ export default function CompatibilityPage() {
   const defaultYear = new Date().getFullYear() - 30;
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setProfiles(loadProfiles());
   }, []);
 

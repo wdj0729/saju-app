@@ -1,10 +1,5 @@
 import { NextRequest } from 'next/server';
-import { parseBody, streamAnthropicResponse, formatOhaeng } from '@/lib/stream-anthropic';
-
-interface PillarData {
-  gan: string;
-  ji: string;
-}
+import { parseBody, streamAnthropicResponse, formatOhaeng, isPillarData, type PillarData } from '@/lib/stream-anthropic';
 
 interface AiAnalysisRequest {
   ilgan: string;
@@ -17,27 +12,19 @@ interface AiAnalysisRequest {
   };
 }
 
-function isPillarData(v: unknown): v is PillarData {
-  return (
-    typeof v === 'object' &&
-    v !== null &&
-    typeof (v as Record<string, unknown>).gan === 'string' &&
-    typeof (v as Record<string, unknown>).ji === 'string'
-  );
-}
-
 function isAiAnalysisRequest(v: unknown): v is AiAnalysisRequest {
   if (typeof v !== 'object' || v === null) return false;
   const r = v as Record<string, unknown>;
+  const pillars = r.pillars as Record<string, unknown> | undefined;
   return (
     typeof r.ilgan === 'string' &&
     typeof r.ohaeng === 'object' &&
     r.ohaeng !== null &&
-    typeof r.pillars === 'object' &&
-    r.pillars !== null &&
-    isPillarData((r.pillars as Record<string, unknown>).year) &&
-    isPillarData((r.pillars as Record<string, unknown>).month) &&
-    isPillarData((r.pillars as Record<string, unknown>).day)
+    typeof pillars === 'object' &&
+    pillars !== null &&
+    isPillarData(pillars.year) &&
+    isPillarData(pillars.month) &&
+    isPillarData(pillars.day)
   );
 }
 
@@ -76,7 +63,8 @@ export async function POST(req: NextRequest): Promise<Response> {
         },
       ],
     });
-  } catch {
+  } catch (error) {
+    console.error('[ai-analysis] AI request failed:', error);
     return new Response('AI 분석 요청에 실패했어요.', { status: 500 });
   }
 }
