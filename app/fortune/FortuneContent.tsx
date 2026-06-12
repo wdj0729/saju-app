@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadSession } from '@/lib/session';
 import { FORTUNE_TEXT } from '@/lib/fortune-text';
@@ -14,9 +14,6 @@ import { SkeletonBox } from '@/components/Skeleton';
 type Period = '오늘' | '이달' | '올해';
 
 const PERIODS: Period[] = ['오늘', '이달', '올해'];
-
-const _today = new Date();
-const TODAY_DATE_STR = `${_today.getFullYear()}년 ${_today.getMonth() + 1}월 ${_today.getDate()}일`;
 
 function FortuneSkeleton() {
   return (
@@ -58,6 +55,11 @@ export default function FortuneContent() {
   const [activeTab, setActiveTab] = useState<Period>('오늘');
   const [isExpanded, setIsExpanded] = useState(false);
   const { aiText, isStreaming, aiError, request } = useAiStream();
+
+  const todayDateStr = useMemo(() => {
+    const d = new Date();
+    return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`;
+  }, []);
 
   useEffect(() => {
     if (!session) return;
@@ -167,7 +169,7 @@ export default function FortuneContent() {
             ilgan,
             period: activeTab,
             summary: currentPeriod.summary,
-            date: TODAY_DATE_STR,
+            date: todayDateStr,
           }}
           filename="fortune.png"
           shareTitle={`${activeTab} 운세`}
