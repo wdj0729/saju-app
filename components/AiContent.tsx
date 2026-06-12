@@ -46,8 +46,11 @@ export default function AiContent({
           {isStreaming && <span className="animate-pulse opacity-70">▌</span>}
         </div>
         {!isStreaming && (
-          <button onClick={onRequest} className="mt-3 text-xs text-muted underline">
-            다시 요청
+          <button
+            onClick={onRequest}
+            className="mt-3 w-full py-2 rounded-xl bg-card-hover text-sm text-muted hover:text-primary transition-colors"
+          >
+            🔄 다시 분석하기
           </button>
         )}
       </>
