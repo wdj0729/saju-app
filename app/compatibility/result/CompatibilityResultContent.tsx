@@ -188,6 +188,8 @@ export default function CompatibilityResultContent() {
             type: 'compatibility',
             nameA,
             nameB,
+            ilganA: personA.result.ilgan,
+            ilganB: personB.result.ilgan,
             score,
             grade,
             gradeLabel,
