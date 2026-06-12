@@ -259,7 +259,10 @@ export default function Home() {
                     <ProfileEditForm
                       profile={profile}
                       onSave={handleSaveEdit}
-                      onCancel={() => setExpandedProfileId(null)}
+                      onCancel={() => {
+                        setExpandedProfileId(null);
+                        setIsEditing(false);
+                      }}
                     />
                   ) : (
                     <div className="flex border-t border-border">
