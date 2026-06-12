@@ -6,9 +6,10 @@ import { calculateSaju } from '@/lib/saju-calculator';
 import { saveSession } from '@/lib/session';
 import { loadProfiles } from '@/lib/profiles';
 import type { Profile } from '@/lib/profiles';
-import { SIJIN, INPUT_CLASS, LABEL_CLASS } from '@/lib/constants';
+import { INPUT_CLASS, LABEL_CLASS } from '@/lib/constants';
 import BackButton from '@/components/BackButton';
 import DateInput from '@/components/DateInput';
+import HourInput from '@/components/HourInput';
 
 export default function SajuInputPage() {
   const router = useRouter();
@@ -163,18 +164,7 @@ export default function SajuInputPage() {
         {/* 태어난 시 */}
         <div>
           <label className={LABEL_CLASS}>태어난 시 (선택)</label>
-          <select
-            value={hourValue ?? ''}
-            onChange={(e) => setHourValue(e.target.value === '' ? null : Number(e.target.value))}
-            className={INPUT_CLASS}
-          >
-            <option value="">모름</option>
-            {SIJIN.map((s) => (
-              <option key={s.value} value={s.value}>
-                {s.label}
-              </option>
-            ))}
-          </select>
+          <HourInput value={hourValue} onChange={setHourValue} />
         </div>
 
         {error && <p className="text-sm text-hwa text-center">{error}</p>}
