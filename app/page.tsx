@@ -16,6 +16,12 @@ const CARDS = [
     href: '/saju',
   },
   {
+    emoji: '✨',
+    title: '2026 신년운세',
+    subtitle: '병오년 총운·직업·재물·건강·연애',
+    href: '/fortune/yearly',
+  },
+  {
     emoji: '💫',
     title: '오늘 운세',
     subtitle: '일간별 맞춤 운세',
