@@ -8,6 +8,7 @@ import type { Profile } from '@/lib/profiles';
 import { calculateSaju } from '@/lib/saju-calculator';
 import { saveSession } from '@/lib/session';
 import { YEARLY_FORTUNE_YEAR } from '@/lib/constants';
+import { setPrefillA } from '@/lib/compatibility-prefill';
 
 const CARDS = [
   {
@@ -40,12 +41,18 @@ export default function Home() {
   const router = useRouter();
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [isEditing, setIsEditing] = useState(false);
+  const [expandedProfileId, setExpandedProfileId] = useState<string | null>(null);
 
   useEffect(() => {
     setProfiles(loadProfiles());
   }, []);
 
-  function handleProfileSelect(profile: Profile) {
+  function handleProfileNav(profile: Profile, dest: 'saju' | 'fortune' | 'yearly' | 'compat') {
+    if (dest === 'compat') {
+      setPrefillA(profile);
+      router.push('/compatibility');
+      return;
+    }
     try {
       const result = calculateSaju({
         year: profile.year,
@@ -66,7 +73,9 @@ export default function Home() {
         },
         result,
       });
-      router.push('/saju/result');
+      router.push(
+        dest === 'saju' ? '/saju/result' : dest === 'fortune' ? '/fortune' : '/fortune/yearly'
+      );
     } catch {
       router.push('/saju');
     }
@@ -90,39 +99,71 @@ export default function Home() {
           <div className="flex justify-between items-center mb-2">
             <span className="text-xs text-muted">저장된 프로필</span>
             <button
-              onClick={() => setIsEditing(!isEditing)}
+              onClick={() => {
+                setIsEditing(!isEditing);
+                setExpandedProfileId(null);
+              }}
               className={`text-xs transition-colors ${isEditing ? 'text-hwa' : 'text-primary'}`}
             >
               {isEditing ? '완료' : '편집'}
             </button>
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-col gap-2">
             {profiles.map((profile) => (
-              <div key={profile.id} className="relative inline-flex items-center">
-                <button
-                  onClick={() => handleProfileSelect(profile)}
-                  disabled={isEditing}
-                  className="bg-card-hover rounded-full px-3 py-1.5 text-xs text-primary disabled:cursor-default"
-                >
-                  🔮 {profile.name || '이름 없음'} · {profile.ilgan}
-                </button>
-                {isEditing && (
+              <div key={profile.id} className="bg-card-hover rounded-2xl overflow-hidden">
+                <div className="flex items-center px-3 py-2 gap-2">
                   <button
-                    onClick={() => handleDelete(profile.id)}
-                    className="absolute -top-1 -right-1 w-4 h-4 bg-hwa rounded-full text-white text-xs flex items-center justify-center leading-none"
-                    aria-label={`${profile.name || '이름 없음'} 삭제`}
+                    onClick={() => {
+                      if (isEditing) return;
+                      setExpandedProfileId(expandedProfileId === profile.id ? null : profile.id);
+                    }}
+                    className="flex-1 text-left text-xs text-primary"
                   >
-                    ×
+                    🔮 {profile.name || '이름 없음'} · {profile.ilgan}
                   </button>
+                  {isEditing ? (
+                    <button
+                      onClick={() => handleDelete(profile.id)}
+                      className="w-4 h-4 bg-hwa rounded-full text-white text-xs flex items-center justify-center leading-none shrink-0"
+                      aria-label={`${profile.name || '이름 없음'} 삭제`}
+                    >
+                      ×
+                    </button>
+                  ) : (
+                    <span className="text-muted text-xs shrink-0">
+                      {expandedProfileId === profile.id ? '∧' : '∨'}
+                    </span>
+                  )}
+                </div>
+                {expandedProfileId === profile.id && !isEditing && (
+                  <div className="flex border-t border-border">
+                    {(
+                      [
+                        { icon: '🔮', label: '사주', dest: 'saju' },
+                        { icon: '💫', label: '운세', dest: 'fortune' },
+                        { icon: '✨', label: '신년', dest: 'yearly' },
+                        { icon: '💑', label: '궁합', dest: 'compat' },
+                      ] as const
+                    ).map(({ icon, label, dest }) => (
+                      <button
+                        key={label}
+                        onClick={() => handleProfileNav(profile, dest)}
+                        className="flex-1 py-2 flex flex-col items-center gap-0.5 hover:bg-card transition-colors"
+                      >
+                        <span className="text-sm">{icon}</span>
+                        <span className="text-xs text-muted">{label}</span>
+                      </button>
+                    ))}
+                  </div>
                 )}
               </div>
             ))}
             {!isEditing && (
               <Link
                 href="/saju"
-                className="bg-primary-gradient rounded-full px-3 py-1.5 text-xs text-white"
+                className="bg-primary-gradient rounded-2xl px-3 py-2 text-xs text-white text-center"
               >
-                + 추가
+                + 새 프로필 추가
               </Link>
             )}
           </div>

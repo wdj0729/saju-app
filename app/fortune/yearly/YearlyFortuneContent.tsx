@@ -7,6 +7,7 @@ import { useYearlySections } from '@/hooks/useYearlySections';
 import YearlySections from '@/components/YearlySections';
 import BackButton from '@/components/BackButton';
 import { SkeletonBox } from '@/components/Skeleton';
+import SessionExpiredPage from '@/components/SessionExpiredPage';
 import { YEARLY_FORTUNE_YEAR, YEARLY_FORTUNE_GANJEE } from '@/lib/constants';
 
 function YearlyFortuneSkeleton() {
@@ -31,11 +32,11 @@ function YearlyFortuneSkeleton() {
 }
 
 export default function YearlyFortuneContent() {
-  const session = useSessionOrRedirect(loadSession, '/saju');
+  const session = useSessionOrRedirect(loadSession, null);
   const { sections, activeSection, isStreaming, aiError, request } = useYearlySections();
 
   useEffect(() => {
-    if (!session) return;
+    if (!session || session === 'not-found') return;
     const name = session.input.name ? `${session.input.name}의 ` : '';
     document.title = `${name}${YEARLY_FORTUNE_YEAR} 신년운세 · ${session.result.ilgan} 일간 — 사주팔자`;
     return () => {
@@ -43,6 +44,7 @@ export default function YearlyFortuneContent() {
     };
   }, [session]);
 
+  if (session === 'not-found') return <SessionExpiredPage redirectPath="/saju" />;
   if (!session) return <YearlyFortuneSkeleton />;
 
   const { input, result } = session;
@@ -67,13 +69,17 @@ export default function YearlyFortuneContent() {
       <header className="flex items-center gap-3 px-4 py-4 border-b border-border">
         <BackButton href="/saju/result" label="내 사주" />
         <h1 className="text-sm font-semibold text-primary">
-          {input.name ? `${input.name} · ${YEARLY_FORTUNE_YEAR} 신년운세` : `${YEARLY_FORTUNE_YEAR} 신년운세`}
+          {input.name
+            ? `${input.name} · ${YEARLY_FORTUNE_YEAR} 신년운세`
+            : `${YEARLY_FORTUNE_YEAR} 신년운세`}
         </h1>
       </header>
 
       <div className="flex flex-col gap-4 px-4 py-6 flex-1">
         <div className="bg-card rounded-2xl p-4">
-          <p className="text-xs text-muted mb-1">✨ {YEARLY_FORTUNE_YEAR}년 {YEARLY_FORTUNE_GANJEE}</p>
+          <p className="text-xs text-muted mb-1">
+            ✨ {YEARLY_FORTUNE_YEAR}년 {YEARLY_FORTUNE_GANJEE}
+          </p>
           <p className="text-xs text-primary">{result.ilgan} 일간 · AI 신년운세 분석</p>
         </div>
 

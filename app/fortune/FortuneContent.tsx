@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadSession } from '@/lib/session';
 import { FORTUNE_TEXT } from '@/lib/fortune-text';
@@ -10,13 +10,11 @@ import BackButton from '@/components/BackButton';
 import AiContent from '@/components/AiContent';
 import { useAiStream } from '@/hooks/useAiStream';
 import { SkeletonBox } from '@/components/Skeleton';
+import SessionExpiredPage from '@/components/SessionExpiredPage';
 
 type Period = '오늘' | '이달' | '올해';
 
 const PERIODS: Period[] = ['오늘', '이달', '올해'];
-
-const _today = new Date();
-const TODAY_DATE_STR = `${_today.getFullYear()}년 ${_today.getMonth() + 1}월 ${_today.getDate()}일`;
 
 function FortuneSkeleton() {
   return (
@@ -54,13 +52,18 @@ function FortuneSkeleton() {
 
 export default function FortuneContent() {
   const router = useRouter();
-  const session = useSessionOrRedirect(loadSession, '/saju');
+  const session = useSessionOrRedirect(loadSession, null);
   const [activeTab, setActiveTab] = useState<Period>('오늘');
   const [isExpanded, setIsExpanded] = useState(false);
   const { aiText, isStreaming, aiError, request } = useAiStream();
 
+  const todayDateStr = useMemo(() => {
+    const d = new Date();
+    return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`;
+  }, []);
+
   useEffect(() => {
-    if (!session) return;
+    if (!session || session === 'not-found') return;
     const name = session.input.name ? `${session.input.name}의 ` : '';
     document.title = `${name}${activeTab} 운세 · ${session.result.ilgan} 일간 — 사주팔자`;
     return () => {
@@ -68,6 +71,7 @@ export default function FortuneContent() {
     };
   }, [session, activeTab]);
 
+  if (session === 'not-found') return <SessionExpiredPage redirectPath="/saju" />;
   if (!session) return <FortuneSkeleton />;
 
   const { ilgan, ohaeng, year, month, day, hour } = session.result;
@@ -167,7 +171,7 @@ export default function FortuneContent() {
             ilgan,
             period: activeTab,
             summary: currentPeriod.summary,
-            date: TODAY_DATE_STR,
+            date: todayDateStr,
           }}
           filename="fortune.png"
           shareTitle={`${activeTab} 운세`}

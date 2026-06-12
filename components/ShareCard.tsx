@@ -16,6 +16,8 @@ type CompatibilityCardProps = {
   type: 'compatibility';
   nameA: string;
   nameB: string;
+  ilganA: string;
+  ilganB: string;
   score: number;
   grade: string;
   gradeLabel: string;
@@ -133,6 +135,8 @@ function SajuInner({ name, ilgan, pillars, ohaeng }: SajuCardProps) {
 function CompatibilityInner({
   nameA,
   nameB,
+  ilganA,
+  ilganB,
   score,
   grade,
   gradeLabel,
@@ -145,41 +149,112 @@ function CompatibilityInner({
     하: '★★☆☆☆',
   };
   const stars = GRADE_STARS[grade] ?? '★★☆☆☆';
+  const avatarA = (nameA || '나').charAt(0);
+  const avatarB = (nameB || '상대').charAt(0);
+
   return (
     <>
-      <div style={{ fontSize: 28, marginBottom: 8 }}>💑</div>
-      <div style={{ fontSize: 13, color: '#9090a8', marginBottom: 8 }}>
-        {nameA} ♡ {nameB}
-      </div>
       <div
         style={{
-          fontSize: 56,
+          display: 'flex',
+          width: '100%',
+          gap: 8,
+          alignItems: 'center',
+          marginBottom: 12,
+        }}
+      >
+        <div
+          style={{
+            flex: 1,
+            background: '#32324a',
+            borderRadius: 12,
+            padding: '10px 8px',
+            textAlign: 'center',
+          }}
+        >
+          <div
+            style={{
+              width: 40,
+              height: 40,
+              background: 'linear-gradient(135deg, #667eea, #764ba2)',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 18,
+              fontWeight: 700,
+              color: 'white',
+              margin: '0 auto 6px',
+            }}
+          >
+            {avatarA}
+          </div>
+          <div style={{ fontSize: 13, fontWeight: 600, color: '#e8e8f0' }}>{nameA || '나'}</div>
+          <div style={{ fontSize: 10, color: '#9090a8', marginTop: 2 }}>{ilganA} 일간</div>
+        </div>
+
+        <div style={{ fontSize: 22 }}>💞</div>
+
+        <div
+          style={{
+            flex: 1,
+            background: '#32324a',
+            borderRadius: 12,
+            padding: '10px 8px',
+            textAlign: 'center',
+          }}
+        >
+          <div
+            style={{
+              width: 40,
+              height: 40,
+              background: 'linear-gradient(135deg, #f093fb, #f5576c)',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 18,
+              fontWeight: 700,
+              color: 'white',
+              margin: '0 auto 6px',
+            }}
+          >
+            {avatarB}
+          </div>
+          <div style={{ fontSize: 13, fontWeight: 600, color: '#e8e8f0' }}>{nameB || '상대'}</div>
+          <div style={{ fontSize: 10, color: '#9090a8', marginTop: 2 }}>{ilganB} 일간</div>
+        </div>
+      </div>
+
+      <div
+        style={{
+          fontSize: 52,
           fontWeight: 800,
           background: 'linear-gradient(to right, #667eea, #764ba2)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           lineHeight: 1,
-          marginBottom: 8,
+          marginBottom: 6,
         }}
       >
         {score}
       </div>
       <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 4 }}>{stars}</div>
-      <div style={{ fontSize: 13, fontWeight: 600, color: '#c8c8e0', marginBottom: 16 }}>
+      <div style={{ fontSize: 13, fontWeight: 600, color: '#c8c8e0', marginBottom: 12 }}>
         {grade} · {gradeLabel}
       </div>
       <div
         style={{
           background: '#32324a',
           borderRadius: 10,
-          padding: '12px 16px',
+          padding: '10px 14px',
           fontSize: 11,
           lineHeight: 1.7,
           color: '#c8c8e0',
           textAlign: 'center',
           width: '100%',
           boxSizing: 'border-box',
-          marginBottom: 16,
+          marginBottom: 12,
         }}
       >
         {summary.length > 80 ? summary.slice(0, 80) + '…' : summary}

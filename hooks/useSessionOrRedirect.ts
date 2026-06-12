@@ -5,9 +5,9 @@ import { useRouter } from 'next/navigation';
 
 export function useSessionOrRedirect<T>(
   loader: () => T | null,
-  redirectPath: string,
+  redirectPath: string | null,
   onLoaded?: (session: T) => void
-): T | null {
+): T | null | 'not-found' {
   const router = useRouter();
   const onLoadedRef = useRef(onLoaded);
 
@@ -15,12 +15,16 @@ export function useSessionOrRedirect<T>(
     onLoadedRef.current = onLoaded;
   });
 
-  const [session, setSession] = useState<T | null>(null);
+  const [session, setSession] = useState<T | null | 'not-found'>(null);
 
   useEffect(() => {
     const s = loader();
     if (!s) {
-      router.replace(redirectPath);
+      if (redirectPath === null) {
+        setSession('not-found');
+      } else {
+        router.replace(redirectPath);
+      }
       return;
     }
     setSession(s);

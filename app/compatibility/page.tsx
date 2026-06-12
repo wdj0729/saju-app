@@ -6,6 +6,7 @@ import { calculateSaju } from '@/lib/saju-calculator';
 import { calcCompatibility, saveCompatSession } from '@/lib/compatibility';
 import { loadProfiles } from '@/lib/profiles';
 import type { Profile } from '@/lib/profiles';
+import { getPrefillA, clearPrefillA } from '@/lib/compatibility-prefill';
 import { SIJIN, YEARS, MONTHS, INPUT_CLASS, LABEL_CLASS } from '@/lib/constants';
 import BackButton from '@/components/BackButton';
 
@@ -204,6 +205,17 @@ export default function CompatibilityPage() {
 
   useEffect(() => {
     setProfiles(loadProfiles());
+    const prefill = getPrefillA();
+    if (prefill) {
+      clearPrefillA();
+      setNameA(prefill.name);
+      setYearA(prefill.year);
+      setMonthA(prefill.month);
+      setDayA(prefill.day);
+      setHourValueA(prefill.hour);
+      setIsLunarA(prefill.isLunar);
+      setGenderA(prefill.gender ?? 'M');
+    }
   }, []);
 
   function loadProfileA(profile: Profile) {
