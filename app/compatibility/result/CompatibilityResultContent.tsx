@@ -10,6 +10,7 @@ import AiContent from '@/components/AiContent';
 import { useAiStream } from '@/hooks/useAiStream';
 import { OHAENG_ORDER, OHAENG_LABEL, OHAENG_BAR } from '@/lib/constants';
 import { SkeletonBox } from '@/components/Skeleton';
+import SessionExpiredPage from '@/components/SessionExpiredPage';
 
 function CompatibilityResultSkeleton() {
   return (
@@ -54,20 +55,26 @@ function CompatibilityResultSkeleton() {
 
 export default function CompatibilityResultContent() {
   const router = useRouter();
-  const session = useSessionOrRedirect(loadCompatSession, '/compatibility');
+  const session = useSessionOrRedirect(loadCompatSession, null);
   const { aiText, isStreaming, aiError, request } = useAiStream();
 
   const maxA = useMemo(
-    () => (session ? Math.max(...Object.values(session.compatibility.ohaengA), 1) : 1),
+    () =>
+      session && session !== 'not-found'
+        ? Math.max(...Object.values(session.compatibility.ohaengA), 1)
+        : 1,
     [session]
   );
   const maxB = useMemo(
-    () => (session ? Math.max(...Object.values(session.compatibility.ohaengB), 1) : 1),
+    () =>
+      session && session !== 'not-found'
+        ? Math.max(...Object.values(session.compatibility.ohaengB), 1)
+        : 1,
     [session]
   );
 
   useEffect(() => {
-    if (!session) return;
+    if (!session || session === 'not-found') return;
     const a = session.personA.name || '나';
     const b = session.personB.name || '상대';
     document.title = `${a} ♡ ${b} 궁합 결과 — 사주팔자`;
@@ -76,6 +83,7 @@ export default function CompatibilityResultContent() {
     };
   }, [session]);
 
+  if (session === 'not-found') return <SessionExpiredPage redirectPath="/compatibility" redirectLabel="다시 입력하기" />;
   if (!session) return <CompatibilityResultSkeleton />;
 
   const { personA, personB, compatibility } = session;

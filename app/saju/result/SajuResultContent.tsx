@@ -19,6 +19,7 @@ import AiSections from '@/components/AiSections';
 import ShareButton from '@/components/ShareButton';
 import BackButton from '@/components/BackButton';
 import { SkeletonBox } from '@/components/Skeleton';
+import SessionExpiredPage from '@/components/SessionExpiredPage';
 
 const SEUN_RELATION: Record<string, { label: string; desc: string }> = {
   same: {
@@ -58,11 +59,6 @@ const OHAENG_CONTROLS: Record<Ohaeng, Ohaeng> = {
   수: '화',
 };
 
-const _today = new Date();
-const TODAY_YEAR = _today.getFullYear();
-const TODAY_MONTH = _today.getMonth() + 1;
-const TODAY_DATE = _today.getDate();
-
 function getSeunRelation(ilganEl: Ohaeng, ganEl: Ohaeng) {
   if (ganEl === ilganEl) return SEUN_RELATION.same;
   if (OHAENG_GENERATES[ganEl] === ilganEl) return SEUN_RELATION.gen_me;
@@ -71,13 +67,23 @@ function getSeunRelation(ilganEl: Ohaeng, ganEl: Ohaeng) {
   return SEUN_RELATION.i_ctrl;
 }
 
-function SeunSection({ ilganElement }: { ilganElement: Ohaeng }) {
-  const seun = getYearPillar(TODAY_YEAR, TODAY_MONTH, TODAY_DATE);
+function SeunSection({
+  ilganElement,
+  todayYear,
+  todayMonth,
+  todayDate,
+}: {
+  ilganElement: Ohaeng;
+  todayYear: number;
+  todayMonth: number;
+  todayDate: number;
+}) {
+  const seun = getYearPillar(todayYear, todayMonth, todayDate);
   const relation = getSeunRelation(ilganElement, GAN_OHAENG[seun.gan]);
 
   return (
     <div className="bg-card rounded-2xl p-4">
-      <p className="text-xs text-muted mb-3">세운 (歲運) · {TODAY_YEAR}년</p>
+      <p className="text-xs text-muted mb-3">세운 (歲運) · {todayYear}년</p>
       <div className="flex items-center gap-4">
         <div className="text-center">
           <div
@@ -149,12 +155,16 @@ export default function SajuResultContent() {
   const router = useRouter();
   const [isSaved, setIsSaved] = useState(false);
   const { sections, activeSection, isStreaming, aiError, request } = useAiSections();
-  const session = useSessionOrRedirect(loadSession, '/saju', (s) =>
+  const session = useSessionOrRedirect(loadSession, null, (s) =>
     setIsSaved(isProfileSaved(s.input))
   );
 
+  const todayYear = useMemo(() => new Date().getFullYear(), []);
+  const todayMonth = useMemo(() => new Date().getMonth() + 1, []);
+  const todayDate = useMemo(() => new Date().getDate(), []);
+
   const daewoon = useMemo(() => {
-    if (!session?.input.gender) return null;
+    if (!session || session === 'not-found' || !session.input.gender) return null;
     return calculateDaewoon(
       {
         year: session.input.year,
@@ -170,7 +180,7 @@ export default function SajuResultContent() {
   }, [session]);
 
   useEffect(() => {
-    if (!session) return;
+    if (!session || session === 'not-found') return;
     const name = session.input.name ? `${session.input.name}의 사주` : '사주 결과';
     document.title = `${name} · ${session.result.ilgan} 일간 — 사주팔자`;
     return () => {
@@ -178,6 +188,7 @@ export default function SajuResultContent() {
     };
   }, [session]);
 
+  if (session === 'not-found') return <SessionExpiredPage redirectPath="/saju" />;
   if (!session) return <SajuResultSkeleton />;
 
   const { input, result } = session;
@@ -246,7 +257,12 @@ export default function SajuResultContent() {
           <OhaengChart ohaeng={result.ohaeng} />
         </div>
 
-        <SeunSection ilganElement={GAN_OHAENG[result.ilgan]} />
+        <SeunSection
+          ilganElement={GAN_OHAENG[result.ilgan]}
+          todayYear={todayYear}
+          todayMonth={todayMonth}
+          todayDate={todayDate}
+        />
 
         <div className="bg-card rounded-2xl p-4">
           <p className="text-xs text-muted mb-3">🤖 AI 심층 분석</p>
