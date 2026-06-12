@@ -6,8 +6,9 @@ import { calculateSaju } from '@/lib/saju-calculator';
 import { saveSession } from '@/lib/session';
 import { loadProfiles } from '@/lib/profiles';
 import type { Profile } from '@/lib/profiles';
-import { SIJIN, YEARS, MONTHS, INPUT_CLASS, LABEL_CLASS } from '@/lib/constants';
+import { SIJIN, INPUT_CLASS, LABEL_CLASS } from '@/lib/constants';
 import BackButton from '@/components/BackButton';
+import DateInput from '@/components/DateInput';
 
 export default function SajuInputPage() {
   const router = useRouter();
@@ -145,52 +146,18 @@ export default function SajuInputPage() {
           </div>
         </div>
 
-        {/* 생년 */}
+        {/* 생년월일 */}
         <div>
-          <label className={LABEL_CLASS}>생년</label>
-          <select
-            value={year}
-            onChange={(e) => setYear(Number(e.target.value))}
-            className={INPUT_CLASS}
-          >
-            {YEARS.map((y) => (
-              <option key={y} value={y}>
-                {y}년
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* 생월 */}
-        <div>
-          <label className={LABEL_CLASS}>생월</label>
-          <select
-            value={month}
-            onChange={(e) => setMonth(Number(e.target.value))}
-            className={INPUT_CLASS}
-          >
-            {MONTHS.map((m) => (
-              <option key={m} value={m}>
-                {m}월
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* 생일 */}
-        <div>
-          <label className={LABEL_CLASS}>생일</label>
-          <select
-            value={clampedDay}
-            onChange={(e) => setDay(Number(e.target.value))}
-            className={INPUT_CLASS}
-          >
-            {Array.from({ length: maxDay }, (_, i) => i + 1).map((d) => (
-              <option key={d} value={d}>
-                {d}일
-              </option>
-            ))}
-          </select>
+          <label className={LABEL_CLASS}>생년월일</label>
+          <DateInput
+            year={year}
+            month={month}
+            day={clampedDay}
+            maxDay={maxDay}
+            onYearChange={setYear}
+            onMonthChange={setMonth}
+            onDayChange={setDay}
+          />
         </div>
 
         {/* 태어난 시 */}
