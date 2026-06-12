@@ -10,6 +10,7 @@ export const YEARLY_SECTION_KEYS: YearlySectionKey[] = [
   '건강운',
   '연애운',
 ];
+const REVERSED_YEARLY_SECTION_KEYS = [...YEARLY_SECTION_KEYS].reverse();
 
 export function emptyYearlySections(): Record<YearlySectionKey, string> {
   return { 총운: '', 직업운: '', 재물운: '', 건강운: '', 연애운: '' };
@@ -96,8 +97,7 @@ export function useYearlySections(): UseYearlySectionsReturn {
           rafRef.current = requestAnimationFrame(() => {
             const parsed = parseYearlySections(textRef.current);
             setSections(parsed);
-            const active =
-              [...YEARLY_SECTION_KEYS].reverse().find((k) => parsed[k].length > 0) ?? null;
+            const active = REVERSED_YEARLY_SECTION_KEYS.find((k) => parsed[k].length > 0) ?? null;
             setActiveSection(active);
             rafRef.current = null;
           });

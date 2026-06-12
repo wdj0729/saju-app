@@ -36,10 +36,10 @@ export function streamAnthropicResponse(params: MessageStreamParams): Response {
             controller.enqueue(encoder.encode(event.delta.text));
           }
         }
+        controller.close();
       } catch (err) {
         console.error('[stream-anthropic] error:', err);
-      } finally {
-        controller.close();
+        controller.error(err);
       }
     },
   });
