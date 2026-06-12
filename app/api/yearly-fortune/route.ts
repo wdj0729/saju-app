@@ -1,5 +1,11 @@
 import { NextRequest } from 'next/server';
-import { parseBody, streamAnthropicResponse, formatOhaeng, isPillarData, type PillarData } from '@/lib/stream-anthropic';
+import {
+  parseBody,
+  streamAnthropicResponse,
+  formatOhaeng,
+  isPillarData,
+  type PillarData,
+} from '@/lib/stream-anthropic';
 import { YEARLY_FORTUNE_YEAR, YEARLY_FORTUNE_GANJEE } from '@/lib/constants';
 
 interface YearlyFortuneRequest {

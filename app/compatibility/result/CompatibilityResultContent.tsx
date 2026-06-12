@@ -83,7 +83,8 @@ export default function CompatibilityResultContent() {
     };
   }, [session]);
 
-  if (session === 'not-found') return <SessionExpiredPage redirectPath="/compatibility" redirectLabel="다시 입력하기" />;
+  if (session === 'not-found')
+    return <SessionExpiredPage redirectPath="/compatibility" redirectLabel="다시 입력하기" />;
   if (!session) return <CompatibilityResultSkeleton />;
 
   const { personA, personB, compatibility } = session;

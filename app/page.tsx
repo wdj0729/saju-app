@@ -115,9 +115,7 @@ export default function Home() {
                   <button
                     onClick={() => {
                       if (isEditing) return;
-                      setExpandedProfileId(
-                        expandedProfileId === profile.id ? null : profile.id
-                      );
+                      setExpandedProfileId(expandedProfileId === profile.id ? null : profile.id);
                     }}
                     className="flex-1 text-left text-xs text-primary"
                   >

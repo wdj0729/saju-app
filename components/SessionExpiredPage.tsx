@@ -13,7 +13,9 @@ export default function SessionExpiredPage({
 }: SessionExpiredPageProps) {
   return (
     <main className="flex flex-col items-center justify-center min-h-screen px-6 text-center gap-4">
-      <span className="text-4xl" aria-hidden="true">🔮</span>
+      <span className="text-4xl" aria-hidden="true">
+        🔮
+      </span>
       <h1 className="text-base font-semibold text-primary">세션이 만료됐어요</h1>
       <p className="text-sm text-muted leading-relaxed">
         생년월일을 다시 입력하면

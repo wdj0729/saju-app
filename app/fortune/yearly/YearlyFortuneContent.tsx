@@ -69,13 +69,17 @@ export default function YearlyFortuneContent() {
       <header className="flex items-center gap-3 px-4 py-4 border-b border-border">
         <BackButton href="/saju/result" label="내 사주" />
         <h1 className="text-sm font-semibold text-primary">
-          {input.name ? `${input.name} · ${YEARLY_FORTUNE_YEAR} 신년운세` : `${YEARLY_FORTUNE_YEAR} 신년운세`}
+          {input.name
+            ? `${input.name} · ${YEARLY_FORTUNE_YEAR} 신년운세`
+            : `${YEARLY_FORTUNE_YEAR} 신년운세`}
         </h1>
       </header>
 
       <div className="flex flex-col gap-4 px-4 py-6 flex-1">
         <div className="bg-card rounded-2xl p-4">
-          <p className="text-xs text-muted mb-1">✨ {YEARLY_FORTUNE_YEAR}년 {YEARLY_FORTUNE_GANJEE}</p>
+          <p className="text-xs text-muted mb-1">
+            ✨ {YEARLY_FORTUNE_YEAR}년 {YEARLY_FORTUNE_GANJEE}
+          </p>
           <p className="text-xs text-primary">{result.ilgan} 일간 · AI 신년운세 분석</p>
         </div>
 
