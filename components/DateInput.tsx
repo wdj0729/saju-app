@@ -42,9 +42,15 @@ export default function DateInput({
   const dayRef = useRef<HTMLInputElement>(null);
 
   // Sync from parent when a profile is loaded externally
-  useEffect(() => { setYearStr(String(year)); }, [year]);
-  useEffect(() => { setMonthStr(String(month).padStart(2, '0')); }, [month]);
-  useEffect(() => { setDayStr(String(day).padStart(2, '0')); }, [day]);
+  useEffect(() => {
+    setYearStr(String(year));
+  }, [year]);
+  useEffect(() => {
+    setMonthStr(String(month).padStart(2, '0'));
+  }, [month]);
+  useEffect(() => {
+    setDayStr(String(day).padStart(2, '0'));
+  }, [day]);
 
   return (
     <div className="flex items-center gap-1.5">
