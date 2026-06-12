@@ -14,12 +14,6 @@ import HourInput from '@/components/HourInput';
 
 const CARDS = [
   {
-    emoji: '🔮',
-    title: '내 사주 보기',
-    subtitle: '생년월일시로 사주팔자 분석',
-    href: '/saju',
-  },
-  {
     emoji: '✨',
     title: `${YEARLY_FORTUNE_YEAR} 신년운세`,
     subtitle: `${YEARLY_FORTUNE_YEAR}년 총운·직업·재물·건강·연애`,
@@ -30,12 +24,6 @@ const CARDS = [
     title: '오늘 운세',
     subtitle: '일간별 맞춤 운세',
     href: '/fortune',
-  },
-  {
-    emoji: '💑',
-    title: '궁합 보기',
-    subtitle: '두 사람의 사주 궁합 분석',
-    href: '/compatibility',
   },
 ];
 
