@@ -41,7 +41,6 @@ export default function Home() {
   const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setProfiles(loadProfiles());
   }, []);
 
