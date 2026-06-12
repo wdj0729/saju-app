@@ -44,17 +44,9 @@ export default function DateInput({
   const dayRef = useRef<HTMLInputElement>(null);
 
   // Sync from parent when a profile is loaded externally
-  useEffect(() => {
-    if (Number(yearStr) !== year) setYearStr(String(year));
-  }, [year]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    if (Number(monthStr) !== month) setMonthStr(String(month).padStart(2, '0'));
-  }, [month]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    if (Number(dayStr) !== day) setDayStr(String(day).padStart(2, '0'));
-  }, [day]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { setYearStr(String(year)); }, [year]);
+  useEffect(() => { setMonthStr(String(month).padStart(2, '0')); }, [month]);
+  useEffect(() => { setDayStr(String(day).padStart(2, '0')); }, [day]);
 
   return (
     <div className="flex items-center gap-1.5">
@@ -66,6 +58,7 @@ export default function DateInput({
         value={yearStr}
         className={`${FIELD_CLASS} w-20 px-2`}
         placeholder="1993"
+        aria-label="년도"
         onChange={(e) => {
           const v = e.target.value.replace(/\D/g, '').slice(0, 4);
           setYearStr(v);
@@ -93,6 +86,7 @@ export default function DateInput({
         value={monthStr}
         className={`${FIELD_CLASS} w-12 px-1`}
         placeholder="06"
+        aria-label="월"
         onChange={(e) => {
           const v = e.target.value.replace(/\D/g, '').slice(0, 2);
           setMonthStr(v);
@@ -121,10 +115,15 @@ export default function DateInput({
         value={dayStr}
         className={`${FIELD_CLASS} w-12 px-1`}
         placeholder="15"
+        aria-label="일"
         onChange={(e) => {
           const v = e.target.value.replace(/\D/g, '').slice(0, 2);
           setDayStr(v);
-          onDayChange(v ? Number(v) : day);
+          if (v.length === 2) {
+            onDayChange(clampDay(Number(v), maxDay));
+          } else {
+            onDayChange(v ? Number(v) : day);
+          }
         }}
         onBlur={() => {
           const clamped = clampDay(Number(dayStr) || 1, maxDay);
