@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { loadProfiles, deleteProfile } from '@/lib/profiles';
@@ -37,8 +37,12 @@ const CARDS = [
 
 export default function Home() {
   const router = useRouter();
-  const [profiles, setProfiles] = useState<Profile[]>(() => loadProfiles());
+  const [profiles, setProfiles] = useState<Profile[]>([]);
   const [isEditing, setIsEditing] = useState(false);
+
+  useEffect(() => {
+    setProfiles(loadProfiles());
+  }, []);
 
   function handleProfileSelect(profile: Profile) {
     try {

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 
 export type SectionKey = '성격분석' | '재물운' | '건강운' | '연애운' | '직업운';
 export const SECTION_KEYS: SectionKey[] = ['성격분석', '재물운', '건강운', '연애운', '직업운'];
+const REVERSED_SECTION_KEYS = [...SECTION_KEYS].reverse();
 
 export function emptySections(): Record<SectionKey, string> {
   return { 성격분석: '', 재물운: '', 건강운: '', 연애운: '', 직업운: '' };
@@ -76,7 +77,7 @@ export function useAiSections(): UseAiSectionsReturn {
         signal: controller.signal,
         body: JSON.stringify(body),
       });
-      if (!res.ok) throw new Error('분석 요청에 실패했습니다.');
+      if (!res.ok) throw new Error('분석 요청에 실패했어요.');
 
       const reader = res.body!.getReader();
       const decoder = new TextDecoder();
@@ -89,7 +90,7 @@ export function useAiSections(): UseAiSectionsReturn {
           rafRef.current = requestAnimationFrame(() => {
             const parsed = parseSections(textRef.current);
             setSections(parsed);
-            const active = [...SECTION_KEYS].reverse().find((k) => parsed[k].length > 0) ?? null;
+            const active = REVERSED_SECTION_KEYS.find((k) => parsed[k].length > 0) ?? null;
             setActiveSection(active);
             rafRef.current = null;
           });
@@ -107,7 +108,7 @@ export function useAiSections(): UseAiSectionsReturn {
       if (err instanceof Error && err.name === 'AbortError') return;
       setSections(emptySections());
       setActiveSection(null);
-      setAiError(err instanceof Error ? err.message : '오류가 발생했습니다.');
+      setAiError(err instanceof Error ? err.message : '오류가 발생했어요.');
     } finally {
       if (rafRef.current !== null) {
         cancelAnimationFrame(rafRef.current);
