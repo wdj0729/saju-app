@@ -201,7 +201,7 @@ export default function Home() {
     patch: Partial<Omit<Profile, 'id' | 'createdAt'>>
   ) {
     updateProfile(id, patch);
-    setProfiles(loadProfiles());
+    setProfiles((prev) => prev.map((p) => (p.id === id ? { ...p, ...patch } : p)));
     setExpandedProfileId(null);
     setIsEditing(false);
   }
@@ -240,7 +240,7 @@ export default function Home() {
                   >
                     🔮 {profile.name || '이름 없음'} · {profile.ilgan}
                   </button>
-                  {isEditing ? (
+                  {isEditing && expandedProfileId !== profile.id ? (
                     <button
                       onClick={() => handleDelete(profile.id)}
                       className="w-4 h-4 bg-hwa rounded-full text-white text-xs flex items-center justify-center leading-none shrink-0"
