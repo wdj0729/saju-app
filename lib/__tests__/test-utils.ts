@@ -6,8 +6,12 @@ export function setupStorageMock(type: 'sessionStorage' | 'localStorage'): Recor
     Object.defineProperty(global, type, {
       value: {
         getItem: (k: string) => store[k] ?? null,
-        setItem: (k: string, v: string) => { store[k] = v; },
-        removeItem: (k: string) => { delete store[k]; },
+        setItem: (k: string, v: string) => {
+          store[k] = v;
+        },
+        removeItem: (k: string) => {
+          delete store[k];
+        },
       },
       writable: true,
       configurable: true,

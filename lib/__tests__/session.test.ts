@@ -54,7 +54,7 @@ describe('SSR 환경 (window 없음)', () => {
 
   beforeEach(() => {
     saved = globalThis.window;
-    // @ts-expect-error
+    // @ts-expect-error: window is read-only in TypeScript but must be deleted to simulate SSR
     delete globalThis.window;
   });
 

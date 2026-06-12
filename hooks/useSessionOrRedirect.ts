@@ -10,7 +10,10 @@ export function useSessionOrRedirect<T>(
 ): T | null {
   const router = useRouter();
   const onLoadedRef = useRef(onLoaded);
-  onLoadedRef.current = onLoaded;
+
+  useEffect(() => {
+    onLoadedRef.current = onLoaded;
+  });
 
   const [session] = useState<T | null>(() => loader());
 

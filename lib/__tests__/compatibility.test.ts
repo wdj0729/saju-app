@@ -8,7 +8,7 @@ import type { CompatibilitySession } from '../compatibility';
 import type { SajuResult } from '../saju-calculator';
 import { setupStorageMock } from './test-utils';
 
-const store = setupStorageMock('sessionStorage');
+setupStorageMock('sessionStorage');
 
 function makeSaju(ohaeng: Record<'목' | '화' | '토' | '금' | '수', number>): SajuResult {
   return {
@@ -101,7 +101,6 @@ describe('calcCompatibility', () => {
   });
 });
 
-
 describe('CompatibilitySession 스토리지', () => {
   const dummy: CompatibilitySession = {
     personA: { name: '홍길동', gender: 'M' as const, result: pureWood },
@@ -133,7 +132,7 @@ describe('SSR 환경 (window 없음)', () => {
 
   beforeEach(() => {
     saved = globalThis.window;
-    // @ts-expect-error
+    // @ts-expect-error: window is read-only in TypeScript but must be deleted to simulate SSR
     delete globalThis.window;
   });
 
