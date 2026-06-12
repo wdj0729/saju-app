@@ -2,10 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-const YEAR_MAX = new Date().getFullYear();
-
 export function clampYear(v: number): number {
-  return Math.min(Math.max(v, 1900), YEAR_MAX);
+  return Math.min(Math.max(v, 1900), new Date().getFullYear());
 }
 export function clampMonth(v: number): number {
   return Math.min(Math.max(v, 1), 12);
@@ -95,8 +93,6 @@ export default function DateInput({
             onMonthChange(clamped);
             dayRef.current?.focus();
             dayRef.current?.select();
-          } else {
-            onMonthChange(v ? Number(v) : month);
           }
         }}
         onBlur={() => {
@@ -121,8 +117,6 @@ export default function DateInput({
           setDayStr(v);
           if (v.length === 2) {
             onDayChange(clampDay(Number(v), maxDay));
-          } else {
-            onDayChange(v ? Number(v) : day);
           }
         }}
         onBlur={() => {
