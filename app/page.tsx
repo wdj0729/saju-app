@@ -3,12 +3,14 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { loadProfiles, deleteProfile } from '@/lib/profiles';
+import { loadProfiles, deleteProfile, updateProfile } from '@/lib/profiles';
 import type { Profile } from '@/lib/profiles';
 import { calculateSaju } from '@/lib/saju-calculator';
 import { saveSession } from '@/lib/session';
-import { YEARLY_FORTUNE_YEAR } from '@/lib/constants';
+import { YEARLY_FORTUNE_YEAR, LABEL_CLASS, INPUT_CLASS } from '@/lib/constants';
 import { setPrefillA } from '@/lib/compatibility-prefill';
+import DateInput from '@/components/DateInput';
+import HourInput from '@/components/HourInput';
 
 const CARDS = [
   {
@@ -36,6 +38,123 @@ const CARDS = [
     href: '/compatibility',
   },
 ];
+
+interface ProfileEditFormProps {
+  profile: Profile;
+  onSave: (id: string, patch: Partial<Omit<Profile, 'id' | 'createdAt'>>) => void;
+  onCancel: () => void;
+}
+
+function ProfileEditForm({ profile, onSave, onCancel }: ProfileEditFormProps) {
+  const [name, setName] = useState(profile.name);
+  const [gender, setGender] = useState<'M' | 'F'>(profile.gender ?? 'M');
+  const [isLunar, setIsLunar] = useState(profile.isLunar);
+  const [year, setYear] = useState(profile.year);
+  const [month, setMonth] = useState(profile.month);
+  const [day, setDay] = useState(profile.day);
+  const [hourValue, setHourValue] = useState<number | null>(profile.hour);
+
+  const maxDay = isLunar ? 30 : new Date(year, month, 0).getDate();
+  const clampedDay = Math.min(day, maxDay);
+
+  function handleSave() {
+    try {
+      const result = calculateSaju({ year, month, day: clampedDay, hour: hourValue, isLunar });
+      onSave(profile.id, {
+        name,
+        gender,
+        isLunar,
+        year,
+        month,
+        day: clampedDay,
+        hour: hourValue,
+        ilgan: result.ilgan,
+      });
+    } catch {
+      // 잘못된 날짜이면 저장하지 않음
+    }
+  }
+
+  return (
+    <div className="border-t border-border px-3 py-3 flex flex-col gap-3">
+      <div>
+        <label className={LABEL_CLASS}>이름</label>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className={INPUT_CLASS}
+        />
+      </div>
+      <div>
+        <label className={LABEL_CLASS}>성별</label>
+        <div className="flex gap-2">
+          {(['M', 'F'] as const).map((g) => (
+            <button
+              key={g}
+              type="button"
+              onClick={() => setGender(g)}
+              className={`flex-1 py-2 rounded-xl text-sm font-medium transition-colors ${
+                gender === g ? 'bg-primary-gradient text-white' : 'bg-card text-muted'
+              }`}
+            >
+              {g === 'M' ? '남성' : '여성'}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div>
+        <label className={LABEL_CLASS}>양력 / 음력</label>
+        <div className="flex gap-2">
+          {([false, true] as const).map((lunar) => (
+            <button
+              key={String(lunar)}
+              type="button"
+              onClick={() => setIsLunar(lunar)}
+              className={`flex-1 py-2 rounded-xl text-sm font-medium transition-colors ${
+                isLunar === lunar ? 'bg-primary-gradient text-white' : 'bg-card text-muted'
+              }`}
+            >
+              {lunar ? '음력' : '양력'}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div>
+        <label className={LABEL_CLASS}>생년월일</label>
+        <DateInput
+          year={year}
+          month={month}
+          day={clampedDay}
+          maxDay={maxDay}
+          onYearChange={setYear}
+          onMonthChange={setMonth}
+          onDayChange={setDay}
+        />
+      </div>
+      <div>
+        <label className={LABEL_CLASS}>태어난 시</label>
+        <HourInput value={hourValue} onChange={setHourValue} />
+      </div>
+      <div className="flex gap-2 pt-1">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="flex-1 py-2 rounded-xl text-sm text-muted bg-card"
+        >
+          취소
+        </button>
+        <button
+          type="button"
+          onClick={handleSave}
+          className="flex-1 py-2 rounded-xl text-sm font-semibold bg-primary-gradient text-white"
+        >
+          저장
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export default function Home() {
   const router = useRouter();
@@ -86,6 +205,15 @@ export default function Home() {
     setProfiles((prev) => prev.filter((p) => p.id !== id));
   }
 
+  function handleSaveEdit(
+    id: string,
+    patch: Partial<Omit<Profile, 'id' | 'createdAt'>>
+  ) {
+    updateProfile(id, patch);
+    setProfiles(loadProfiles());
+    setExpandedProfileId(null);
+  }
+
   return (
     <main className="flex flex-col items-center justify-center min-h-screen px-6">
       <div className="flex flex-col items-center mb-8">
@@ -114,7 +242,6 @@ export default function Home() {
                 <div className="flex items-center px-3 py-2 gap-2">
                   <button
                     onClick={() => {
-                      if (isEditing) return;
                       setExpandedProfileId(expandedProfileId === profile.id ? null : profile.id);
                     }}
                     className="flex-1 text-left text-xs text-primary"
@@ -135,26 +262,34 @@ export default function Home() {
                     </span>
                   )}
                 </div>
-                {expandedProfileId === profile.id && !isEditing && (
-                  <div className="flex border-t border-border">
-                    {(
-                      [
-                        { icon: '🔮', label: '사주', dest: 'saju' },
-                        { icon: '💫', label: '운세', dest: 'fortune' },
-                        { icon: '✨', label: '신년', dest: 'yearly' },
-                        { icon: '💑', label: '궁합', dest: 'compat' },
-                      ] as const
-                    ).map(({ icon, label, dest }) => (
-                      <button
-                        key={label}
-                        onClick={() => handleProfileNav(profile, dest)}
-                        className="flex-1 py-2 flex flex-col items-center gap-0.5 hover:bg-card transition-colors"
-                      >
-                        <span className="text-sm">{icon}</span>
-                        <span className="text-xs text-muted">{label}</span>
-                      </button>
-                    ))}
-                  </div>
+                {expandedProfileId === profile.id && (
+                  isEditing ? (
+                    <ProfileEditForm
+                      profile={profile}
+                      onSave={handleSaveEdit}
+                      onCancel={() => setExpandedProfileId(null)}
+                    />
+                  ) : (
+                    <div className="flex border-t border-border">
+                      {(
+                        [
+                          { icon: '🔮', label: '사주', dest: 'saju' },
+                          { icon: '💫', label: '운세', dest: 'fortune' },
+                          { icon: '✨', label: '신년', dest: 'yearly' },
+                          { icon: '💑', label: '궁합', dest: 'compat' },
+                        ] as const
+                      ).map(({ icon, label, dest }) => (
+                        <button
+                          key={label}
+                          onClick={() => handleProfileNav(profile, dest)}
+                          className="flex-1 py-2 flex flex-col items-center gap-0.5 hover:bg-card transition-colors"
+                        >
+                          <span className="text-sm">{icon}</span>
+                          <span className="text-xs text-muted">{label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )
                 )}
               </div>
             ))}
