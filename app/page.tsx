@@ -196,10 +196,7 @@ export default function Home() {
     setProfiles((prev) => prev.filter((p) => p.id !== id));
   }
 
-  function handleSaveEdit(
-    id: string,
-    patch: Partial<Omit<Profile, 'id' | 'createdAt'>>
-  ) {
+  function handleSaveEdit(id: string, patch: Partial<Omit<Profile, 'id' | 'createdAt'>>) {
     updateProfile(id, patch);
     setProfiles((prev) => prev.map((p) => (p.id === id ? { ...p, ...patch } : p)));
     setExpandedProfileId(null);
@@ -254,8 +251,8 @@ export default function Home() {
                     </span>
                   )}
                 </div>
-                {expandedProfileId === profile.id && (
-                  isEditing ? (
+                {expandedProfileId === profile.id &&
+                  (isEditing ? (
                     <ProfileEditForm
                       profile={profile}
                       onSave={handleSaveEdit}
@@ -284,8 +281,7 @@ export default function Home() {
                         </button>
                       ))}
                     </div>
-                  )
-                )}
+                  ))}
               </div>
             ))}
             {!isEditing && (

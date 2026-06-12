@@ -84,10 +84,7 @@ export function deleteProfile(id: string): void {
   persist(loadProfiles().filter((p) => p.id !== id));
 }
 
-export function updateProfile(
-  id: string,
-  patch: Partial<Omit<Profile, 'id' | 'createdAt'>>
-): void {
+export function updateProfile(id: string, patch: Partial<Omit<Profile, 'id' | 'createdAt'>>): void {
   if (typeof window === 'undefined') return;
   persist(loadProfiles().map((p) => (p.id === id ? { ...p, ...patch } : p)));
 }
