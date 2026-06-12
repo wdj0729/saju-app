@@ -7,9 +7,10 @@ import { calcCompatibility, saveCompatSession } from '@/lib/compatibility';
 import { loadProfiles } from '@/lib/profiles';
 import type { Profile } from '@/lib/profiles';
 import { getPrefillA, clearPrefillA } from '@/lib/compatibility-prefill';
-import { SIJIN, INPUT_CLASS, LABEL_CLASS } from '@/lib/constants';
+import { INPUT_CLASS, LABEL_CLASS } from '@/lib/constants';
 import BackButton from '@/components/BackButton';
 import DateInput from '@/components/DateInput';
+import HourInput from '@/components/HourInput';
 
 interface PersonFormProps {
   label: string;
@@ -135,18 +136,7 @@ function PersonForm({
 
       <div>
         <label className={LABEL_CLASS}>태어난 시 (선택)</label>
-        <select
-          value={hourValue ?? ''}
-          onChange={(e) => setHourValue(e.target.value === '' ? null : Number(e.target.value))}
-          className={INPUT_CLASS}
-        >
-          <option value="">모름</option>
-          {SIJIN.map((s) => (
-            <option key={s.value} value={s.value}>
-              {s.label}
-            </option>
-          ))}
-        </select>
+        <HourInput value={hourValue} onChange={setHourValue} />
       </div>
     </div>
   );
