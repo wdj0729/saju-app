@@ -69,6 +69,7 @@ export async function POST(req: NextRequest): Promise<Response> {
     name ? `- 이름: ${name}` : null,
     genderText ? `- 성별: ${genderText}` : null,
     '',
+    // 이 기능은 2026년(병오년) 전용입니다. 연도 변경 시 아래 연도·간지 표기를 함께 수정하세요.
     '위 사주를 바탕으로 2026년 병오년(丙午年) 신년운세를 아래 5가지 항목으로 분석해주세요.',
     '말투 규칙: 친근하고 쉬운 일상 언어로 쓰세요. 명리학 전문 용어는 쓰지 마세요. 꼭 써야 할 경우 괄호 안에 쉬운 말로 풀어 쓰세요. 사주를 전혀 모르는 사람도 바로 이해할 수 있어야 합니다.',
     '형식 규칙: 반드시 아래 마커 5개만 그대로 사용하세요. --- 구분선, 헤더(#), 마크다운 장식 일체를 쓰지 마세요. 각 항목은 3~4문장으로 쓰세요. [연애운] 내용 뒤에 바로 응답을 끝내세요.',
@@ -97,7 +98,8 @@ export async function POST(req: NextRequest): Promise<Response> {
       max_tokens: 1500,
       messages: [{ role: 'user', content: lines }],
     });
-  } catch {
+  } catch (error) {
+    console.error('[yearly-fortune] AI request failed:', error);
     return new Response('AI 분석 요청에 실패했어요.', { status: 500 });
   }
 }

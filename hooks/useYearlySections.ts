@@ -84,7 +84,8 @@ export function useYearlySections(): UseYearlySectionsReturn {
       });
       if (!res.ok) throw new Error('분석 요청에 실패했어요.');
 
-      const reader = res.body!.getReader();
+      if (!res.body) throw new Error('Response body is missing');
+      const reader = res.body.getReader();
       const decoder = new TextDecoder();
 
       while (true) {
@@ -103,6 +104,7 @@ export function useYearlySections(): UseYearlySectionsReturn {
         }
       }
 
+      // flush any remaining bytes held in the decoder's internal buffer
       textRef.current += decoder.decode();
       if (rafRef.current !== null) {
         cancelAnimationFrame(rafRef.current);
