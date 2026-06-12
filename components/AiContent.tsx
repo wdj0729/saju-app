@@ -21,8 +21,11 @@ export default function AiContent({
     return (
       <div>
         <p className="text-sm text-hwa mb-2">{aiError}</p>
-        <button onClick={onRequest} className="text-xs text-muted underline">
-          다시 시도
+        <button
+          onClick={onRequest}
+          className="mt-1 w-full py-2 rounded-xl bg-card-hover text-sm text-muted hover:text-primary transition-colors"
+        >
+          🔄 다시 분석하기
         </button>
       </div>
     );
