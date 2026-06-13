@@ -167,9 +167,10 @@ export default function SajuResultContent() {
     setIsSaved(isProfileSaved(s.input))
   );
 
-  const todayYear = useMemo(() => new Date().getFullYear(), []);
-  const todayMonth = useMemo(() => new Date().getMonth() + 1, []);
-  const todayDate = useMemo(() => new Date().getDate(), []);
+  const { todayYear, todayMonth, todayDate } = useMemo(() => {
+    const d = new Date();
+    return { todayYear: d.getFullYear(), todayMonth: d.getMonth() + 1, todayDate: d.getDate() };
+  }, []);
 
   const daewoon = useMemo(() => {
     if (!session || session === 'not-found' || !session.input.gender) return null;
