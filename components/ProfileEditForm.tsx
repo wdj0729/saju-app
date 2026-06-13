@@ -61,6 +61,7 @@ export default function ProfileEditForm({ profile, onSave, onCancel }: ProfileEd
         onDayChange={setDay}
         hourValue={hourValue}
         onHourChange={setHourValue}
+        compact
       />
       {saveError && <p className="text-xs text-hwa text-center">{saveError}</p>}
       <div className="flex gap-2 pt-1">

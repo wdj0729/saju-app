@@ -22,6 +22,7 @@ interface PersonInputFieldsProps {
   onHourChange: (v: number | null) => void;
   showOptionalHints?: boolean;
   namePlaceholder?: string;
+  compact?: boolean;
 }
 
 export default function PersonInputFields({
@@ -42,6 +43,7 @@ export default function PersonInputFields({
   onHourChange,
   showOptionalHints = false,
   namePlaceholder,
+  compact = false,
 }: PersonInputFieldsProps) {
   return (
     <>
@@ -65,7 +67,7 @@ export default function PersonInputFields({
               key={g}
               type="button"
               onClick={() => onGenderChange(g)}
-              className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+              className={`flex-1 ${compact ? 'py-2' : 'py-2.5'} rounded-xl text-sm font-medium transition-colors ${
                 gender === g ? 'bg-primary-gradient text-white' : 'bg-card text-muted'
               }`}
             >
@@ -82,7 +84,7 @@ export default function PersonInputFields({
               key={String(lunar)}
               type="button"
               onClick={() => onIsLunarChange(lunar)}
-              className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+              className={`flex-1 ${compact ? 'py-2' : 'py-2.5'} rounded-xl text-sm font-medium transition-colors ${
                 isLunar === lunar ? 'bg-primary-gradient text-white' : 'bg-card text-muted'
               }`}
             >
