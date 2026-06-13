@@ -38,15 +38,24 @@ export default function DateInput({
   const [monthStr, setMonthStr] = useState(String(month).padStart(2, '0'));
   const [dayStr, setDayStr] = useState(String(day).padStart(2, '0'));
 
+  // Refs track the latest input value synchronously so onBlur closures
+  // are not stale when focus() triggers blur mid-onChange batch.
+  const yearStrRef = useRef(String(year));
+  const monthStrRef = useRef(String(month).padStart(2, '0'));
+
   const monthRef = useRef<HTMLInputElement>(null);
   const dayRef = useRef<HTMLInputElement>(null);
 
   // Sync from parent when a profile is loaded externally
   useEffect(() => {
-    setYearStr(String(year));
+    const v = String(year);
+    yearStrRef.current = v;
+    setYearStr(v);
   }, [year]);
   useEffect(() => {
-    setMonthStr(String(month).padStart(2, '0'));
+    const v = String(month).padStart(2, '0');
+    monthStrRef.current = v;
+    setMonthStr(v);
   }, [month]);
   useEffect(() => {
     setDayStr(String(day).padStart(2, '0'));
@@ -65,6 +74,7 @@ export default function DateInput({
         aria-label="년도"
         onChange={(e) => {
           const v = e.target.value.replace(/\D/g, '').slice(0, 4);
+          yearStrRef.current = v;
           setYearStr(v);
           if (v.length === 4) {
             onYearChange(clampYear(Number(v)));
@@ -73,12 +83,17 @@ export default function DateInput({
           }
         }}
         onBlur={() => {
-          if (yearStr.length < 4) {
-            setYearStr(String(year));
+          const current = yearStrRef.current;
+          if (current.length < 4) {
+            const reset = String(year);
+            yearStrRef.current = reset;
+            setYearStr(reset);
             return;
           }
-          const clamped = clampYear(Number(yearStr));
-          setYearStr(String(clamped));
+          const clamped = clampYear(Number(current));
+          const clamped_str = String(clamped);
+          yearStrRef.current = clamped_str;
+          setYearStr(clamped_str);
           onYearChange(clamped);
         }}
       />
@@ -95,6 +110,7 @@ export default function DateInput({
         aria-label="월"
         onChange={(e) => {
           const v = e.target.value.replace(/\D/g, '').slice(0, 2);
+          monthStrRef.current = v;
           setMonthStr(v);
           if (v.length === 2) {
             const clamped = clampMonth(Number(v));
@@ -104,8 +120,10 @@ export default function DateInput({
           }
         }}
         onBlur={() => {
-          const clamped = clampMonth(Number(monthStr) || 1);
-          setMonthStr(String(clamped).padStart(2, '0'));
+          const clamped = clampMonth(Number(monthStrRef.current) || 1);
+          const padded = String(clamped).padStart(2, '0');
+          monthStrRef.current = padded;
+          setMonthStr(padded);
           onMonthChange(clamped);
         }}
       />
