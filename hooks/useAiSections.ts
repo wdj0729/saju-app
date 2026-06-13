@@ -62,6 +62,12 @@ export function useAiSections(cacheKey?: string): UseAiSectionsReturn {
     };
   }, []);
 
+  useEffect(() => {
+    if (!cacheKey) return;
+    const cached = loadAiCache(cacheKey);
+    if (cached) setSections(cached as Record<SectionKey, string>);
+  }, [cacheKey]);
+
   async function request(url: string, body: unknown) {
     abortRef.current?.abort();
     if (rafRef.current !== null) {
