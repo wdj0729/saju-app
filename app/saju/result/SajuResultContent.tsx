@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadSession } from '@/lib/session';
+import { makeAiCacheKey } from '@/lib/ai-cache';
 import { ILJU_TEXT } from '@/lib/ilju-text';
 import { GAN_OHAENG, JI_OHAENG } from '@/lib/saju-data';
 import { OHAENG_TEXT } from '@/lib/constants';
@@ -154,7 +155,14 @@ function SajuResultSkeleton() {
 export default function SajuResultContent() {
   const router = useRouter();
   const [isSaved, setIsSaved] = useState(false);
-  const { sections, activeSection, isStreaming, aiError, request } = useAiSections();
+
+  const cacheKey = useMemo(() => {
+    const s = loadSession();
+    if (!s) return undefined;
+    return makeAiCacheKey(s.input.year, s.input.month, s.input.day, s.input.hour, s.input.isLunar);
+  }, []);
+
+  const { sections, activeSection, isStreaming, aiError, request } = useAiSections(cacheKey);
   const session = useSessionOrRedirect(loadSession, null, (s) =>
     setIsSaved(isProfileSaved(s.input))
   );
