@@ -44,7 +44,8 @@ export function useAiStream(): UseAiStreamReturn {
         body: JSON.stringify(body),
       });
       if (!res.ok) throw new Error('분석 요청에 실패했어요.');
-      const reader = res.body!.getReader();
+      if (!res.body) throw new Error('Response body is missing');
+      const reader = res.body.getReader();
       const decoder = new TextDecoder();
       while (true) {
         const { done, value } = await reader.read();
