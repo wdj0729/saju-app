@@ -58,20 +58,13 @@ export default function CompatibilityResultContent() {
   const session = useSessionOrRedirect(loadCompatSession, null);
   const { aiText, isStreaming, aiError, request } = useAiStream();
 
-  const maxA = useMemo(
-    () =>
-      session && session !== 'not-found'
-        ? Math.max(...Object.values(session.compatibility.ohaengA), 1)
-        : 1,
-    [session]
-  );
-  const maxB = useMemo(
-    () =>
-      session && session !== 'not-found'
-        ? Math.max(...Object.values(session.compatibility.ohaengB), 1)
-        : 1,
-    [session]
-  );
+  const { maxA, maxB } = useMemo(() => {
+    if (!session || session === 'not-found') return { maxA: 1, maxB: 1 };
+    return {
+      maxA: Math.max(...Object.values(session.compatibility.ohaengA), 1),
+      maxB: Math.max(...Object.values(session.compatibility.ohaengB), 1),
+    };
+  }, [session]);
 
   useEffect(() => {
     if (!session || session === 'not-found') return;

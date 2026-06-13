@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadSession } from '@/lib/session';
 import { FORTUNE_TEXT } from '@/lib/fortune-text';
@@ -57,10 +57,10 @@ export default function FortuneContent() {
   const [isExpanded, setIsExpanded] = useState(false);
   const { aiText, isStreaming, aiError, request } = useAiStream();
 
-  const todayDateStr = useMemo(() => {
+  const [todayDateStr] = useState(() => {
     const d = new Date();
     return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`;
-  }, []);
+  });
 
   useEffect(() => {
     if (!session || session === 'not-found') return;
