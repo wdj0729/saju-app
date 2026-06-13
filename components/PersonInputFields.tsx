@@ -48,9 +48,7 @@ export default function PersonInputFields({
   return (
     <>
       <div>
-        <label className={LABEL_CLASS}>
-          이름{showOptionalHints ? ' (선택)' : ''}
-        </label>
+        <label className={LABEL_CLASS}>이름{showOptionalHints ? ' (선택)' : ''}</label>
         <input
           type="text"
           value={name}
@@ -106,9 +104,7 @@ export default function PersonInputFields({
         />
       </div>
       <div>
-        <label className={LABEL_CLASS}>
-          태어난 시{showOptionalHints ? ' (선택)' : ''}
-        </label>
+        <label className={LABEL_CLASS}>태어난 시{showOptionalHints ? ' (선택)' : ''}</label>
         <HourInput value={hourValue} onChange={onHourChange} />
       </div>
     </>

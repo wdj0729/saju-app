@@ -26,14 +26,15 @@ export function loadAiCache(key: string): Record<string, string> | null {
     const raw = localStorage.getItem(key);
     if (!raw) return null;
     const parsed: unknown = JSON.parse(raw);
-    if (
-      typeof parsed !== 'object' ||
-      parsed === null ||
-      Array.isArray(parsed)
-    ) return null;
+    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) return null;
     const entry = parsed as Record<string, unknown>;
     if (entry.v !== CACHE_VERSION) return null;
-    if (typeof entry.sections !== 'object' || entry.sections === null || Array.isArray(entry.sections)) return null;
+    if (
+      typeof entry.sections !== 'object' ||
+      entry.sections === null ||
+      Array.isArray(entry.sections)
+    )
+      return null;
     return entry.sections as Record<string, string>;
   } catch {
     return null;
