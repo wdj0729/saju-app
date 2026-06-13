@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { saveAiCache, loadAiCache } from '@/lib/ai-cache';
 
 export type SectionKey = '성격분석' | '재물운' | '건강운' | '연애운' | '직업운';
 export const SECTION_KEYS: SectionKey[] = ['성격분석', '재물운', '건강운', '연애운', '직업운'];
@@ -40,8 +41,13 @@ interface UseAiSectionsReturn {
   request: (url: string, body: unknown) => Promise<void>;
 }
 
-export function useAiSections(): UseAiSectionsReturn {
-  const [sections, setSections] = useState<Record<SectionKey, string>>(emptySections());
+export function useAiSections(cacheKey?: string): UseAiSectionsReturn {
+  const [sections, setSections] = useState<Record<SectionKey, string>>(() => {
+    if (!cacheKey) return emptySections();
+    const cached = loadAiCache(cacheKey);
+    if (!cached) return emptySections();
+    return cached as Record<SectionKey, string>;
+  });
   const [activeSection, setActiveSection] = useState<SectionKey | null>(null);
   const [isStreaming, setIsStreaming] = useState(false);
   const [aiError, setAiError] = useState('');
@@ -55,6 +61,12 @@ export function useAiSections(): UseAiSectionsReturn {
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    if (!cacheKey) return;
+    const cached = loadAiCache(cacheKey);
+    if (cached) setSections(cached as Record<SectionKey, string>);
+  }, [cacheKey]);
 
   async function request(url: string, body: unknown) {
     abortRef.current?.abort();
@@ -102,7 +114,9 @@ export function useAiSections(): UseAiSectionsReturn {
         cancelAnimationFrame(rafRef.current);
         rafRef.current = null;
       }
-      setSections(parseSections(textRef.current));
+      const finalSections = parseSections(textRef.current);
+      if (cacheKey) saveAiCache(cacheKey, finalSections);
+      setSections(finalSections);
       setActiveSection(null);
     } catch (err) {
       if (err instanceof Error && err.name === 'AbortError') return;

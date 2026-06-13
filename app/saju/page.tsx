@@ -6,10 +6,8 @@ import { calculateSaju } from '@/lib/saju-calculator';
 import { saveSession } from '@/lib/session';
 import { loadProfiles } from '@/lib/profiles';
 import type { Profile } from '@/lib/profiles';
-import { INPUT_CLASS, LABEL_CLASS } from '@/lib/constants';
 import BackButton from '@/components/BackButton';
-import DateInput from '@/components/DateInput';
-import HourInput from '@/components/HourInput';
+import PersonInputFields from '@/components/PersonInputFields';
 
 export default function SajuInputPage() {
   const router = useRouter();
@@ -99,73 +97,25 @@ export default function SajuInputPage() {
           </div>
         )}
 
-        {/* 이름 */}
-        <div>
-          <label className={LABEL_CLASS}>이름 (선택)</label>
-          <input
-            type="text"
-            placeholder="이름을 입력하세요"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className={INPUT_CLASS}
-          />
-        </div>
-
-        {/* 성별 */}
-        <div>
-          <label className={LABEL_CLASS}>성별</label>
-          <div className="flex gap-2">
-            {(['M', 'F'] as const).map((g) => (
-              <button
-                key={g}
-                onClick={() => setGender(g)}
-                className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                  gender === g ? 'bg-primary-gradient text-white' : 'bg-card text-muted'
-                }`}
-              >
-                {g === 'M' ? '남성' : '여성'}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* 양력/음력 토글 */}
-        <div>
-          <label className={LABEL_CLASS}>양력 / 음력</label>
-          <div className="flex gap-2">
-            {([false, true] as const).map((lunar) => (
-              <button
-                key={String(lunar)}
-                onClick={() => setIsLunar(lunar)}
-                className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                  isLunar === lunar ? 'bg-primary-gradient text-white' : 'bg-card text-muted'
-                }`}
-              >
-                {lunar ? '음력' : '양력'}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* 생년월일 */}
-        <div>
-          <label className={LABEL_CLASS}>생년월일</label>
-          <DateInput
-            year={year}
-            month={month}
-            day={clampedDay}
-            maxDay={maxDay}
-            onYearChange={setYear}
-            onMonthChange={setMonth}
-            onDayChange={setDay}
-          />
-        </div>
-
-        {/* 태어난 시 */}
-        <div>
-          <label className={LABEL_CLASS}>태어난 시 (선택)</label>
-          <HourInput value={hourValue} onChange={setHourValue} />
-        </div>
+        <PersonInputFields
+          name={name}
+          onNameChange={setName}
+          gender={gender}
+          onGenderChange={setGender}
+          isLunar={isLunar}
+          onIsLunarChange={setIsLunar}
+          year={year}
+          month={month}
+          day={clampedDay}
+          maxDay={maxDay}
+          onYearChange={setYear}
+          onMonthChange={setMonth}
+          onDayChange={setDay}
+          hourValue={hourValue}
+          onHourChange={setHourValue}
+          showOptionalHints
+          namePlaceholder="이름을 입력하세요"
+        />
 
         {error && <p className="text-sm text-hwa text-center">{error}</p>}
       </div>
