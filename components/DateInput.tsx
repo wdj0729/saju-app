@@ -23,7 +23,7 @@ interface DateInputProps {
 }
 
 const FIELD_CLASS =
-  'bg-card border border-border rounded-xl text-primary text-sm text-center appearance-none py-3';
+  'bg-card border border-border rounded-xl text-primary text-base text-center appearance-none py-3';
 
 export default function DateInput({
   year,

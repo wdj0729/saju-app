@@ -14,7 +14,7 @@ interface HourInputProps {
 }
 
 const FIELD_CLASS =
-  'bg-card border border-border rounded-xl text-primary text-sm text-center appearance-none py-3';
+  'bg-card border border-border rounded-xl text-primary text-base text-center appearance-none py-3';
 
 export default function HourInput({ value, onChange }: HourInputProps) {
   const [hourStr, setHourStr] = useState(value !== null ? String(value).padStart(2, '0') : '');
