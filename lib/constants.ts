@@ -7,7 +7,7 @@ export const YEARS = Array.from({ length: 201 }, (_, i) => 1900 + i);
 export const MONTHS = Array.from({ length: 12 }, (_, i) => i + 1);
 
 export const INPUT_CLASS =
-  'w-full bg-card border border-border rounded-xl px-4 py-3 text-primary text-sm appearance-none';
+  'w-full bg-card border border-border rounded-xl px-4 py-3 text-primary text-base appearance-none';
 export const LABEL_CLASS = 'block text-xs text-muted mb-1.5';
 
 export const SIJIN = [
