@@ -35,4 +35,14 @@ describe('saveAiCache / loadAiCache', () => {
     localStorage.setItem('saju-ai-cache:arr', '[]');
     expect(loadAiCache('saju-ai-cache:arr')).toBeNull();
   });
+
+  it('버전 불일치 시 null 반환', () => {
+    localStorage.setItem('saju-ai-cache:old', JSON.stringify({ v: 0, sections }));
+    expect(loadAiCache('saju-ai-cache:old')).toBeNull();
+  });
+
+  it('sections가 배열이면 null 반환', () => {
+    localStorage.setItem('saju-ai-cache:arr-sections', JSON.stringify({ v: 1, sections: [] }));
+    expect(loadAiCache('saju-ai-cache:arr-sections')).toBeNull();
+  });
 });
