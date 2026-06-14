@@ -108,6 +108,7 @@ export default function DateInput({
         className={`${FIELD_CLASS} w-12 px-1`}
         placeholder="06"
         aria-label="월"
+        onFocus={(e) => e.target.select()}
         onChange={(e) => {
           const v = e.target.value.replace(/\D/g, '').slice(0, 2);
           monthStrRef.current = v;
@@ -138,6 +139,7 @@ export default function DateInput({
         className={`${FIELD_CLASS} w-12 px-1`}
         placeholder="15"
         aria-label="일"
+        onFocus={(e) => e.target.select()}
         onChange={(e) => {
           const v = e.target.value.replace(/\D/g, '').slice(0, 2);
           setDayStr(v);

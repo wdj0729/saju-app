@@ -177,10 +177,17 @@ export default function Home() {
 
       <div className="flex flex-col gap-3 w-full">
         {CARDS.map((card) => (
-          <Link
+          <button
             key={card.title}
-            href={card.href}
-            className="bg-card rounded-2xl p-4 flex items-center gap-4 hover:bg-card-hover transition-colors"
+            onClick={() => {
+              const dest = card.href === '/fortune' ? 'fortune' : 'yearly';
+              if (profiles.length === 1) {
+                handleProfileNav(profiles[0], dest);
+              } else {
+                router.push(card.href);
+              }
+            }}
+            className="bg-card rounded-2xl p-4 flex items-center gap-4 hover:bg-card-hover transition-colors text-left w-full"
           >
             <span className="text-2xl">{card.emoji}</span>
             <div className="flex-1">
@@ -188,7 +195,7 @@ export default function Home() {
               <p className="text-xs text-muted mt-0.5">{card.subtitle}</p>
             </div>
             <span className="text-muted">→</span>
-          </Link>
+          </button>
         ))}
       </div>
     </main>
