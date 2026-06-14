@@ -4,7 +4,7 @@ import { SkeletonBox } from '@/components/Skeleton';
 
 function SajuResultSkeleton() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col flex-1">
       <header className="flex items-center gap-3 px-4 py-4 border-b border-border">
         <SkeletonBox className="h-4 w-16" />
         <SkeletonBox className="h-4 w-24" />
