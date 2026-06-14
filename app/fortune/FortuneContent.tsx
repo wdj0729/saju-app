@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadSession } from '@/lib/session';
-import { FORTUNE_TEXT } from '@/lib/fortune-text';
+import { FORTUNE_TEXT, getDayVariantIndex } from '@/lib/fortune-text';
 import { useSessionOrRedirect } from '@/hooks/useSessionOrRedirect';
 import ShareButton from '@/components/ShareButton';
 import BackButton from '@/components/BackButton';
@@ -11,6 +11,8 @@ import AiContent from '@/components/AiContent';
 import { useAiStream } from '@/hooks/useAiStream';
 import { SkeletonBox } from '@/components/Skeleton';
 import SessionExpiredPage from '@/components/SessionExpiredPage';
+import { getDayPillar } from '@/lib/saju-calculator';
+import { OHAENG_LABEL } from '@/lib/constants';
 
 type Period = '오늘' | '이달' | '올해';
 
@@ -57,10 +59,13 @@ export default function FortuneContent() {
   const [isExpanded, setIsExpanded] = useState(false);
   const { aiText, isStreaming, aiError, request } = useAiStream();
 
-  const [todayDateStr] = useState(() => {
-    const d = new Date();
-    return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일`;
-  });
+  const [todayDate] = useState(() => new Date());
+  const todayDateStr = `${todayDate.getFullYear()}년 ${todayDate.getMonth() + 1}월 ${todayDate.getDate()}일`;
+
+  const todayIljin = (() => {
+    const pillar = getDayPillar(todayDate.getFullYear(), todayDate.getMonth() + 1, todayDate.getDate());
+    return `${pillar.gan}${pillar.ji}일 (${OHAENG_LABEL[pillar.ganElement]})`;
+  })();
 
   useEffect(() => {
     if (!session || session === 'not-found') return;
@@ -76,7 +81,10 @@ export default function FortuneContent() {
 
   const { ilgan, ohaeng, year, month, day, hour } = session.result;
   const fortune = FORTUNE_TEXT[ilgan] ?? FORTUNE_TEXT['甲'];
-  const currentPeriod = fortune[activeTab];
+  const currentPeriod =
+    activeTab === '오늘'
+      ? fortune.오늘[getDayVariantIndex(todayDate)]
+      : fortune[activeTab];
 
   function handleTabChange(tab: Period) {
     setActiveTab(tab);
@@ -120,9 +128,14 @@ export default function FortuneContent() {
       <div className="flex flex-col gap-4 px-4 py-6 flex-1">
         <div className="bg-card rounded-2xl overflow-hidden">
           <div className="p-4">
-            <p className="text-xs text-muted mb-2">
-              💫 {activeTab}의 운세 · {ilgan} 일간
-            </p>
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs text-muted">
+                💫 {activeTab}의 운세 · {ilgan} 일간
+              </p>
+              {activeTab === '오늘' && (
+                <p className="text-xs text-muted">일진 {todayIljin}</p>
+              )}
+            </div>
             <p className="text-sm text-primary leading-relaxed">{currentPeriod.summary}</p>
           </div>
 

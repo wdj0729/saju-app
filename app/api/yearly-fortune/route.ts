@@ -6,7 +6,7 @@ import {
   isPillarData,
   type PillarData,
 } from '@/lib/stream-anthropic';
-import { YEARLY_FORTUNE_YEAR, YEARLY_FORTUNE_GANJEE } from '@/lib/constants';
+import { getFortuneYear, getFortuneGanjee } from '@/lib/constants';
 
 interface YearlyFortuneRequest {
   ilgan: string;
@@ -41,6 +41,8 @@ export async function POST(req: NextRequest): Promise<Response> {
   const parsed = await parseBody(req, isYearlyFortuneRequest);
   if (parsed instanceof Response) return parsed;
   const { ilgan, ohaeng, pillars, name, gender } = parsed.data;
+  const fortuneYear = getFortuneYear();
+  const fortuneGanjee = getFortuneGanjee(fortuneYear);
 
   const pillarText = [
     `${pillars.year.gan}${pillars.year.ji}`,
@@ -62,12 +64,12 @@ export async function POST(req: NextRequest): Promise<Response> {
     name ? `- 이름: ${name}` : null,
     genderText ? `- 성별: ${genderText}` : null,
     '',
-    `위 사주를 바탕으로 ${YEARLY_FORTUNE_YEAR}년 ${YEARLY_FORTUNE_GANJEE} 신년운세를 아래 5가지 항목으로 분석해주세요.`,
+    `위 사주를 바탕으로 ${fortuneYear}년 ${fortuneGanjee} 신년운세를 아래 5가지 항목으로 분석해주세요.`,
     '말투 규칙: 친근하고 쉬운 일상 언어로 쓰세요. 명리학 전문 용어는 쓰지 마세요. 꼭 써야 할 경우 괄호 안에 쉬운 말로 풀어 쓰세요. 사주를 전혀 모르는 사람도 바로 이해할 수 있어야 합니다.',
     '형식 규칙: 반드시 아래 마커 5개만 그대로 사용하세요. --- 구분선, 헤더(#), 마크다운 장식 일체를 쓰지 마세요. 각 항목은 3~4문장으로 쓰세요. [연애운] 내용 뒤에 바로 응답을 끝내세요.',
     '',
     '[총운]',
-    `(${YEARLY_FORTUNE_YEAR}년 전체 기운과 이 사람에게 어떤 한 해가 될지 핵심만)`,
+    `(${fortuneYear}년 전체 기운과 이 사람에게 어떤 한 해가 될지 핵심만)`,
     '',
     '[직업운]',
     '(올해 커리어·직장에서 주목할 흐름과 조언)',
