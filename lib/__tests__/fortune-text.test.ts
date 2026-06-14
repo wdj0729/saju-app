@@ -62,11 +62,7 @@ describe('FORTUNE_TEXT', () => {
 
 describe('getDayVariantIndex', () => {
   it('0, 1, 2 중 하나를 반환한다', () => {
-    const dates = [
-      new Date('2026-01-01'),
-      new Date('2026-06-14'),
-      new Date('2026-12-31'),
-    ];
+    const dates = [new Date('2026-01-01'), new Date('2026-06-14'), new Date('2026-12-31')];
     dates.forEach((date) => {
       const idx = getDayVariantIndex(date);
       expect(idx).toBeGreaterThanOrEqual(0);

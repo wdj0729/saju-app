@@ -63,7 +63,11 @@ export default function FortuneContent() {
   const todayDateStr = `${todayDate.getFullYear()}년 ${todayDate.getMonth() + 1}월 ${todayDate.getDate()}일`;
 
   const todayIljin = (() => {
-    const pillar = getDayPillar(todayDate.getFullYear(), todayDate.getMonth() + 1, todayDate.getDate());
+    const pillar = getDayPillar(
+      todayDate.getFullYear(),
+      todayDate.getMonth() + 1,
+      todayDate.getDate()
+    );
     return `${pillar.gan}${pillar.ji}일 (${OHAENG_LABEL[pillar.ganElement]})`;
   })();
 
@@ -82,9 +86,7 @@ export default function FortuneContent() {
   const { ilgan, ohaeng, year, month, day, hour } = session.result;
   const fortune = FORTUNE_TEXT[ilgan] ?? FORTUNE_TEXT['甲'];
   const currentPeriod =
-    activeTab === '오늘'
-      ? fortune.오늘[getDayVariantIndex(todayDate)]
-      : fortune[activeTab];
+    activeTab === '오늘' ? fortune.오늘[getDayVariantIndex(todayDate)] : fortune[activeTab];
 
   function handleTabChange(tab: Period) {
     setActiveTab(tab);
@@ -132,9 +134,7 @@ export default function FortuneContent() {
               <p className="text-xs text-muted">
                 💫 {activeTab}의 운세 · {ilgan} 일간
               </p>
-              {activeTab === '오늘' && (
-                <p className="text-xs text-muted">일진 {todayIljin}</p>
-              )}
+              {activeTab === '오늘' && <p className="text-xs text-muted">일진 {todayIljin}</p>}
             </div>
             <p className="text-sm text-primary leading-relaxed">{currentPeriod.summary}</p>
           </div>

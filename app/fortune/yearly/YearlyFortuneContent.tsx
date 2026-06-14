@@ -71,9 +71,7 @@ export default function YearlyFortuneContent() {
       <header className="flex items-center gap-3 px-4 py-4 border-b border-border">
         <BackButton href="/saju/result" label="내 사주" />
         <h1 className="text-sm font-semibold text-primary">
-          {input.name
-            ? `${input.name} · ${fortuneYear} 신년운세`
-            : `${fortuneYear} 신년운세`}
+          {input.name ? `${input.name} · ${fortuneYear} 신년운세` : `${fortuneYear} 신년운세`}
         </h1>
       </header>
 

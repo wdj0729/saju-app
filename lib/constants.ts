@@ -1,9 +1,35 @@
 import type { Ohaeng } from '@/lib/saju-data';
 
 const STEMS_KO = ['갑', '을', '병', '정', '무', '기', '경', '신', '임', '계'] as const;
-const BRANCHES_KO = ['자', '축', '인', '묘', '진', '사', '오', '미', '신', '유', '술', '해'] as const;
+const BRANCHES_KO = [
+  '자',
+  '축',
+  '인',
+  '묘',
+  '진',
+  '사',
+  '오',
+  '미',
+  '신',
+  '유',
+  '술',
+  '해',
+] as const;
 const STEMS_HAN = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'] as const;
-const BRANCHES_HAN = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'] as const;
+const BRANCHES_HAN = [
+  '子',
+  '丑',
+  '寅',
+  '卯',
+  '辰',
+  '巳',
+  '午',
+  '未',
+  '申',
+  '酉',
+  '戌',
+  '亥',
+] as const;
 
 export function getFortuneYear(): number {
   const now = new Date();
