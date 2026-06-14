@@ -3,10 +3,12 @@
 import { SkeletonBox } from './Skeleton';
 import { YEARLY_SECTION_KEYS } from '@/hooks/useYearlySections';
 import type { YearlySectionKey } from '@/hooks/useYearlySections';
-import { YEARLY_FORTUNE_YEAR } from '@/lib/constants';
+import { getFortuneYear } from '@/lib/constants';
+
+const fortuneYear = getFortuneYear();
 
 const SECTION_META: Record<YearlySectionKey, { emoji: string; title: string }> = {
-  총운: { emoji: '✨', title: `${YEARLY_FORTUNE_YEAR}년 총운` },
+  총운: { emoji: '✨', title: `${fortuneYear}년 총운` },
   직업운: { emoji: '💼', title: '직업운' },
   재물운: { emoji: '💰', title: '재물운' },
   건강운: { emoji: '🌿', title: '건강운' },
@@ -47,7 +49,7 @@ export default function YearlySections({
         onClick={onRequest}
         className="w-full py-3 rounded-xl bg-primary-gradient text-white text-sm font-medium"
       >
-        {YEARLY_FORTUNE_YEAR} 신년운세 분석하기
+        {fortuneYear} 신년운세 분석하기
       </button>
     );
   }

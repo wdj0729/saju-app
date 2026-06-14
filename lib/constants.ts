@@ -1,7 +1,49 @@
 import type { Ohaeng } from '@/lib/saju-data';
 
-export const YEARLY_FORTUNE_YEAR = 2026;
-export const YEARLY_FORTUNE_GANJEE = '병오년(丙午年)';
+const STEMS_KO = ['갑', '을', '병', '정', '무', '기', '경', '신', '임', '계'] as const;
+const BRANCHES_KO = [
+  '자',
+  '축',
+  '인',
+  '묘',
+  '진',
+  '사',
+  '오',
+  '미',
+  '신',
+  '유',
+  '술',
+  '해',
+] as const;
+const STEMS_HAN = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'] as const;
+const BRANCHES_HAN = [
+  '子',
+  '丑',
+  '寅',
+  '卯',
+  '辰',
+  '巳',
+  '午',
+  '未',
+  '申',
+  '酉',
+  '戌',
+  '亥',
+] as const;
+
+export function getFortuneYear(): number {
+  const now = new Date();
+  return now.getMonth() === 11 ? now.getFullYear() + 1 : now.getFullYear();
+}
+
+export function getFortuneGanjee(year: number): string {
+  const offset = (((year - 1984) % 60) + 60) % 60;
+  const stem = STEMS_KO[offset % 10];
+  const branch = BRANCHES_KO[offset % 12];
+  const stemHan = STEMS_HAN[offset % 10];
+  const branchHan = BRANCHES_HAN[offset % 12];
+  return `${stem}${branch}년(${stemHan}${branchHan}年)`;
+}
 
 export const YEARS = Array.from({ length: 201 }, (_, i) => 1900 + i);
 export const MONTHS = Array.from({ length: 12 }, (_, i) => i + 1);

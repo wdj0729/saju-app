@@ -7,15 +7,17 @@ import { loadProfiles, deleteProfile, updateProfile } from '@/lib/profiles';
 import type { Profile } from '@/lib/profiles';
 import { calculateSaju } from '@/lib/saju-calculator';
 import { saveSession } from '@/lib/session';
-import { YEARLY_FORTUNE_YEAR } from '@/lib/constants';
+import { getFortuneYear } from '@/lib/constants';
 import { setPrefillA } from '@/lib/compatibility-prefill';
 import ProfileEditForm from '@/components/ProfileEditForm';
+
+const fortuneYear = getFortuneYear();
 
 const CARDS = [
   {
     emoji: '✨',
-    title: `${YEARLY_FORTUNE_YEAR} 신년운세`,
-    subtitle: `${YEARLY_FORTUNE_YEAR}년 총운·직업·재물·건강·연애`,
+    title: `${fortuneYear} 신년운세`,
+    subtitle: `${fortuneYear}년 총운·직업·재물·건강·연애`,
     href: '/fortune/yearly',
   },
   {
