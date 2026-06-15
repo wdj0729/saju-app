@@ -13,7 +13,7 @@ interface ProfileEditFormProps {
 
 export default function ProfileEditForm({ profile, onSave, onCancel }: ProfileEditFormProps) {
   const [name, setName] = useState(profile.name);
-  const [gender, setGender] = useState<'M' | 'F'>(profile.gender ?? 'M');
+  const [gender, setGender] = useState<'M' | 'F'>(profile.gender);
   const [isLunar, setIsLunar] = useState(profile.isLunar);
   const [year, setYear] = useState(profile.year);
   const [month, setMonth] = useState(profile.month);

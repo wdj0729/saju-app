@@ -42,7 +42,7 @@ export default function CompatibilityPage() {
       setDayA(prefill.day);
       setHourValueA(prefill.hour);
       setIsLunarA(prefill.isLunar);
-      setGenderA(prefill.gender ?? 'M');
+      setGenderA(prefill.gender);
     }
   }, []);
 
@@ -53,7 +53,7 @@ export default function CompatibilityPage() {
     setDayA(profile.day);
     setHourValueA(profile.hour);
     setIsLunarA(profile.isLunar);
-    setGenderA(profile.gender ?? 'M');
+    setGenderA(profile.gender);
   }
 
   function loadProfileB(profile: Profile) {
@@ -63,7 +63,7 @@ export default function CompatibilityPage() {
     setDayB(profile.day);
     setHourValueB(profile.hour);
     setIsLunarB(profile.isLunar);
-    setGenderB(profile.gender ?? 'M');
+    setGenderB(profile.gender);
   }
 
   const maxDayA = isLunarA ? 30 : new Date(yearA, monthA, 0).getDate();

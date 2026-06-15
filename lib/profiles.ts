@@ -10,7 +10,7 @@ export interface Profile {
   day: number;
   hour: number | null;
   isLunar: boolean;
-  gender?: 'M' | 'F';
+  gender: 'M' | 'F';
   ilgan: string;
   createdAt: number;
 }
@@ -18,13 +18,16 @@ export interface Profile {
 export function isProfile(v: unknown): v is Profile {
   if (typeof v !== 'object' || v === null) return false;
   const r = v as Record<string, unknown>;
+  // Migrate legacy data: if gender is missing, default to 'M'
+  if (r.gender === undefined) r.gender = 'M';
   return (
     typeof r.id === 'string' &&
     typeof r.year === 'number' &&
     typeof r.month === 'number' &&
     typeof r.day === 'number' &&
     typeof r.isLunar === 'boolean' &&
-    typeof r.ilgan === 'string'
+    typeof r.ilgan === 'string' &&
+    (r.gender === 'M' || r.gender === 'F')
   );
 }
 
@@ -88,7 +91,7 @@ export function profileToSessionInput(profile: Profile): SajuSessionInput {
     day: profile.day,
     hour: profile.hour,
     isLunar: profile.isLunar,
-    gender: profile.gender ?? 'M',
+    gender: profile.gender,
   };
 }
 
