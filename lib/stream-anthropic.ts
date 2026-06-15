@@ -38,6 +38,20 @@ export function formatOhaeng(ohaeng: Record<string, number>): string {
     .join(' / ');
 }
 
+export function formatPillars(pillars: {
+  year: PillarData;
+  month: PillarData;
+  day: PillarData;
+  hour: PillarData | null;
+}): string {
+  return [
+    `${pillars.year.gan}${pillars.year.ji}`,
+    `${pillars.month.gan}${pillars.month.ji}`,
+    `${pillars.day.gan}${pillars.day.ji}`,
+    pillars.hour ? `${pillars.hour.gan}${pillars.hour.ji}` : '시주 미상',
+  ].join(' / ');
+}
+
 export function streamAnthropicResponse(params: MessageStreamParams): Response {
   const stream = anthropic.messages.stream(params);
 
