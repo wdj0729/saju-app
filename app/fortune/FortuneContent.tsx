@@ -91,7 +91,7 @@ export default function FortuneContent() {
   if (session === 'not-found') return <SessionExpiredPage redirectPath="/saju" />;
   if (!session) return <FortuneSkeleton />;
 
-  const { ilgan, ohaeng, year, month, day, hour } = session.result;
+  const { ilgan } = session.result;
   const fortune = FORTUNE_TEXT[ilgan] ?? FORTUNE_TEXT['甲'];
   const currentPeriod =
     activeTab === '오늘' ? fortune.오늘[getDayVariantIndex(todayDate)] : fortune[activeTab];

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 interface StreamingRequestOptions {
   onStart: () => void;
@@ -21,7 +21,9 @@ export function useStreamingRequest(options: StreamingRequestOptions): UseStream
   const textRef = useRef('');
   const rafRef = useRef<number | null>(null);
   const optionsRef = useRef(options);
-  optionsRef.current = options;
+  useLayoutEffect(() => {
+    optionsRef.current = options;
+  });
 
   useEffect(() => {
     return () => {
