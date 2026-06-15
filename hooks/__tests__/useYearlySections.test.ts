@@ -1,4 +1,4 @@
-import { parseYearlySections, YEARLY_SECTION_KEYS } from '../useYearlySections';
+import { parseYearlySections, YEARLY_SECTION_KEYS } from '../../lib/yearly-sections';
 
 describe('parseYearlySections', () => {
   it('빈 문자열 → 모든 섹션 빈 문자열', () => {

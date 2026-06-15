@@ -22,6 +22,7 @@ function isSajuSession(v: unknown): v is SajuSession {
   if (typeof r.input !== 'object' || r.input === null) return false;
   if (typeof r.result !== 'object' || r.result === null) return false;
   const input = r.input as Record<string, unknown>;
+  if (input.gender === undefined) input.gender = 'M';
   return (
     typeof input.year === 'number' &&
     typeof input.month === 'number' &&

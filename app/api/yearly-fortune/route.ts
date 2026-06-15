@@ -3,6 +3,7 @@ import {
   parseBody,
   streamAnthropicResponse,
   formatOhaeng,
+  formatPillars,
   isPillarData,
   type PillarData,
 } from '@/lib/stream-anthropic';
@@ -44,12 +45,7 @@ export async function POST(req: NextRequest): Promise<Response> {
   const fortuneYear = getFortuneYear();
   const fortuneGanjee = getFortuneGanjee(fortuneYear);
 
-  const pillarText = [
-    `${pillars.year.gan}${pillars.year.ji}`,
-    `${pillars.month.gan}${pillars.month.ji}`,
-    `${pillars.day.gan}${pillars.day.ji}`,
-    pillars.hour ? `${pillars.hour.gan}${pillars.hour.ji}` : '시주 미상',
-  ].join(' / ');
+  const pillarText = formatPillars(pillars);
 
   const ohaengText = formatOhaeng(ohaeng);
   const genderText = gender === 'M' ? '남성' : gender === 'F' ? '여성' : undefined;

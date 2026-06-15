@@ -1,8 +1,8 @@
 'use client';
 
 import { SkeletonBox } from './Skeleton';
-import { YEARLY_SECTION_KEYS } from '@/hooks/useYearlySections';
-import type { YearlySectionKey } from '@/hooks/useYearlySections';
+import { YEARLY_SECTION_KEYS } from '@/lib/yearly-sections';
+import type { YearlySectionKey } from '@/lib/yearly-sections';
 import { getFortuneYear } from '@/lib/constants';
 
 const fortuneYear = getFortuneYear();

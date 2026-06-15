@@ -1,4 +1,4 @@
-import { parseSections, SECTION_KEYS } from '../useAiSections';
+import { parseSections, SECTION_KEYS } from '../../lib/saju-sections';
 
 describe('parseSections', () => {
   it('빈 문자열 → 모든 섹션 빈 문자열', () => {

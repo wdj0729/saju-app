@@ -32,7 +32,7 @@ export default function SajuInputPage() {
     setDay(profile.day);
     setHourValue(profile.hour);
     setIsLunar(profile.isLunar);
-    setGender(profile.gender ?? 'M');
+    setGender(profile.gender);
   }
 
   const maxDay = isLunar ? 30 : new Date(year, month, 0).getDate();

@@ -7,140 +7,8 @@ import { calcCompatibility, saveCompatSession } from '@/lib/compatibility';
 import { loadProfiles } from '@/lib/profiles';
 import type { Profile } from '@/lib/profiles';
 import { getPrefillA, clearPrefillA } from '@/lib/compatibility-prefill';
-import { INPUT_CLASS, LABEL_CLASS } from '@/lib/constants';
 import BackButton from '@/components/BackButton';
-import DateInput from '@/components/DateInput';
-import HourInput from '@/components/HourInput';
-
-interface PersonFormProps {
-  label: string;
-  profiles: Profile[];
-  onProfileSelect: (profile: Profile) => void;
-  name: string;
-  setName: (v: string) => void;
-  gender: 'M' | 'F';
-  setGender: (v: 'M' | 'F') => void;
-  isLunar: boolean;
-  setIsLunar: (v: boolean) => void;
-  year: number;
-  setYear: (v: number) => void;
-  month: number;
-  setMonth: (v: number) => void;
-  day: number;
-  setDay: (v: number) => void;
-  hourValue: number | null;
-  setHourValue: (v: number | null) => void;
-}
-
-function PersonForm({
-  label,
-  profiles,
-  onProfileSelect,
-  name,
-  setName,
-  gender,
-  setGender,
-  isLunar,
-  setIsLunar,
-  year,
-  setYear,
-  month,
-  setMonth,
-  day,
-  setDay,
-  hourValue,
-  setHourValue,
-}: PersonFormProps) {
-  const maxDay = isLunar ? 30 : new Date(year, month, 0).getDate();
-  const clampedDay = Math.min(day, maxDay);
-
-  return (
-    <div className="bg-card rounded-2xl px-4 py-4 flex flex-col gap-4">
-      <p className="text-xs font-semibold text-primary">{label}</p>
-
-      {profiles.length > 0 && (
-        <div>
-          <p className="text-xs text-muted mb-1.5">저장된 프로필 불러오기</p>
-          <div className="flex flex-wrap gap-2">
-            {profiles.map((profile) => (
-              <button
-                key={profile.id}
-                type="button"
-                onClick={() => onProfileSelect(profile)}
-                className="bg-card-hover rounded-full px-3 py-1.5 text-xs text-primary"
-              >
-                {profile.name || '이름 없음'} · {profile.ilgan}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <div>
-        <label className={LABEL_CLASS}>이름 (선택)</label>
-        <input
-          type="text"
-          placeholder="이름을 입력하세요"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className={INPUT_CLASS}
-        />
-      </div>
-
-      <div>
-        <label className={LABEL_CLASS}>성별</label>
-        <div className="flex gap-2">
-          {(['M', 'F'] as const).map((g) => (
-            <button
-              key={g}
-              onClick={() => setGender(g)}
-              className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                gender === g ? 'bg-primary-gradient text-white' : 'bg-card text-muted'
-              }`}
-            >
-              {g === 'M' ? '남성' : '여성'}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <label className={LABEL_CLASS}>양력 / 음력</label>
-        <div className="flex gap-2">
-          {([false, true] as const).map((lunar) => (
-            <button
-              key={String(lunar)}
-              onClick={() => setIsLunar(lunar)}
-              className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                isLunar === lunar ? 'bg-primary-gradient text-white' : 'bg-card text-muted'
-              }`}
-            >
-              {lunar ? '음력' : '양력'}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <label className={LABEL_CLASS}>생년월일</label>
-        <DateInput
-          year={year}
-          month={month}
-          day={clampedDay}
-          maxDay={maxDay}
-          onYearChange={setYear}
-          onMonthChange={setMonth}
-          onDayChange={setDay}
-        />
-      </div>
-
-      <div>
-        <label className={LABEL_CLASS}>태어난 시 (선택)</label>
-        <HourInput value={hourValue} onChange={setHourValue} />
-      </div>
-    </div>
-  );
-}
+import PersonInputFields from '@/components/PersonInputFields';
 
 export default function CompatibilityPage() {
   const router = useRouter();
@@ -174,7 +42,7 @@ export default function CompatibilityPage() {
       setDayA(prefill.day);
       setHourValueA(prefill.hour);
       setIsLunarA(prefill.isLunar);
-      setGenderA(prefill.gender ?? 'M');
+      setGenderA(prefill.gender);
     }
   }, []);
 
@@ -185,7 +53,7 @@ export default function CompatibilityPage() {
     setDayA(profile.day);
     setHourValueA(profile.hour);
     setIsLunarA(profile.isLunar);
-    setGenderA(profile.gender ?? 'M');
+    setGenderA(profile.gender);
   }
 
   function loadProfileB(profile: Profile) {
@@ -195,11 +63,13 @@ export default function CompatibilityPage() {
     setDayB(profile.day);
     setHourValueB(profile.hour);
     setIsLunarB(profile.isLunar);
-    setGenderB(profile.gender ?? 'M');
+    setGenderB(profile.gender);
   }
 
-  const clampedDayA = Math.min(dayA, isLunarA ? 30 : new Date(yearA, monthA, 0).getDate());
-  const clampedDayB = Math.min(dayB, isLunarB ? 30 : new Date(yearB, monthB, 0).getDate());
+  const maxDayA = isLunarA ? 30 : new Date(yearA, monthA, 0).getDate();
+  const maxDayB = isLunarB ? 30 : new Date(yearB, monthB, 0).getDate();
+  const clampedDayA = Math.min(dayA, maxDayA);
+  const clampedDayB = Math.min(dayB, maxDayB);
 
   function handleSubmit() {
     setError('');
@@ -238,48 +108,88 @@ export default function CompatibilityPage() {
       </header>
 
       <div className="flex flex-col gap-4 px-4 py-6 flex-1">
-        <PersonForm
+        <PersonInputFields
           label="💑 나의 정보"
-          profiles={profiles}
-          onProfileSelect={loadProfileA}
+          profileChips={
+            profiles.length > 0 ? (
+              <div>
+                <p className="text-xs text-muted mb-1.5">저장된 프로필 불러오기</p>
+                <div className="flex flex-wrap gap-2">
+                  {profiles.map((profile) => (
+                    <button
+                      key={profile.id}
+                      type="button"
+                      onClick={() => loadProfileA(profile)}
+                      className="bg-card-hover rounded-full px-3 py-1.5 text-xs text-primary"
+                    >
+                      {profile.name || '이름 없음'} · {profile.ilgan}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : undefined
+          }
           name={nameA}
-          setName={setNameA}
+          onNameChange={setNameA}
           gender={genderA}
-          setGender={setGenderA}
+          onGenderChange={setGenderA}
           isLunar={isLunarA}
-          setIsLunar={setIsLunarA}
+          onIsLunarChange={setIsLunarA}
           year={yearA}
-          setYear={setYearA}
           month={monthA}
-          setMonth={setMonthA}
-          day={dayA}
-          setDay={setDayA}
+          day={clampedDayA}
+          maxDay={maxDayA}
+          onYearChange={setYearA}
+          onMonthChange={setMonthA}
+          onDayChange={setDayA}
           hourValue={hourValueA}
-          setHourValue={setHourValueA}
+          onHourChange={setHourValueA}
+          showOptionalHints
+          namePlaceholder="이름을 입력하세요"
         />
 
         <div className="flex items-center justify-center py-1">
           <span className="text-muted text-lg">♡</span>
         </div>
 
-        <PersonForm
+        <PersonInputFields
           label="💑 상대방 정보"
-          profiles={profiles}
-          onProfileSelect={loadProfileB}
+          profileChips={
+            profiles.length > 0 ? (
+              <div>
+                <p className="text-xs text-muted mb-1.5">저장된 프로필 불러오기</p>
+                <div className="flex flex-wrap gap-2">
+                  {profiles.map((profile) => (
+                    <button
+                      key={profile.id}
+                      type="button"
+                      onClick={() => loadProfileB(profile)}
+                      className="bg-card-hover rounded-full px-3 py-1.5 text-xs text-primary"
+                    >
+                      {profile.name || '이름 없음'} · {profile.ilgan}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : undefined
+          }
           name={nameB}
-          setName={setNameB}
+          onNameChange={setNameB}
           gender={genderB}
-          setGender={setGenderB}
+          onGenderChange={setGenderB}
           isLunar={isLunarB}
-          setIsLunar={setIsLunarB}
+          onIsLunarChange={setIsLunarB}
           year={yearB}
-          setYear={setYearB}
           month={monthB}
-          setMonth={setMonthB}
-          day={dayB}
-          setDay={setDayB}
+          day={clampedDayB}
+          maxDay={maxDayB}
+          onYearChange={setYearB}
+          onMonthChange={setMonthB}
+          onDayChange={setDayB}
           hourValue={hourValueB}
-          setHourValue={setHourValueB}
+          onHourChange={setHourValueB}
+          showOptionalHints
+          namePlaceholder="이름을 입력하세요"
         />
 
         {error && <p className="text-sm text-hwa text-center">{error}</p>}

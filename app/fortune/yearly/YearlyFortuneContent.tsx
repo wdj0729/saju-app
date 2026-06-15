@@ -1,8 +1,9 @@
 'use client';
 
-import { useCallback, useEffect } from 'react';
+import { useCallback, useMemo } from 'react';
 import { loadSession } from '@/lib/session';
 import { useSessionOrRedirect } from '@/hooks/useSessionOrRedirect';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { useYearlySections } from '@/hooks/useYearlySections';
 import YearlySections from '@/components/YearlySections';
 import MonthlyFortune from '@/components/MonthlyFortune';
@@ -35,6 +36,18 @@ function YearlyFortuneSkeleton() {
 export default function YearlyFortuneContent() {
   const session = useSessionOrRedirect(loadSession, null);
   const { sections, activeSection, isStreaming, aiError, request } = useYearlySections();
+  const pillars = useMemo(
+    () =>
+      session && session !== 'not-found'
+        ? {
+            year: session.result.year,
+            month: session.result.month,
+            day: session.result.day,
+            hour: session.result.hour ?? null,
+          }
+        : null,
+    [session]
+  );
   const fortuneYear = getFortuneYear();
   const fortuneGanjee = getFortuneGanjee(fortuneYear);
 
@@ -55,14 +68,11 @@ export default function YearlyFortuneContent() {
     });
   }, [request, session]);
 
-  useEffect(() => {
-    if (!session || session === 'not-found') return;
-    const name = session.input.name ? `${session.input.name}의 ` : '';
-    document.title = `${name}${fortuneYear} 신년운세 · ${session.result.ilgan} 일간 — 사주팔자`;
-    return () => {
-      document.title = '사주팔자';
-    };
-  }, [session, fortuneYear]);
+  const docTitle =
+    session && session !== 'not-found'
+      ? `${session.input.name ? `${session.input.name}의 ` : ''}${fortuneYear} 신년운세 · ${session.result.ilgan} 일간 — 사주팔자`
+      : undefined;
+  useDocumentTitle(docTitle);
 
   if (session === 'not-found') return <SessionExpiredPage redirectPath="/saju" />;
   if (!session) return <YearlyFortuneSkeleton />;
@@ -98,12 +108,7 @@ export default function YearlyFortuneContent() {
           <MonthlyFortune
             ilgan={result.ilgan}
             ohaeng={result.ohaeng}
-            pillars={{
-              year: result.year,
-              month: result.month,
-              day: result.day,
-              hour: result.hour ?? null,
-            }}
+            pillars={pillars!}
             name={input.name || undefined}
             gender={input.gender}
           />
