@@ -9,9 +9,17 @@ const geistSans = Geist({
   subsets: ['latin'],
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
+const defaultDescription =
+  '생년월일시 입력만으로 AI가 분석하는 사주팔자. 오늘 운세·신년운세·궁합까지.';
+
 export const metadata: Metadata = {
-  title: '사주팔자',
-  description: '생년월일시로 보는 사주팔자 분석',
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: '사주팔자',
+    template: '%s — 사주팔자',
+  },
+  description: defaultDescription,
   manifest: '/manifest.webmanifest',
   appleWebApp: {
     capable: true,
@@ -20,6 +28,24 @@ export const metadata: Metadata = {
   },
   icons: {
     apple: '/icon-192.png',
+  },
+  openGraph: {
+    type: 'website',
+    siteName: '사주팔자',
+    locale: 'ko_KR',
+    title: {
+      default: '사주팔자',
+      template: '%s — 사주팔자',
+    },
+    description: defaultDescription,
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: {
+      default: '사주팔자',
+      template: '%s — 사주팔자',
+    },
+    description: defaultDescription,
   },
 };
 
