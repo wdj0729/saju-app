@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { makeMonthlyFortuneCacheKey, saveAiCache, loadAiCache } from '@/lib/ai-cache';
 import {
   parseYearlySections,
@@ -11,6 +11,7 @@ import type { YearlySectionKey } from '@/lib/yearly-sections';
 import type { Pillar } from '@/lib/saju-calculator';
 import type { Ohaeng } from '@/lib/saju-data';
 import { getFortuneYear } from '@/lib/constants';
+import { useStreamingRequest } from './useStreamingRequest';
 
 export interface MonthlyFortuneInput {
   ilgan: string;
@@ -41,22 +42,25 @@ export function useMonthlyFortune(input: MonthlyFortuneInput): UseMonthlyFortune
   const [selectedMonth, setSelectedMonthState] = useState<number>(new Date().getMonth() + 1);
   const [sections, setSections] = useState<Record<YearlySectionKey, string>>(emptyYearlySections());
   const [activeSection, setActiveSection] = useState<YearlySectionKey | null>(null);
-  const [isStreaming, setIsStreaming] = useState(false);
   const [aiError, setAiError] = useState('');
   const [hasCachedResult, setHasCachedResult] = useState(false);
-  const abortRef = useRef<AbortController | null>(null);
-  const textRef = useRef('');
-  const rafRef = useRef<number | null>(null);
 
-  const loadCache = useCallback(
-    (month: number) => {
-      const key = makeMonthlyFortuneCacheKey(
+  const REVERSED_KEYS = [...YEARLY_SECTION_KEYS].reverse();
+
+  const makeCacheKey = useCallback(
+    (month: number) =>
+      makeMonthlyFortuneCacheKey(
         `${input.pillars.day.gan}${input.pillars.day.ji}`,
         input.pillars.hour ? `${input.pillars.hour.gan}${input.pillars.hour.ji}` : null,
         fortuneYear,
         month
-      );
-      const cached = loadAiCache(key);
+      ),
+    [input.pillars.day, input.pillars.hour, fortuneYear]
+  );
+
+  const loadCache = useCallback(
+    (month: number) => {
+      const cached = loadAiCache(makeCacheKey(month));
       if (cached) {
         const validated = YEARLY_SECTION_KEYS.reduce(
           (acc, k) => {
@@ -73,105 +77,47 @@ export function useMonthlyFortune(input: MonthlyFortuneInput): UseMonthlyFortune
       }
       setAiError('');
     },
-    [input.pillars.day, input.pillars.hour, fortuneYear]
+    [makeCacheKey]
   );
 
   useEffect(() => {
     loadCache(selectedMonth);
   }, [selectedMonth, loadCache]);
 
-  useEffect(() => {
-    return () => {
-      abortRef.current?.abort();
-      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
-    };
-  }, []);
+  const { isStreaming, request, abort } = useStreamingRequest({
+    onStart: () => {
+      setSections(emptyYearlySections());
+      setActiveSection(null);
+      setAiError('');
+      setHasCachedResult(false);
+    },
+    onChunk: (text) => {
+      const parsed = parseYearlySections(text);
+      setSections(parsed);
+      setActiveSection(REVERSED_KEYS.find((k) => parsed[k].length > 0) ?? null);
+    },
+    onComplete: (text) => {
+      const final = parseYearlySections(text);
+      setSections(final);
+      setActiveSection(null);
+      setHasCachedResult(true);
+      saveAiCache(makeCacheKey(selectedMonth), final);
+    },
+    onError: (msg) => {
+      setSections(emptyYearlySections());
+      setActiveSection(null);
+      setAiError(msg);
+    },
+  });
 
   function setSelectedMonth(m: number) {
-    abortRef.current?.abort();
-    if (rafRef.current !== null) {
-      cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    }
-    setIsStreaming(false);
+    abort();
     setActiveSection(null);
     setSelectedMonthState(m);
   }
 
-  async function requestAi() {
-    abortRef.current?.abort();
-    if (rafRef.current !== null) {
-      cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    }
-    const controller = new AbortController();
-    abortRef.current = controller;
-    textRef.current = '';
-    setSections(emptyYearlySections());
-    setActiveSection(null);
-    setIsStreaming(true);
-    setAiError('');
-    setHasCachedResult(false);
-
-    try {
-      const res = await fetch('/api/monthly-fortune', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        signal: controller.signal,
-        body: JSON.stringify({ ...input, month: selectedMonth }),
-      });
-      if (!res.ok) throw new Error('AI 분석 요청에 실패했어요.');
-      if (!res.body) throw new Error('Response body is missing');
-
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        textRef.current += decoder.decode(value, { stream: true });
-        if (rafRef.current === null) {
-          rafRef.current = requestAnimationFrame(() => {
-            const parsed = parseYearlySections(textRef.current);
-            setSections(parsed);
-            const active =
-              [...YEARLY_SECTION_KEYS].reverse().find((k) => parsed[k].length > 0) ?? null;
-            setActiveSection(active);
-            rafRef.current = null;
-          });
-        }
-      }
-
-      textRef.current += decoder.decode();
-      if (rafRef.current !== null) {
-        cancelAnimationFrame(rafRef.current);
-        rafRef.current = null;
-      }
-      const final = parseYearlySections(textRef.current);
-      setSections(final);
-      setActiveSection(null);
-      setHasCachedResult(true);
-      saveAiCache(
-        makeMonthlyFortuneCacheKey(
-          `${input.pillars.day.gan}${input.pillars.day.ji}`,
-          input.pillars.hour ? `${input.pillars.hour.gan}${input.pillars.hour.ji}` : null,
-          fortuneYear,
-          selectedMonth
-        ),
-        final
-      );
-    } catch (err) {
-      if (err instanceof Error && err.name === 'AbortError') return;
-      setSections(emptyYearlySections());
-      setActiveSection(null);
-      setAiError(err instanceof Error ? err.message : '오류가 발생했어요.');
-    } finally {
-      if (rafRef.current !== null) {
-        cancelAnimationFrame(rafRef.current);
-        rafRef.current = null;
-      }
-      setIsStreaming(false);
-    }
+  function requestAi() {
+    request('/api/monthly-fortune', { ...input, month: selectedMonth });
   }
 
   return {
