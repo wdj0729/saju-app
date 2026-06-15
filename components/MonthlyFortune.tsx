@@ -41,6 +41,7 @@ export default function MonthlyFortune(props: MonthlyFortuneInput) {
           <button
             key={m}
             onClick={() => setSelectedMonth(m)}
+            aria-pressed={selectedMonth === m}
             className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
               selectedMonth === m
                 ? 'bg-primary-gradient text-white'
@@ -106,19 +107,14 @@ export default function MonthlyFortune(props: MonthlyFortuneInput) {
                 ) : (
                   <p className="text-sm text-primary leading-relaxed whitespace-pre-wrap">
                     {text}
-                    {activeSection === key && (
-                      <span className="animate-pulse opacity-70">▌</span>
-                    )}
+                    {activeSection === key && <span className="animate-pulse opacity-70">▌</span>}
                   </p>
                 )}
               </div>
             );
           })}
           {!isStreaming && hasCachedResult && (
-            <button
-              onClick={requestAi}
-              className="mt-1 text-xs text-muted underline text-center"
-            >
+            <button onClick={requestAi} className="mt-1 text-xs text-muted underline text-center">
               다시 요청
             </button>
           )}

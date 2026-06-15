@@ -64,7 +64,14 @@ export function useMonthlyFortune(input: MonthlyFortuneInput): UseMonthlyFortune
       );
       const cached = loadAiCache(key);
       if (cached) {
-        setSections(cached as Record<YearlySectionKey, string>);
+        const validated = YEARLY_SECTION_KEYS.reduce(
+          (acc, k) => {
+            acc[k] = typeof cached[k] === 'string' ? cached[k] : '';
+            return acc;
+          },
+          {} as Record<YearlySectionKey, string>
+        );
+        setSections(validated);
         setHasCachedResult(true);
       } else {
         setSections(emptyYearlySections());
@@ -119,7 +126,7 @@ export function useMonthlyFortune(input: MonthlyFortuneInput): UseMonthlyFortune
         signal: controller.signal,
         body: JSON.stringify({ ...input, month: selectedMonth }),
       });
-      if (!res.ok) throw new Error('분석 요청에 실패했어요.');
+      if (!res.ok) throw new Error('AI 분석 요청에 실패했어요.');
       if (!res.body) throw new Error('Response body is missing');
 
       const reader = res.body.getReader();

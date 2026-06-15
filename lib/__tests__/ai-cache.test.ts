@@ -53,7 +53,9 @@ describe('makeMonthlyFortuneCacheKey', () => {
   });
 
   it('시주 있으면 포함', () => {
-    expect(makeMonthlyFortuneCacheKey('甲子', '壬午', 2026, 1)).toBe('monthly-fortune:甲子-壬午:2026:1');
+    expect(makeMonthlyFortuneCacheKey('甲子', '壬午', 2026, 1)).toBe(
+      'monthly-fortune:甲子-壬午:2026:1'
+    );
   });
 
   it('다른 일주는 다른 키', () => {

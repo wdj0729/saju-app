@@ -42,7 +42,9 @@ function isMonthlyFortuneRequest(v: unknown): v is MonthlyFortuneRequest {
     isPillarData(pillars.year) &&
     isPillarData(pillars.month) &&
     isPillarData(pillars.day) &&
-    (pillars.hour === null || pillars.hour === undefined || isPillarData(pillars.hour as unknown)) &&
+    (pillars.hour === null ||
+      pillars.hour === undefined ||
+      isPillarData(pillars.hour as unknown)) &&
     (r.name === undefined || (typeof r.name === 'string' && r.name.length <= 50))
   );
 }
