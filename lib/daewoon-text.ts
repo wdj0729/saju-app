@@ -16,7 +16,9 @@ const OHAENG_CONTROLS: Record<Ohaeng, Ohaeng> = {
   수: '화',
 };
 
-const RELATION_TEXT: Record<string, { label: string; relDesc: string }> = {
+type RelationKey = 'same' | 'gen_me' | 'i_gen' | 'ctrl_me' | 'i_ctrl';
+
+const RELATION_TEXT: Record<RelationKey, { label: string; relDesc: string }> = {
   same: {
     label: '경쟁·독립의 10년',
     relDesc:
@@ -52,7 +54,7 @@ const JI_FLAVOR: Record<Ohaeng, string> = {
   수: '수(水)의 기운이 더해져 지혜와 유연성이 중요해지는 시기예요.',
 };
 
-function getRelationKey(ilganEl: Ohaeng, ganEl: Ohaeng): string {
+function getRelationKey(ilganEl: Ohaeng, ganEl: Ohaeng): RelationKey {
   if (ganEl === ilganEl) return 'same';
   if (OHAENG_GENERATES[ganEl] === ilganEl) return 'gen_me';
   if (OHAENG_GENERATES[ilganEl] === ganEl) return 'i_gen';

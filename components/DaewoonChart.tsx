@@ -15,9 +15,7 @@ interface DaewoonChartProps {
 function DaewoonChart({ result, currentAge, ilganElement }: DaewoonChartProps) {
   const { pillars, daewoonSu, direction } = result;
 
-  const currentIdx = pillars.findIndex(
-    (p) => currentAge >= p.startAge && currentAge <= p.endAge
-  );
+  const currentIdx = pillars.findIndex((p) => currentAge >= p.startAge && currentAge <= p.endAge);
   const defaultIdx = currentIdx === -1 ? 0 : currentIdx;
   const [selectedIdx, setSelectedIdx] = useState(defaultIdx);
 
@@ -44,11 +42,7 @@ function DaewoonChart({ result, currentAge, ilganElement }: DaewoonChartProps) {
           const isPast = currentIdx !== -1 && i < currentIdx;
           const isSelected = i === selectedIdx;
           const futureSteps = currentIdx === -1 ? i : i - currentIdx;
-          const opacity = isPast
-            ? 0.35
-            : isCurrent
-              ? 1
-              : Math.max(0.45, 1 - futureSteps * 0.1);
+          const opacity = isPast ? 0.35 : isCurrent ? 1 : Math.max(0.45, 1 - futureSteps * 0.1);
 
           return (
             <button
@@ -104,11 +98,13 @@ function DaewoonChart({ result, currentAge, ilganElement }: DaewoonChartProps) {
       >
         <div className="flex items-center gap-4">
           <div className="text-center">
-            <div className={`text-3xl font-bold leading-none ${OHAENG_TEXT[selected.ganElement]}`}>
+            <div
+              className={`font-serif text-3xl font-bold leading-none ${OHAENG_TEXT[selected.ganElement]}`}
+            >
               {selected.gan}
             </div>
             <div
-              className={`text-3xl font-bold leading-none mt-1 ${OHAENG_TEXT[selected.jiElement]}`}
+              className={`font-serif text-3xl font-bold leading-none mt-1 ${OHAENG_TEXT[selected.jiElement]}`}
             >
               {selected.ji}
             </div>
@@ -119,8 +115,8 @@ function DaewoonChart({ result, currentAge, ilganElement }: DaewoonChartProps) {
               {selected.startAge} ~ {selected.endAge}세
             </p>
             <p className="text-xs text-muted mt-0.5">
-              {selected.ganElement}({OHAENG_LABEL[selected.ganElement]}) ·{' '}
-              {selected.jiElement}({OHAENG_LABEL[selected.jiElement]})
+              {selected.ganElement}({OHAENG_LABEL[selected.ganElement]}) · {selected.jiElement}(
+              {OHAENG_LABEL[selected.jiElement]})
             </p>
           </div>
         </div>
