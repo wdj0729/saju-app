@@ -9,6 +9,7 @@ import { GAN_OHAENG, JI_OHAENG } from '@/lib/saju-data';
 import { OHAENG_TEXT } from '@/lib/constants';
 import { getYearPillar } from '@/lib/saju-calculator';
 import type { Ohaeng } from '@/lib/saju-data';
+import { getOhaengRelationKey } from '@/lib/ohaeng-relations';
 import { saveProfile, isProfileSaved } from '@/lib/profiles';
 import { calculateDaewoon, calcMadeAge } from '@/lib/daewoon';
 import { useSessionOrRedirect } from '@/hooks/useSessionOrRedirect';
@@ -45,27 +46,8 @@ const SEUN_RELATION: Record<string, { label: string; desc: string }> = {
   },
 };
 
-const OHAENG_GENERATES: Record<Ohaeng, Ohaeng> = {
-  목: '화',
-  화: '토',
-  토: '금',
-  금: '수',
-  수: '목',
-};
-const OHAENG_CONTROLS: Record<Ohaeng, Ohaeng> = {
-  목: '토',
-  화: '금',
-  토: '수',
-  금: '목',
-  수: '화',
-};
-
 function getSeunRelation(ilganEl: Ohaeng, ganEl: Ohaeng) {
-  if (ganEl === ilganEl) return SEUN_RELATION.same;
-  if (OHAENG_GENERATES[ganEl] === ilganEl) return SEUN_RELATION.gen_me;
-  if (OHAENG_GENERATES[ilganEl] === ganEl) return SEUN_RELATION.i_gen;
-  if (OHAENG_CONTROLS[ganEl] === ilganEl) return SEUN_RELATION.ctrl_me;
-  return SEUN_RELATION.i_ctrl;
+  return SEUN_RELATION[getOhaengRelationKey(ilganEl, ganEl)];
 }
 
 function SeunSection({
@@ -284,7 +266,13 @@ export default function SajuResultContent() {
           />
         </div>
 
-        {daewoon && <DaewoonChart result={daewoon} currentAge={currentAge} />}
+        {daewoon && (
+          <DaewoonChart
+            result={daewoon}
+            currentAge={currentAge}
+            ilganElement={GAN_OHAENG[result.ilgan]}
+          />
+        )}
       </div>
 
       <div className="flex flex-col gap-3 px-4 pb-8">
