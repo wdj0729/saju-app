@@ -48,17 +48,17 @@ describe('saveAiCache / loadAiCache', () => {
 });
 
 describe('makeMonthlyFortuneCacheKey', () => {
-  it('일간·연도·월로 캐시 키 생성', () => {
-    expect(makeMonthlyFortuneCacheKey('甲', 2026, 6)).toBe('monthly-fortune:甲:2026:6');
+  it('일주·연도·월로 캐시 키 생성', () => {
+    expect(makeMonthlyFortuneCacheKey('甲子', null, 2026, 6)).toBe('monthly-fortune:甲子-x:2026:6');
   });
 
-  it('1월도 그대로 사용 (zero-padding 없음)', () => {
-    expect(makeMonthlyFortuneCacheKey('壬', 2026, 1)).toBe('monthly-fortune:壬:2026:1');
+  it('시주 있으면 포함', () => {
+    expect(makeMonthlyFortuneCacheKey('甲子', '壬午', 2026, 1)).toBe('monthly-fortune:甲子-壬午:2026:1');
   });
 
-  it('다른 일간도 구분', () => {
-    expect(makeMonthlyFortuneCacheKey('乙', 2026, 6)).not.toBe(
-      makeMonthlyFortuneCacheKey('甲', 2026, 6)
+  it('다른 일주는 다른 키', () => {
+    expect(makeMonthlyFortuneCacheKey('甲子', null, 2026, 6)).not.toBe(
+      makeMonthlyFortuneCacheKey('甲午', null, 2026, 6)
     );
   });
 });

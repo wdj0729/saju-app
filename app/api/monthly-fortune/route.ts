@@ -8,6 +8,8 @@ import {
 } from '@/lib/stream-anthropic';
 import { getFortuneYear } from '@/lib/constants';
 
+const ILGAN_VALUES = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'] as const;
+
 interface MonthlyFortuneRequest {
   ilgan: string;
   ohaeng: Record<string, number>;
@@ -28,16 +30,20 @@ function isMonthlyFortuneRequest(v: unknown): v is MonthlyFortuneRequest {
   const pillars = r.pillars as Record<string, unknown> | undefined;
   return (
     typeof r.ilgan === 'string' &&
+    ILGAN_VALUES.includes(r.ilgan as (typeof ILGAN_VALUES)[number]) &&
     typeof r.ohaeng === 'object' &&
     r.ohaeng !== null &&
     typeof r.month === 'number' &&
+    Number.isInteger(r.month) &&
     r.month >= 1 &&
     r.month <= 12 &&
     typeof pillars === 'object' &&
     pillars !== null &&
     isPillarData(pillars.year) &&
     isPillarData(pillars.month) &&
-    isPillarData(pillars.day)
+    isPillarData(pillars.day) &&
+    (pillars.hour === null || pillars.hour === undefined || isPillarData(pillars.hour as unknown)) &&
+    (r.name === undefined || (typeof r.name === 'string' && r.name.length <= 50))
   );
 }
 

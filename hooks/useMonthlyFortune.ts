@@ -56,7 +56,12 @@ export function useMonthlyFortune(input: MonthlyFortuneInput): UseMonthlyFortune
 
   const loadCache = useCallback(
     (month: number) => {
-      const key = makeMonthlyFortuneCacheKey(input.ilgan, fortuneYear, month);
+      const key = makeMonthlyFortuneCacheKey(
+        `${input.pillars.day.gan}${input.pillars.day.ji}`,
+        input.pillars.hour ? `${input.pillars.hour.gan}${input.pillars.hour.ji}` : null,
+        fortuneYear,
+        month
+      );
       const cached = loadAiCache(key);
       if (cached) {
         setSections(cached as Record<YearlySectionKey, string>);
@@ -67,7 +72,7 @@ export function useMonthlyFortune(input: MonthlyFortuneInput): UseMonthlyFortune
       }
       setAiError('');
     },
-    [input.ilgan, fortuneYear]
+    [input.pillars.day, input.pillars.hour, fortuneYear]
   );
 
   useEffect(() => {
@@ -144,7 +149,15 @@ export function useMonthlyFortune(input: MonthlyFortuneInput): UseMonthlyFortune
       setSections(final);
       setActiveSection(null);
       setHasCachedResult(true);
-      saveAiCache(makeMonthlyFortuneCacheKey(input.ilgan, fortuneYear, selectedMonth), final);
+      saveAiCache(
+        makeMonthlyFortuneCacheKey(
+          `${input.pillars.day.gan}${input.pillars.day.ji}`,
+          input.pillars.hour ? `${input.pillars.hour.gan}${input.pillars.hour.ji}` : null,
+          fortuneYear,
+          selectedMonth
+        ),
+        final
+      );
     } catch (err) {
       if (err instanceof Error && err.name === 'AbortError') return;
       setSections(emptyYearlySections());

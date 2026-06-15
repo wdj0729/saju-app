@@ -55,7 +55,7 @@ export default function MonthlyFortune(props: MonthlyFortuneInput) {
       {/* 규칙 기반 요약 */}
       {ruleSummary && (
         <div className="bg-card rounded-2xl p-4 flex flex-col gap-2">
-          <p className="text-xs text-muted">💫 {selectedMonth}월 요약</p>
+          <p className="text-xs text-muted">💫 {props.ilgan} 일간 기본 운세</p>
           <p className="text-sm text-primary leading-relaxed">{ruleSummary.summary}</p>
           <div className="flex flex-col gap-1 mt-1">
             {(Object.entries(ruleSummary.details) as [string, string][]).map(([key, value]) => (

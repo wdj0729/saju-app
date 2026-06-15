@@ -13,8 +13,13 @@ export function makeAiCacheKey(
 
 const MONTHLY_PREFIX = 'monthly-fortune:';
 
-export function makeMonthlyFortuneCacheKey(ilgan: string, year: number, month: number): string {
-  return `${MONTHLY_PREFIX}${ilgan}:${year}:${month}`;
+export function makeMonthlyFortuneCacheKey(
+  dayPillar: string,
+  hourPillar: string | null,
+  year: number,
+  month: number
+): string {
+  return `${MONTHLY_PREFIX}${dayPillar}-${hourPillar ?? 'x'}:${year}:${month}`;
 }
 
 export function saveAiCache(key: string, sections: Record<string, string>): void {
