@@ -13,6 +13,8 @@ import type { Ohaeng } from '@/lib/saju-data';
 import { getFortuneYear } from '@/lib/constants';
 import { useStreamingRequest } from './useStreamingRequest';
 
+const REVERSED_MONTHLY_KEYS = [...YEARLY_SECTION_KEYS].reverse();
+
 export interface MonthlyFortuneInput {
   ilgan: string;
   ohaeng: Record<Ohaeng, number>;
@@ -44,8 +46,6 @@ export function useMonthlyFortune(input: MonthlyFortuneInput): UseMonthlyFortune
   const [activeSection, setActiveSection] = useState<YearlySectionKey | null>(null);
   const [aiError, setAiError] = useState('');
   const [hasCachedResult, setHasCachedResult] = useState(false);
-
-  const REVERSED_KEYS = [...YEARLY_SECTION_KEYS].reverse();
 
   const makeCacheKey = useCallback(
     (month: number) =>
@@ -94,7 +94,7 @@ export function useMonthlyFortune(input: MonthlyFortuneInput): UseMonthlyFortune
     onChunk: (text) => {
       const parsed = parseYearlySections(text);
       setSections(parsed);
-      setActiveSection(REVERSED_KEYS.find((k) => parsed[k].length > 0) ?? null);
+      setActiveSection(REVERSED_MONTHLY_KEYS.find((k) => parsed[k].length > 0) ?? null);
     },
     onComplete: (text) => {
       const final = parseYearlySections(text);
