@@ -21,13 +21,7 @@ interface AiSectionsProps {
   onRequest: () => void;
 }
 
-function AiSections({
-  sections,
-  activeSection,
-  isStreaming,
-  aiError,
-  onRequest,
-}: AiSectionsProps) {
+function AiSections({ sections, activeSection, isStreaming, aiError, onRequest }: AiSectionsProps) {
   const hasContent = SECTION_KEYS.some((k) => sections[k]);
 
   if (aiError && !hasContent) {
