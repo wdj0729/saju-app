@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { loadSession } from '@/lib/session';
 import { useSessionOrRedirect } from '@/hooks/useSessionOrRedirect';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
@@ -36,6 +36,18 @@ function YearlyFortuneSkeleton() {
 export default function YearlyFortuneContent() {
   const session = useSessionOrRedirect(loadSession, null);
   const { sections, activeSection, isStreaming, aiError, request } = useYearlySections();
+  const pillars = useMemo(
+    () =>
+      session && session !== 'not-found'
+        ? {
+            year: session.result.year,
+            month: session.result.month,
+            day: session.result.day,
+            hour: session.result.hour ?? null,
+          }
+        : null,
+    [session]
+  );
   const fortuneYear = getFortuneYear();
   const fortuneGanjee = getFortuneGanjee(fortuneYear);
 
@@ -96,12 +108,7 @@ export default function YearlyFortuneContent() {
           <MonthlyFortune
             ilgan={result.ilgan}
             ohaeng={result.ohaeng}
-            pillars={{
-              year: result.year,
-              month: result.month,
-              day: result.day,
-              hour: result.hour ?? null,
-            }}
+            pillars={pillars!}
             name={input.name || undefined}
             gender={input.gender}
           />

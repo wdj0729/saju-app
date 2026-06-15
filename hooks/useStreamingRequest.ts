@@ -34,6 +34,7 @@ export function useStreamingRequest(options: StreamingRequestOptions): UseStream
 
   function abort() {
     abortRef.current?.abort();
+    abortRef.current = null;
     if (rafRef.current !== null) {
       cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
@@ -91,7 +92,10 @@ export function useStreamingRequest(options: StreamingRequestOptions): UseStream
         cancelAnimationFrame(rafRef.current);
         rafRef.current = null;
       }
-      setIsStreaming(false);
+      // Guard against racing a subsequent request() call that already set isStreaming=true
+      if (abortRef.current === controller) {
+        setIsStreaming(false);
+      }
     }
   }
 

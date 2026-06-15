@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { makeMonthlyFortuneCacheKey, saveAiCache, loadAiCache } from '@/lib/ai-cache';
 import {
   parseYearlySections,
@@ -42,6 +42,7 @@ export interface UseMonthlyFortuneReturn {
 export function useMonthlyFortune(input: MonthlyFortuneInput): UseMonthlyFortuneReturn {
   const fortuneYear = getFortuneYear();
   const [selectedMonth, setSelectedMonthState] = useState<number>(new Date().getMonth() + 1);
+  const requestedMonthRef = useRef<number>(new Date().getMonth() + 1);
   const [sections, setSections] = useState<Record<YearlySectionKey, string>>(emptyYearlySections());
   const [activeSection, setActiveSection] = useState<YearlySectionKey | null>(null);
   const [aiError, setAiError] = useState('');
@@ -55,7 +56,15 @@ export function useMonthlyFortune(input: MonthlyFortuneInput): UseMonthlyFortune
         fortuneYear,
         month
       ),
-    [input.pillars.day, input.pillars.hour, fortuneYear]
+    // Use primitive values, not object refs, to avoid invalidating on every parent render
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      input.pillars.day.gan,
+      input.pillars.day.ji,
+      input.pillars.hour?.gan,
+      input.pillars.hour?.ji,
+      fortuneYear,
+    ]
   );
 
   const loadCache = useCallback(
@@ -101,7 +110,7 @@ export function useMonthlyFortune(input: MonthlyFortuneInput): UseMonthlyFortune
       setSections(final);
       setActiveSection(null);
       setHasCachedResult(true);
-      saveAiCache(makeCacheKey(selectedMonth), final);
+      saveAiCache(makeCacheKey(requestedMonthRef.current), final);
     },
     onError: (msg) => {
       setSections(emptyYearlySections());
@@ -117,6 +126,7 @@ export function useMonthlyFortune(input: MonthlyFortuneInput): UseMonthlyFortune
   }
 
   function requestAi() {
+    requestedMonthRef.current = selectedMonth;
     request('/api/monthly-fortune', { ...input, month: selectedMonth });
   }
 
