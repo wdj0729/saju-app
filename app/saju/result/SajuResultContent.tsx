@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadSession } from '@/lib/session';
 import { makeAiCacheKey } from '@/lib/ai-cache';
@@ -14,6 +14,7 @@ import { saveProfile, isProfileSaved } from '@/lib/profiles';
 import { calculateDaewoon, calcMadeAge } from '@/lib/daewoon';
 import { useSessionOrRedirect } from '@/hooks/useSessionOrRedirect';
 import { useAiSections } from '@/hooks/useAiSections';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import SajuGrid from '@/components/SajuGrid';
 import OhaengChart from '@/components/OhaengChart';
 import DaewoonChart from '@/components/DaewoonChart';
@@ -217,14 +218,11 @@ export default function SajuResultContent() {
     }
   }, [session]);
 
-  useEffect(() => {
-    if (!session || session === 'not-found') return;
-    const name = session.input.name ? `${session.input.name}의 사주` : '사주 결과';
-    document.title = `${name} · ${session.result.ilgan} 일간 — 사주팔자`;
-    return () => {
-      document.title = '사주팔자';
-    };
-  }, [session]);
+  const docTitle =
+    session && session !== 'not-found'
+      ? `${session.input.name ? `${session.input.name}의 사주` : '사주 결과'} · ${session.result.ilgan} 일간 — 사주팔자`
+      : undefined;
+  useDocumentTitle(docTitle);
 
   if (session === 'not-found') return <SessionExpiredPage redirectPath="/saju" />;
   if (!session) return <SajuResultSkeleton />;

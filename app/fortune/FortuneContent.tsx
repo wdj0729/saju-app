@@ -1,10 +1,11 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadSession } from '@/lib/session';
 import { FORTUNE_TEXT, getDayVariantIndex } from '@/lib/fortune-text';
 import { useSessionOrRedirect } from '@/hooks/useSessionOrRedirect';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import ShareButton from '@/components/ShareButton';
 import BackButton from '@/components/BackButton';
 import AiContent from '@/components/AiContent';
@@ -81,14 +82,11 @@ export default function FortuneContent() {
     });
   }, [request, session]);
 
-  useEffect(() => {
-    if (!session || session === 'not-found') return;
-    const name = session.input.name ? `${session.input.name}의 ` : '';
-    document.title = `${name}${activeTab} 운세 · ${session.result.ilgan} 일간 — 사주팔자`;
-    return () => {
-      document.title = '사주팔자';
-    };
-  }, [session, activeTab]);
+  const docTitle =
+    session && session !== 'not-found'
+      ? `${session.input.name ? `${session.input.name}의 ` : ''}${activeTab} 운세 · ${session.result.ilgan} 일간 — 사주팔자`
+      : undefined;
+  useDocumentTitle(docTitle);
 
   if (session === 'not-found') return <SessionExpiredPage redirectPath="/saju" />;
   if (!session) return <FortuneSkeleton />;
