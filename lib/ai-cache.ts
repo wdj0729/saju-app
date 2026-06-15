@@ -11,6 +11,12 @@ export function makeAiCacheKey(
   return `${PREFIX}${year}-${month}-${day}-${hour ?? 'x'}-${isLunar ? 'L' : 'S'}`;
 }
 
+const MONTHLY_PREFIX = 'monthly-fortune:';
+
+export function makeMonthlyFortuneCacheKey(ilgan: string, year: number, month: number): string {
+  return `${MONTHLY_PREFIX}${ilgan}:${year}:${month}`;
+}
+
 export function saveAiCache(key: string, sections: Record<string, string>): void {
   if (typeof window === 'undefined') return;
   try {

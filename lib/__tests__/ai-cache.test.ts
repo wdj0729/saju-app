@@ -1,4 +1,4 @@
-import { makeAiCacheKey, saveAiCache, loadAiCache } from '../ai-cache';
+import { makeAiCacheKey, saveAiCache, loadAiCache, makeMonthlyFortuneCacheKey } from '../ai-cache';
 import { setupStorageMock } from './test-utils';
 
 setupStorageMock('localStorage');
@@ -44,5 +44,21 @@ describe('saveAiCache / loadAiCache', () => {
   it('sections가 배열이면 null 반환', () => {
     localStorage.setItem('saju-ai-cache:arr-sections', JSON.stringify({ v: 1, sections: [] }));
     expect(loadAiCache('saju-ai-cache:arr-sections')).toBeNull();
+  });
+});
+
+describe('makeMonthlyFortuneCacheKey', () => {
+  it('일간·연도·월로 캐시 키 생성', () => {
+    expect(makeMonthlyFortuneCacheKey('甲', 2026, 6)).toBe('monthly-fortune:甲:2026:6');
+  });
+
+  it('1월도 그대로 사용 (zero-padding 없음)', () => {
+    expect(makeMonthlyFortuneCacheKey('壬', 2026, 1)).toBe('monthly-fortune:壬:2026:1');
+  });
+
+  it('다른 일간도 구분', () => {
+    expect(makeMonthlyFortuneCacheKey('乙', 2026, 6)).not.toBe(
+      makeMonthlyFortuneCacheKey('甲', 2026, 6)
+    );
   });
 });
