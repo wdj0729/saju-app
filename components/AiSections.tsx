@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import { SkeletonBox } from './Skeleton';
 import { SECTION_KEYS } from '@/hooks/useAiSections';
 import type { SectionKey } from '@/hooks/useAiSections';
@@ -20,7 +21,7 @@ interface AiSectionsProps {
   onRequest: () => void;
 }
 
-export default function AiSections({
+function AiSections({
   sections,
   activeSection,
   isStreaming,
@@ -91,3 +92,5 @@ export default function AiSections({
     </div>
   );
 }
+
+export default memo(AiSections);

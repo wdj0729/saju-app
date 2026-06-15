@@ -11,9 +11,11 @@ export function emptySections(): Record<SectionKey, string> {
   return { 성격분석: '', 재물운: '', 건강운: '', 연애운: '', 직업운: '' };
 }
 
+const SECTION_MARKER_RE = /\[(성격분석|재물운|건강운|연애운|직업운)\]/g;
+
 export function parseSections(text: string): Record<SectionKey, string> {
   const result = emptySections();
-  const markerRegex = /\[(성격분석|재물운|건강운|연애운|직업운)\]/g;
+  const markerRegex = new RegExp(SECTION_MARKER_RE.source, 'g');
   let match: RegExpExecArray | null;
   let lastKey: SectionKey | null = null;
   let lastIndex = 0;

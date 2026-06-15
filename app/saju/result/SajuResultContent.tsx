@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadSession } from '@/lib/session';
 import { makeAiCacheKey } from '@/lib/ai-cache';
@@ -189,7 +189,7 @@ export default function SajuResultContent() {
     (p) => p.startAge <= currentAge && currentAge <= p.endAge
   );
 
-  function handleAiRequest() {
+  const handleAiRequest = useCallback(() => {
     request('/api/saju-analysis', {
       ilgan: result.ilgan,
       ohaeng: result.ohaeng,
@@ -212,16 +212,16 @@ export default function SajuResultContent() {
           }
         : undefined,
     });
-  }
+  }, [request, result, input, currentAge, currentDaewoon]);
 
-  function handleSave() {
+  const handleSave = useCallback(() => {
     try {
       saveProfile(input, result.ilgan);
       setIsSaved(true);
     } catch {
       // localStorage unavailable or quota exceeded — ignore silently
     }
-  }
+  }, [input, result.ilgan]);
 
   return (
     <div className="flex flex-col flex-1">
