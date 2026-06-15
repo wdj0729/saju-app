@@ -5,6 +5,7 @@ import { loadSession } from '@/lib/session';
 import { useSessionOrRedirect } from '@/hooks/useSessionOrRedirect';
 import { useYearlySections } from '@/hooks/useYearlySections';
 import YearlySections from '@/components/YearlySections';
+import MonthlyFortune from '@/components/MonthlyFortune';
 import BackButton from '@/components/BackButton';
 import { SkeletonBox } from '@/components/Skeleton';
 import SessionExpiredPage from '@/components/SessionExpiredPage';
@@ -90,6 +91,21 @@ export default function YearlyFortuneContent() {
           aiError={aiError}
           onRequest={handleRequest}
         />
+
+        <div className="border-t border-border pt-4">
+          <MonthlyFortune
+            ilgan={result.ilgan}
+            ohaeng={result.ohaeng}
+            pillars={{
+              year: result.year,
+              month: result.month,
+              day: result.day,
+              hour: result.hour ?? null,
+            }}
+            name={input.name || undefined}
+            gender={input.gender}
+          />
+        </div>
       </div>
     </div>
   );
