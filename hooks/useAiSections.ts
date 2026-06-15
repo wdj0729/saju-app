@@ -2,38 +2,14 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { saveAiCache, loadAiCache } from '@/lib/ai-cache';
+import { parseSections, emptySections, SECTION_KEYS } from '@/lib/saju-sections';
 
-export type SectionKey = '성격분석' | '재물운' | '건강운' | '연애운' | '직업운';
-export const SECTION_KEYS: SectionKey[] = ['성격분석', '재물운', '건강운', '연애운', '직업운'];
+export type { SectionKey } from '@/lib/saju-sections';
+export { SECTION_KEYS, emptySections, parseSections } from '@/lib/saju-sections';
+
+import type { SectionKey } from '@/lib/saju-sections';
+
 const REVERSED_SECTION_KEYS = [...SECTION_KEYS].reverse();
-
-export function emptySections(): Record<SectionKey, string> {
-  return { 성격분석: '', 재물운: '', 건강운: '', 연애운: '', 직업운: '' };
-}
-
-const SECTION_MARKER_RE = /\[(성격분석|재물운|건강운|연애운|직업운)\]/g;
-
-export function parseSections(text: string): Record<SectionKey, string> {
-  SECTION_MARKER_RE.lastIndex = 0;
-  const result = emptySections();
-  let match: RegExpExecArray | null;
-  let lastKey: SectionKey | null = null;
-  let lastIndex = 0;
-
-  while ((match = SECTION_MARKER_RE.exec(text)) !== null) {
-    if (lastKey !== null) {
-      result[lastKey] = text.slice(lastIndex, match.index).trim();
-    }
-    lastKey = match[1] as SectionKey;
-    lastIndex = match.index + match[0].length;
-  }
-
-  if (lastKey !== null) {
-    result[lastKey] = text.slice(lastIndex).trim();
-  }
-
-  return result;
-}
 
 interface UseAiSectionsReturn {
   sections: Record<SectionKey, string>;

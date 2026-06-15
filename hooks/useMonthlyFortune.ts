@@ -6,8 +6,8 @@ import {
   parseYearlySections,
   emptyYearlySections,
   YEARLY_SECTION_KEYS,
-} from '@/hooks/useYearlySections';
-import type { YearlySectionKey } from '@/hooks/useYearlySections';
+} from '@/lib/yearly-sections';
+import type { YearlySectionKey } from '@/lib/yearly-sections';
 import type { Pillar } from '@/lib/saju-calculator';
 import type { Ohaeng } from '@/lib/saju-data';
 import { getFortuneYear } from '@/lib/constants';

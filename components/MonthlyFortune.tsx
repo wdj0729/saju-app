@@ -2,8 +2,8 @@
 
 import { useMonthlyFortune } from '@/hooks/useMonthlyFortune';
 import type { MonthlyFortuneInput } from '@/hooks/useMonthlyFortune';
-import { YEARLY_SECTION_KEYS } from '@/hooks/useYearlySections';
-import type { YearlySectionKey } from '@/hooks/useYearlySections';
+import { YEARLY_SECTION_KEYS } from '@/lib/yearly-sections';
+import type { YearlySectionKey } from '@/lib/yearly-sections';
 import { SkeletonBox } from './Skeleton';
 
 const MONTHS = Array.from({ length: 12 }, (_, i) => i + 1);

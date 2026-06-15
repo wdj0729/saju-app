@@ -2,8 +2,8 @@
 
 import { memo } from 'react';
 import { SkeletonBox } from './Skeleton';
-import { SECTION_KEYS } from '@/hooks/useAiSections';
-import type { SectionKey } from '@/hooks/useAiSections';
+import { SECTION_KEYS } from '@/lib/saju-sections';
+import type { SectionKey } from '@/lib/saju-sections';
 
 const SECTION_META: Record<SectionKey, { emoji: string; title: string }> = {
   성격분석: { emoji: '🔮', title: '성격 분석' },
