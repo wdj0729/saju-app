@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import { INPUT_CLASS, LABEL_CLASS } from '@/lib/constants';
 import DateInput from './DateInput';
 import HourInput from './HourInput';
@@ -23,6 +24,8 @@ interface PersonInputFieldsProps {
   showOptionalHints?: boolean;
   namePlaceholder?: string;
   compact?: boolean;
+  label?: string;
+  profileChips?: ReactNode;
 }
 
 export default function PersonInputFields({
@@ -44,8 +47,10 @@ export default function PersonInputFields({
   showOptionalHints = false,
   namePlaceholder,
   compact = false,
+  label,
+  profileChips,
 }: PersonInputFieldsProps) {
-  return (
+  const fields = (
     <>
       <div>
         <label className={LABEL_CLASS}>이름{showOptionalHints ? ' (선택)' : ''}</label>
@@ -107,6 +112,23 @@ export default function PersonInputFields({
         <label className={LABEL_CLASS}>태어난 시{showOptionalHints ? ' (선택)' : ''}</label>
         <HourInput value={hourValue} onChange={onHourChange} />
       </div>
+    </>
+  );
+
+  if (label) {
+    return (
+      <div className="bg-card rounded-2xl px-4 py-4 flex flex-col gap-4">
+        <p className="text-xs font-semibold text-primary">{label}</p>
+        {profileChips}
+        {fields}
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {profileChips}
+      {fields}
     </>
   );
 }
