@@ -18,16 +18,20 @@ export default function SessionExpiredPage({
   redirectLabel = '다시 입력하기',
 }: SessionExpiredPageProps) {
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
   const [profiles, setProfiles] = useState<Profile[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loadingId, setLoadingId] = useState<string | null>(null);
 
   useEffect(() => {
     setProfiles(loadProfiles());
+    setMounted(true);
   }, []);
 
+  if (!mounted) return null;
+
   function handleProfileSelect(profile: Profile) {
-    if (loading) return;
-    setLoading(true);
+    if (loadingId) return;
+    setLoadingId(profile.id);
     try {
       const result = calculateSaju({
         year: profile.year,
@@ -50,7 +54,7 @@ export default function SessionExpiredPage({
       });
       router.refresh();
     } catch {
-      setLoading(false);
+      setLoadingId(null);
       router.push(redirectPath);
     }
   }
@@ -70,14 +74,14 @@ export default function SessionExpiredPage({
             <button
               key={profile.id}
               onClick={() => handleProfileSelect(profile)}
-              disabled={loading}
+              disabled={!!loadingId}
               aria-label={`${profile.name || '이름 없음'} 프로필 선택`}
               className={`w-full rounded-2xl px-4 py-3 flex items-center gap-3 text-left transition-colors disabled:opacity-60 ${
                 i === 0 ? 'bg-primary-gradient text-white' : 'bg-card hover:bg-card-hover'
               }`}
             >
               <span className="text-lg" aria-hidden="true">
-                🔮
+                {loadingId === profile.id ? '⏳' : '🔮'}
               </span>
               <div className="flex-1">
                 <p className={`text-sm font-semibold ${i === 0 ? 'text-white' : 'text-primary'}`}>
