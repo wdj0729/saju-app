@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { loadProfiles } from '@/lib/profiles';
 import type { Profile } from '@/lib/profiles';
 import { calculateSaju } from '@/lib/saju-calculator';
@@ -18,7 +18,6 @@ export default function SessionExpiredPage({
   redirectLabel = '다시 입력하기',
 }: SessionExpiredPageProps) {
   const router = useRouter();
-  const pathname = usePathname();
   const [profiles, setProfiles] = useState<Profile[]>([]);
 
   useEffect(() => {
@@ -46,7 +45,7 @@ export default function SessionExpiredPage({
         },
         result,
       });
-      router.replace(pathname);
+      router.refresh();
     } catch {
       router.push(redirectPath);
     }
