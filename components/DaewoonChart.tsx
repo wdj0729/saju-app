@@ -54,6 +54,8 @@ function DaewoonChart({ result, currentAge, ilganElement }: DaewoonChartProps) {
             <button
               key={pillar.gan + pillar.ji}
               onClick={() => setSelectedIdx(i)}
+              aria-label={`${pillar.startAge}~${pillar.endAge}세 대운 ${pillar.gan}${pillar.ji}`}
+              aria-pressed={isSelected}
               className="flex-shrink-0 rounded-xl p-2.5 text-center transition-all"
               style={{
                 minWidth: '58px',
@@ -67,7 +69,7 @@ function DaewoonChart({ result, currentAge, ilganElement }: DaewoonChartProps) {
               {isCurrent && (
                 <div
                   className="text-center mb-1 leading-none"
-                  style={{ fontSize: '8px', color: '#a0a0ff' }}
+                  style={{ fontSize: '10px', color: '#a0a0ff' }}
                 >
                   현재
                 </div>
