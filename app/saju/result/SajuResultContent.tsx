@@ -284,7 +284,13 @@ export default function SajuResultContent() {
           />
         </div>
 
-        {daewoon && <DaewoonChart result={daewoon} currentAge={currentAge} />}
+        {daewoon && (
+          <DaewoonChart
+            result={daewoon}
+            currentAge={currentAge}
+            ilganElement={GAN_OHAENG[result.ilgan]}
+          />
+        )}
       </div>
 
       <div className="flex flex-col gap-3 px-4 pb-8">
