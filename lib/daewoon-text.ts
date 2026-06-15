@@ -1,5 +1,4 @@
 import type { Ohaeng } from './saju-data';
-import { OHAENG_LABEL } from './constants';
 
 const OHAENG_GENERATES: Record<Ohaeng, Ohaeng> = {
   목: '화',
