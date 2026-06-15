@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadSession } from '@/lib/session';
 import { makeAiCacheKey } from '@/lib/ai-cache';
@@ -50,7 +50,7 @@ function getSeunRelation(ilganEl: Ohaeng, ganEl: Ohaeng) {
   return SEUN_RELATION[getOhaengRelationKey(ilganEl, ganEl)];
 }
 
-function SeunSection({
+const SeunSection = memo(function SeunSection({
   ilganElement,
   todayYear,
   todayMonth,
@@ -87,7 +87,7 @@ function SeunSection({
       </div>
     </div>
   );
-}
+});
 
 function SajuResultSkeleton() {
   return (
@@ -170,26 +170,19 @@ export default function SajuResultContent() {
     );
   }, [session]);
 
-  useEffect(() => {
-    if (!session || session === 'not-found') return;
-    const name = session.input.name ? `${session.input.name}의 사주` : '사주 결과';
-    document.title = `${name} · ${session.result.ilgan} 일간 — 사주팔자`;
-    return () => {
-      document.title = '사주팔자';
-    };
+  const currentAge = useMemo(() => {
+    if (!session || session === 'not-found') return 0;
+    return calcMadeAge(session.input.year, session.input.month, session.input.day);
   }, [session]);
 
-  if (session === 'not-found') return <SessionExpiredPage redirectPath="/saju" />;
-  if (!session) return <SajuResultSkeleton />;
-
-  const { input, result } = session;
-  const displayName = input.name ? `${input.name}의 사주` : '사주 결과';
-  const currentAge = calcMadeAge(input.year, input.month, input.day);
-  const currentDaewoon = daewoon?.pillars.find(
-    (p) => p.startAge <= currentAge && currentAge <= p.endAge
+  const currentDaewoon = useMemo(
+    () => daewoon?.pillars.find((p) => p.startAge <= currentAge && currentAge <= p.endAge),
+    [daewoon, currentAge]
   );
 
   const handleAiRequest = useCallback(() => {
+    if (!session || session === 'not-found') return;
+    const { input, result } = session;
     request('/api/saju-analysis', {
       ilgan: result.ilgan,
       ohaeng: result.ohaeng,
@@ -212,16 +205,32 @@ export default function SajuResultContent() {
           }
         : undefined,
     });
-  }, [request, result, input, currentAge, currentDaewoon]);
+  }, [request, session, currentAge, currentDaewoon]);
 
   const handleSave = useCallback(() => {
+    if (!session || session === 'not-found') return;
     try {
-      saveProfile(input, result.ilgan);
+      saveProfile(session.input, session.result.ilgan);
       setIsSaved(true);
     } catch {
       // localStorage unavailable or quota exceeded — ignore silently
     }
-  }, [input, result.ilgan]);
+  }, [session]);
+
+  useEffect(() => {
+    if (!session || session === 'not-found') return;
+    const name = session.input.name ? `${session.input.name}의 사주` : '사주 결과';
+    document.title = `${name} · ${session.result.ilgan} 일간 — 사주팔자`;
+    return () => {
+      document.title = '사주팔자';
+    };
+  }, [session]);
+
+  if (session === 'not-found') return <SessionExpiredPage redirectPath="/saju" />;
+  if (!session) return <SajuResultSkeleton />;
+
+  const { input, result } = session;
+  const displayName = input.name ? `${input.name}의 사주` : '사주 결과';
 
   return (
     <div className="flex flex-col flex-1">

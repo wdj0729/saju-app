@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadSession } from '@/lib/session';
 import { FORTUNE_TEXT, getDayVariantIndex } from '@/lib/fortune-text';
@@ -62,14 +62,14 @@ export default function FortuneContent() {
   const [todayDate] = useState(() => new Date());
   const todayDateStr = `${todayDate.getFullYear()}년 ${todayDate.getMonth() + 1}월 ${todayDate.getDate()}일`;
 
-  const todayIljin = (() => {
+  const todayIljin = useMemo(() => {
     const pillar = getDayPillar(
       todayDate.getFullYear(),
       todayDate.getMonth() + 1,
       todayDate.getDate()
     );
     return `${pillar.gan}${pillar.ji}일 (${OHAENG_LABEL[pillar.ganElement]})`;
-  })();
+  }, [todayDate]);
 
   useEffect(() => {
     if (!session || session === 'not-found') return;
