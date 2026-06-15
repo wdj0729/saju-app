@@ -72,20 +72,14 @@ export default function SessionExpiredPage({
               onClick={() => handleProfileSelect(profile)}
               disabled={loading}
               className={`w-full rounded-2xl px-4 py-3 flex items-center gap-3 text-left transition-colors disabled:opacity-60 ${
-                i === 0
-                  ? 'bg-primary-gradient text-white'
-                  : 'bg-card hover:bg-card-hover'
+                i === 0 ? 'bg-primary-gradient text-white' : 'bg-card hover:bg-card-hover'
               }`}
             >
               <span className="text-lg" aria-hidden="true">
                 🔮
               </span>
               <div className="flex-1">
-                <p
-                  className={`text-sm font-semibold ${
-                    i === 0 ? 'text-white' : 'text-primary'
-                  }`}
-                >
+                <p className={`text-sm font-semibold ${i === 0 ? 'text-white' : 'text-primary'}`}>
                   {profile.name || '이름 없음'}
                 </p>
                 <p className={`text-xs ${i === 0 ? 'text-white/70' : 'text-muted'}`}>
