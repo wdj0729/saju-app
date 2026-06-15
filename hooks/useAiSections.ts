@@ -14,13 +14,13 @@ export function emptySections(): Record<SectionKey, string> {
 const SECTION_MARKER_RE = /\[(성격분석|재물운|건강운|연애운|직업운)\]/g;
 
 export function parseSections(text: string): Record<SectionKey, string> {
+  SECTION_MARKER_RE.lastIndex = 0;
   const result = emptySections();
-  const markerRegex = new RegExp(SECTION_MARKER_RE.source, 'g');
   let match: RegExpExecArray | null;
   let lastKey: SectionKey | null = null;
   let lastIndex = 0;
 
-  while ((match = markerRegex.exec(text)) !== null) {
+  while ((match = SECTION_MARKER_RE.exec(text)) !== null) {
     if (lastKey !== null) {
       result[lastKey] = text.slice(lastIndex, match.index).trim();
     }

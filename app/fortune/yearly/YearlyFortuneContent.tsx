@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { loadSession } from '@/lib/session';
 import { useSessionOrRedirect } from '@/hooks/useSessionOrRedirect';
 import { useYearlySections } from '@/hooks/useYearlySections';
@@ -38,6 +38,23 @@ export default function YearlyFortuneContent() {
   const fortuneYear = getFortuneYear();
   const fortuneGanjee = getFortuneGanjee(fortuneYear);
 
+  const handleRequest = useCallback(() => {
+    if (!session || session === 'not-found') return;
+    const { input, result } = session;
+    request('/api/yearly-fortune', {
+      ilgan: result.ilgan,
+      ohaeng: result.ohaeng,
+      pillars: {
+        year: result.year,
+        month: result.month,
+        day: result.day,
+        hour: result.hour ?? null,
+      },
+      name: input.name || undefined,
+      gender: input.gender,
+    });
+  }, [request, session]);
+
   useEffect(() => {
     if (!session || session === 'not-found') return;
     const name = session.input.name ? `${session.input.name}의 ` : '';
@@ -51,21 +68,6 @@ export default function YearlyFortuneContent() {
   if (!session) return <YearlyFortuneSkeleton />;
 
   const { input, result } = session;
-
-  function handleRequest() {
-    request('/api/yearly-fortune', {
-      ilgan: result.ilgan,
-      ohaeng: result.ohaeng,
-      pillars: {
-        year: result.year,
-        month: result.month,
-        day: result.day,
-        hour: result.hour ?? null,
-      },
-      name: input.name || undefined,
-      gender: input.gender,
-    });
-  }
 
   return (
     <div className="flex flex-col flex-1">
