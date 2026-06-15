@@ -19,12 +19,15 @@ export default function SessionExpiredPage({
 }: SessionExpiredPageProps) {
   const router = useRouter();
   const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setProfiles(loadProfiles());
   }, []);
 
   function handleProfileSelect(profile: Profile) {
+    if (loading) return;
+    setLoading(true);
     try {
       const result = calculateSaju({
         year: profile.year,
@@ -47,6 +50,7 @@ export default function SessionExpiredPage({
       });
       router.refresh();
     } catch {
+      setLoading(false);
       router.push(redirectPath);
     }
   }
@@ -66,7 +70,8 @@ export default function SessionExpiredPage({
             <button
               key={profile.id}
               onClick={() => handleProfileSelect(profile)}
-              className={`w-full rounded-2xl px-4 py-3 flex items-center gap-3 text-left transition-colors ${
+              disabled={loading}
+              className={`w-full rounded-2xl px-4 py-3 flex items-center gap-3 text-left transition-colors disabled:opacity-60 ${
                 i === 0
                   ? 'bg-primary-gradient text-white'
                   : 'bg-card hover:bg-card-hover'

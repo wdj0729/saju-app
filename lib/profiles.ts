@@ -23,6 +23,7 @@ export function isProfile(v: unknown): v is Profile {
     typeof r.year === 'number' &&
     typeof r.month === 'number' &&
     typeof r.day === 'number' &&
+    typeof r.isLunar === 'boolean' &&
     typeof r.ilgan === 'string'
   );
 }
