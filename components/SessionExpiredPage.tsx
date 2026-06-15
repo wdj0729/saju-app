@@ -71,6 +71,7 @@ export default function SessionExpiredPage({
               key={profile.id}
               onClick={() => handleProfileSelect(profile)}
               disabled={loading}
+              aria-label={`${profile.name || '이름 없음'} 프로필 선택`}
               className={`w-full rounded-2xl px-4 py-3 flex items-center gap-3 text-left transition-colors disabled:opacity-60 ${
                 i === 0 ? 'bg-primary-gradient text-white' : 'bg-card hover:bg-card-hover'
               }`}
