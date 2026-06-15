@@ -51,7 +51,8 @@ export default function Home() {
       router.push(
         dest === 'saju' ? '/saju/result' : dest === 'fortune' ? '/fortune' : '/fortune/yearly'
       );
-    } catch {
+    } catch (err) {
+      console.error('프로필 사주 계산 실패:', err);
       router.push('/saju');
     }
   }

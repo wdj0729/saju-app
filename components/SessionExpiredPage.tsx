@@ -40,7 +40,7 @@ export default function SessionExpiredPage({
       saveSession({ input, result });
       setLoadingId(null);
       router.refresh();
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('프로필 사주 계산 실패:', err);
       setLoadingId(null);
       router.push(redirectPath);
