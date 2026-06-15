@@ -80,6 +80,18 @@ export function saveProfile(input: SajuSessionInput, ilgan: string): void {
   persist(profiles);
 }
 
+export function profileToSessionInput(profile: Profile): SajuSessionInput {
+  return {
+    name: profile.name,
+    year: profile.year,
+    month: profile.month,
+    day: profile.day,
+    hour: profile.hour,
+    isLunar: profile.isLunar,
+    gender: profile.gender ?? 'M',
+  };
+}
+
 export function deleteProfile(id: string): void {
   if (typeof window === 'undefined') return;
   persist(loadProfiles().filter((p) => p.id !== id));

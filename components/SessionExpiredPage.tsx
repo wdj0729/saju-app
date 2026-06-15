@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { loadProfiles } from '@/lib/profiles';
+import { loadProfiles, profileToSessionInput } from '@/lib/profiles';
 import type { Profile } from '@/lib/profiles';
 import { calculateSaju } from '@/lib/saju-calculator';
 import { saveSession } from '@/lib/session';
@@ -29,31 +29,19 @@ export default function SessionExpiredPage({
 
   if (!mounted) return null;
 
-  function handleProfileSelect(profile: Profile) {
+  async function handleProfileSelect(profile: Profile) {
     if (loadingId) return;
     setLoadingId(profile.id);
+    // Yield to React so the loading indicator paints before synchronous calculation
+    await new Promise<void>((resolve) => setTimeout(resolve, 0));
     try {
-      const result = calculateSaju({
-        year: profile.year,
-        month: profile.month,
-        day: profile.day,
-        hour: profile.hour,
-        isLunar: profile.isLunar,
-      });
-      saveSession({
-        input: {
-          name: profile.name,
-          year: profile.year,
-          month: profile.month,
-          day: profile.day,
-          hour: profile.hour,
-          isLunar: profile.isLunar,
-          gender: profile.gender ?? 'M',
-        },
-        result,
-      });
+      const input = profileToSessionInput(profile);
+      const result = calculateSaju(input);
+      saveSession({ input, result });
+      setLoadingId(null);
       router.refresh();
-    } catch {
+    } catch (err: unknown) {
+      console.error('프로필 사주 계산 실패:', err);
       setLoadingId(null);
       router.push(redirectPath);
     }

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { loadProfiles, deleteProfile, updateProfile } from '@/lib/profiles';
+import { loadProfiles, deleteProfile, updateProfile, profileToSessionInput } from '@/lib/profiles';
 import type { Profile } from '@/lib/profiles';
 import { calculateSaju } from '@/lib/saju-calculator';
 import { saveSession } from '@/lib/session';
@@ -45,29 +45,14 @@ export default function Home() {
       return;
     }
     try {
-      const result = calculateSaju({
-        year: profile.year,
-        month: profile.month,
-        day: profile.day,
-        hour: profile.hour,
-        isLunar: profile.isLunar,
-      });
-      saveSession({
-        input: {
-          name: profile.name,
-          year: profile.year,
-          month: profile.month,
-          day: profile.day,
-          hour: profile.hour,
-          isLunar: profile.isLunar,
-          gender: profile.gender ?? 'M',
-        },
-        result,
-      });
+      const input = profileToSessionInput(profile);
+      const result = calculateSaju(input);
+      saveSession({ input, result });
       router.push(
         dest === 'saju' ? '/saju/result' : dest === 'fortune' ? '/fortune' : '/fortune/yearly'
       );
-    } catch {
+    } catch (err) {
+      console.error('프로필 사주 계산 실패:', err);
       router.push('/saju');
     }
   }
