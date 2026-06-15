@@ -38,8 +38,6 @@ export interface UseMonthlyFortuneReturn {
   requestAi: () => void;
 }
 
-const REVERSED_KEYS = [...YEARLY_SECTION_KEYS].reverse();
-
 export function useMonthlyFortune(input: MonthlyFortuneInput): UseMonthlyFortuneReturn {
   const fortuneYear = getFortuneYear();
   const [selectedMonth, setSelectedMonthState] = useState<number>(new Date().getMonth() + 1);
@@ -140,7 +138,8 @@ export function useMonthlyFortune(input: MonthlyFortuneInput): UseMonthlyFortune
           rafRef.current = requestAnimationFrame(() => {
             const parsed = parseYearlySections(textRef.current);
             setSections(parsed);
-            const active = REVERSED_KEYS.find((k) => parsed[k].length > 0) ?? null;
+            const active =
+              [...YEARLY_SECTION_KEYS].reverse().find((k) => parsed[k].length > 0) ?? null;
             setActiveSection(active);
             rafRef.current = null;
           });

@@ -9,6 +9,7 @@ import {
 import { getFortuneYear } from '@/lib/constants';
 
 const ILGAN_VALUES = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'] as const;
+const MONTHLY_FORTUNE_MAX_TOKENS = 1000;
 
 interface MonthlyFortuneRequest {
   ilgan: string;
@@ -59,6 +60,7 @@ export async function POST(req: NextRequest): Promise<Response> {
     `${pillars.year.gan}${pillars.year.ji}`,
     `${pillars.month.gan}${pillars.month.ji}`,
     `${pillars.day.gan}${pillars.day.ji}`,
+    // null이면 '시주 미상' 표시 (캐시 키의 null과 다름 — 여기는 프롬프트 표시용)
     pillars.hour ? `${pillars.hour.gan}${pillars.hour.ji}` : '시주 미상',
   ].join(' / ');
 
@@ -100,7 +102,7 @@ export async function POST(req: NextRequest): Promise<Response> {
   try {
     return streamAnthropicResponse({
       model: 'claude-sonnet-4-6',
-      max_tokens: 1000,
+      max_tokens: MONTHLY_FORTUNE_MAX_TOKENS,
       messages: [{ role: 'user', content: lines }],
     });
   } catch (error) {
