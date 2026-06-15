@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadSession } from '@/lib/session';
 import { FORTUNE_TEXT, getDayVariantIndex } from '@/lib/fortune-text';
@@ -62,14 +62,24 @@ export default function FortuneContent() {
   const [todayDate] = useState(() => new Date());
   const todayDateStr = `${todayDate.getFullYear()}년 ${todayDate.getMonth() + 1}월 ${todayDate.getDate()}일`;
 
-  const todayIljin = (() => {
+  const todayIljin = useMemo(() => {
     const pillar = getDayPillar(
       todayDate.getFullYear(),
       todayDate.getMonth() + 1,
       todayDate.getDate()
     );
     return `${pillar.gan}${pillar.ji}일 (${OHAENG_LABEL[pillar.ganElement]})`;
-  })();
+  }, [todayDate]);
+
+  const handleAiRequest = useCallback(() => {
+    if (!session || session === 'not-found') return;
+    const { ilgan, ohaeng, year, month, day, hour } = session.result;
+    request('/api/ai-analysis', {
+      ilgan,
+      ohaeng,
+      pillars: { year, month, day, hour: hour ?? null },
+    });
+  }, [request, session]);
 
   useEffect(() => {
     if (!session || session === 'not-found') return;
@@ -91,14 +101,6 @@ export default function FortuneContent() {
   function handleTabChange(tab: Period) {
     setActiveTab(tab);
     setIsExpanded(false);
-  }
-
-  function handleAiRequest() {
-    request('/api/ai-analysis', {
-      ilgan,
-      ohaeng,
-      pillars: { year, month, day, hour: hour ?? null },
-    });
   }
 
   return (

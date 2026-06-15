@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import { SkeletonBox } from './Skeleton';
 import { SECTION_KEYS } from '@/hooks/useAiSections';
 import type { SectionKey } from '@/hooks/useAiSections';
@@ -20,13 +21,7 @@ interface AiSectionsProps {
   onRequest: () => void;
 }
 
-export default function AiSections({
-  sections,
-  activeSection,
-  isStreaming,
-  aiError,
-  onRequest,
-}: AiSectionsProps) {
+function AiSections({ sections, activeSection, isStreaming, aiError, onRequest }: AiSectionsProps) {
   const hasContent = SECTION_KEYS.some((k) => sections[k]);
 
   if (aiError && !hasContent) {
@@ -91,3 +86,5 @@ export default function AiSections({
     </div>
   );
 }
+
+export default memo(AiSections);

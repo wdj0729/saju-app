@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { Pillar } from '@/lib/saju-calculator';
 import type { Ohaeng } from '@/lib/saju-data';
 import { OHAENG_TEXT } from '@/lib/constants';
@@ -17,7 +18,7 @@ const OHAENG_BG: Record<Ohaeng, string> = {
   수: 'bg-su/10',
 };
 
-export default function SajuGrid({ year, month, day, hour }: SajuGridProps) {
+function SajuGrid({ year, month, day, hour }: SajuGridProps) {
   const data = [
     { label: '시', pillar: hour },
     { label: '일', pillar: day },
@@ -59,3 +60,5 @@ export default function SajuGrid({ year, month, day, hour }: SajuGridProps) {
     </div>
   );
 }
+
+export default memo(SajuGrid);
