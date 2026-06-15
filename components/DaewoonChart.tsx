@@ -36,52 +36,58 @@ function DaewoonChart({ result, currentAge, ilganElement }: DaewoonChartProps) {
       </p>
 
       {/* 가로 스크롤 카드 행 */}
-      <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1">
-        {pillars.map((pillar, i) => {
-          const isCurrent = i === currentIdx;
-          const isPast = currentIdx !== -1 && i < currentIdx;
-          const isSelected = i === selectedIdx;
-          const futureSteps = currentIdx === -1 ? i : i - currentIdx;
-          const opacity = isPast ? 0.35 : isCurrent ? 1 : Math.max(0.45, 1 - futureSteps * 0.1);
+      <div className="relative">
+        <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1">
+          {pillars.map((pillar, i) => {
+            const isCurrent = i === currentIdx;
+            const isPast = currentIdx !== -1 && i < currentIdx;
+            const isSelected = i === selectedIdx;
+            const futureSteps = currentIdx === -1 ? i : i - currentIdx;
+            const opacity = isPast ? 0.35 : isCurrent ? 1 : Math.max(0.45, 1 - futureSteps * 0.1);
 
-          return (
-            <button
-              key={pillar.gan + pillar.ji}
-              onClick={() => setSelectedIdx(i)}
-              aria-label={`${pillar.startAge}~${pillar.endAge}세 대운 ${pillar.gan}${pillar.ji}`}
-              aria-pressed={isSelected}
-              className="flex-shrink-0 rounded-xl p-2.5 text-center transition-all"
-              style={{
-                minWidth: '58px',
-                opacity,
-                background: isSelected
-                  ? 'linear-gradient(135deg, rgba(102,126,234,0.25), rgba(118,75,162,0.25))'
-                  : 'var(--color-card-hover)',
-                border: `1px solid ${isSelected ? 'rgba(102,126,234,0.7)' : 'transparent'}`,
-              }}
-            >
-              {isCurrent && (
-                <div
-                  className="text-center mb-1 leading-none"
-                  style={{ fontSize: '10px', color: '#a0a0ff' }}
-                >
-                  현재
-                </div>
-              )}
-              <div className={`text-lg font-bold leading-none ${OHAENG_TEXT[pillar.ganElement]}`}>
-                {pillar.gan}
-              </div>
-              <div
-                className={`text-lg font-bold leading-none mt-0.5 ${OHAENG_TEXT[pillar.jiElement]}`}
+            return (
+              <button
+                key={pillar.gan + pillar.ji}
+                onClick={() => setSelectedIdx(i)}
+                aria-label={`${pillar.startAge}~${pillar.endAge}세 대운 ${pillar.gan}${pillar.ji}`}
+                aria-pressed={isSelected}
+                className="flex-shrink-0 rounded-xl p-2.5 text-center transition-all"
+                style={{
+                  minWidth: '58px',
+                  opacity,
+                  background: isSelected
+                    ? 'linear-gradient(135deg, rgba(102,126,234,0.25), rgba(118,75,162,0.25))'
+                    : 'var(--color-card-hover)',
+                  border: `1px solid ${isSelected ? 'rgba(102,126,234,0.7)' : 'transparent'}`,
+                }}
               >
-                {pillar.ji}
-              </div>
-              <div className="text-muted mt-1.5" style={{ fontSize: '9px' }}>
-                {pillar.startAge}~{pillar.endAge}
-              </div>
-            </button>
-          );
-        })}
+                {isCurrent && (
+                  <div
+                    className="text-[10px] text-center mb-1 leading-none"
+                    style={{ color: '#a0a0ff' }}
+                  >
+                    현재
+                  </div>
+                )}
+                <div className={`text-lg font-bold leading-none ${OHAENG_TEXT[pillar.ganElement]}`}>
+                  {pillar.gan}
+                </div>
+                <div
+                  className={`text-lg font-bold leading-none mt-0.5 ${OHAENG_TEXT[pillar.jiElement]}`}
+                >
+                  {pillar.ji}
+                </div>
+                <div className="text-muted mt-1.5" style={{ fontSize: '9px' }}>
+                  {pillar.startAge}~{pillar.endAge}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+        <div
+          className="absolute right-0 top-0 bottom-2 w-8 pointer-events-none"
+          style={{ background: 'linear-gradient(to right, transparent, var(--color-card))' }}
+        />
       </div>
 
       {/* 상세 패널 */}

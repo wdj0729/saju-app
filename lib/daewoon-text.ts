@@ -1,22 +1,5 @@
 import type { Ohaeng } from './saju-data';
-
-const OHAENG_GENERATES: Record<Ohaeng, Ohaeng> = {
-  목: '화',
-  화: '토',
-  토: '금',
-  금: '수',
-  수: '목',
-};
-
-const OHAENG_CONTROLS: Record<Ohaeng, Ohaeng> = {
-  목: '토',
-  화: '금',
-  토: '수',
-  금: '목',
-  수: '화',
-};
-
-type RelationKey = 'same' | 'gen_me' | 'i_gen' | 'ctrl_me' | 'i_ctrl';
+import { type RelationKey, getOhaengRelationKey } from './ohaeng-relations';
 
 const RELATION_TEXT: Record<RelationKey, { label: string; relDesc: string }> = {
   same: {
@@ -54,14 +37,6 @@ const JI_FLAVOR: Record<Ohaeng, string> = {
   수: '수(水)의 기운이 더해져 지혜와 유연성이 중요해지는 시기예요.',
 };
 
-function getRelationKey(ilganEl: Ohaeng, ganEl: Ohaeng): RelationKey {
-  if (ganEl === ilganEl) return 'same';
-  if (OHAENG_GENERATES[ganEl] === ilganEl) return 'gen_me';
-  if (OHAENG_GENERATES[ilganEl] === ganEl) return 'i_gen';
-  if (OHAENG_CONTROLS[ganEl] === ilganEl) return 'ctrl_me';
-  return 'i_ctrl';
-}
-
 export interface DaewoonInterpretation {
   label: string;
   desc: string;
@@ -72,7 +47,7 @@ export function getDaewoonInterpretation(
   ganEl: Ohaeng,
   jiEl: Ohaeng
 ): DaewoonInterpretation {
-  const key = getRelationKey(ilganEl, ganEl);
+  const key = getOhaengRelationKey(ilganEl, ganEl);
   const { label, relDesc } = RELATION_TEXT[key];
   return { label, desc: `${relDesc} ${JI_FLAVOR[jiEl]}` };
 }
