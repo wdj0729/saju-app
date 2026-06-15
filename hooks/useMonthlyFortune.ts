@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { makeMonthlyFortuneCacheKey, saveAiCache, loadAiCache } from '@/lib/ai-cache';
-import { FORTUNE_TEXT, type FortuneEntry } from '@/lib/fortune-text';
 import {
   parseYearlySections,
   emptyYearlySections,
@@ -29,7 +28,6 @@ export interface MonthlyFortuneInput {
 export interface UseMonthlyFortuneReturn {
   selectedMonth: number;
   setSelectedMonth: (m: number) => void;
-  ruleSummary: FortuneEntry['이달'] | null;
   sections: Record<YearlySectionKey, string>;
   activeSection: YearlySectionKey | null;
   isStreaming: boolean;
@@ -49,8 +47,6 @@ export function useMonthlyFortune(input: MonthlyFortuneInput): UseMonthlyFortune
   const abortRef = useRef<AbortController | null>(null);
   const textRef = useRef('');
   const rafRef = useRef<number | null>(null);
-
-  const ruleSummary = FORTUNE_TEXT[input.ilgan]?.이달 ?? null;
 
   const loadCache = useCallback(
     (month: number) => {
@@ -181,7 +177,6 @@ export function useMonthlyFortune(input: MonthlyFortuneInput): UseMonthlyFortune
   return {
     selectedMonth,
     setSelectedMonth,
-    ruleSummary,
     sections,
     activeSection,
     isStreaming,
