@@ -4,10 +4,10 @@ import { useEffect, useRef, useState } from 'react';
 import { saveAiCache, loadAiCache } from '@/lib/ai-cache';
 import { parseSections, emptySections, SECTION_KEYS } from '@/lib/saju-sections';
 
-export type { SectionKey } from '@/lib/saju-sections';
-export { SECTION_KEYS, emptySections, parseSections } from '@/lib/saju-sections';
-
 import type { SectionKey } from '@/lib/saju-sections';
+
+export type { SectionKey };
+export { SECTION_KEYS, emptySections, parseSections } from '@/lib/saju-sections';
 
 const REVERSED_SECTION_KEYS = [...SECTION_KEYS].reverse();
 

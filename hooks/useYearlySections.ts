@@ -3,10 +3,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { parseYearlySections, emptyYearlySections, YEARLY_SECTION_KEYS } from '@/lib/yearly-sections';
 
-export type { YearlySectionKey } from '@/lib/yearly-sections';
-export { YEARLY_SECTION_KEYS, emptyYearlySections, parseYearlySections } from '@/lib/yearly-sections';
-
 import type { YearlySectionKey } from '@/lib/yearly-sections';
+
+export type { YearlySectionKey };
+export { YEARLY_SECTION_KEYS, emptyYearlySections, parseYearlySections } from '@/lib/yearly-sections';
 
 const REVERSED_YEARLY_SECTION_KEYS = [...YEARLY_SECTION_KEYS].reverse();
 
