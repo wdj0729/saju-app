@@ -7,7 +7,7 @@ export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
 export default function Image() {
-  const fontData = readFileSync(join(process.cwd(), 'public/fonts/NotoSansKR-Bold.woff2'));
+  const fontData = readFileSync(join(process.cwd(), 'public/fonts/NotoSansKR-Bold.ttf'));
 
   return new ImageResponse(
     (

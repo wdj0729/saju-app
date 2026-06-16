@@ -8,7 +8,7 @@ export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
 export default function Image() {
-  const fontData = readFileSync(join(process.cwd(), 'public/fonts/NotoSansKR-Bold.woff2'));
+  const fontData = readFileSync(join(process.cwd(), 'public/fonts/NotoSansKR-Bold.ttf'));
   const year = getFortuneYear();
 
   return new ImageResponse(
@@ -44,7 +44,7 @@ export default function Image() {
             fontFamily: 'Noto Sans KR',
           }}
         >
-          {year} 신년운세
+          {`${year} 신년운세`}
         </div>
       </div>
     ),
