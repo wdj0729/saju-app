@@ -12,42 +12,40 @@ export default function Image() {
   const year = getFortuneYear();
 
   return new ImageResponse(
-    (
+    <div
+      style={{
+        background: '#1e1e2e',
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 28,
+      }}
+    >
+      <div style={{ fontSize: 80 }}>✨</div>
       <div
         style={{
-          background: '#1e1e2e',
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 28,
+          fontSize: 56,
+          fontWeight: 700,
+          color: '#ffffff',
+          fontFamily: 'Noto Sans KR',
+          letterSpacing: '-1px',
         }}
       >
-        <div style={{ fontSize: 80 }}>✨</div>
-        <div
-          style={{
-            fontSize: 56,
-            fontWeight: 700,
-            color: '#ffffff',
-            fontFamily: 'Noto Sans KR',
-            letterSpacing: '-1px',
-          }}
-        >
-          사주팔자
-        </div>
-        <div
-          style={{
-            fontSize: 26,
-            color: '#a0a0b0',
-            fontFamily: 'Noto Sans KR',
-          }}
-        >
-          {`${year} 신년운세`}
-        </div>
+        사주팔자
       </div>
-    ),
+      <div
+        style={{
+          fontSize: 26,
+          color: '#a0a0b0',
+          fontFamily: 'Noto Sans KR',
+        }}
+      >
+        {`${year} 신년운세`}
+      </div>
+    </div>,
     {
       ...size,
       fonts: [{ name: 'Noto Sans KR', data: fontData, style: 'normal', weight: 700 }],
