@@ -17,6 +17,7 @@ import { useAiSections } from '@/hooks/useAiSections';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import SajuGrid from '@/components/SajuGrid';
 import OhaengChart from '@/components/OhaengChart';
+import OhaengAdvice from '@/components/OhaengAdvice';
 import DaewoonChart from '@/components/DaewoonChart';
 import AiSections from '@/components/AiSections';
 import ShareButton from '@/components/ShareButton';
@@ -254,6 +255,8 @@ export default function SajuResultContent() {
           <p className="text-xs text-muted mb-4">오행 분포</p>
           <OhaengChart ohaeng={result.ohaeng} />
         </div>
+
+        <OhaengAdvice ohaeng={result.ohaeng} />
 
         <SeunSection
           ilganElement={GAN_OHAENG[result.ilgan]}
