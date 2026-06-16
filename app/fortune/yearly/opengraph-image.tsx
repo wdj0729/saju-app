@@ -1,54 +1,10 @@
-import { ImageResponse } from 'next/og';
-import { readFileSync } from 'fs';
-import { join } from 'path';
+import { makeOGImage, OG_SIZE, OG_CONTENT_TYPE } from '@/lib/og-image';
 import { getFortuneYear } from '@/lib/constants';
 
 export const alt = '신년운세 — 사주팔자';
-export const size = { width: 1200, height: 630 };
-export const contentType = 'image/png';
+export const size = OG_SIZE;
+export const contentType = OG_CONTENT_TYPE;
 
 export default function Image() {
-  const fontData = readFileSync(join(process.cwd(), 'public/fonts/NotoSansKR-Bold.ttf'));
-  const year = getFortuneYear();
-
-  return new ImageResponse(
-    <div
-      style={{
-        background: '#1e1e2e',
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 28,
-      }}
-    >
-      <div style={{ fontSize: 80 }}>✨</div>
-      <div
-        style={{
-          fontSize: 56,
-          fontWeight: 700,
-          color: '#ffffff',
-          fontFamily: 'Noto Sans KR',
-          letterSpacing: '-1px',
-        }}
-      >
-        사주팔자
-      </div>
-      <div
-        style={{
-          fontSize: 26,
-          color: '#a0a0b0',
-          fontFamily: 'Noto Sans KR',
-        }}
-      >
-        {`${year} 신년운세`}
-      </div>
-    </div>,
-    {
-      ...size,
-      fonts: [{ name: 'Noto Sans KR', data: fontData, style: 'normal', weight: 700 }],
-    }
-  );
+  return makeOGImage('✨', `${getFortuneYear()} 신년운세`);
 }
