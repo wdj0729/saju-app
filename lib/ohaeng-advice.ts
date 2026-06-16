@@ -63,5 +63,5 @@ export function getMostLackingOhaeng(ohaeng: Record<Ohaeng, number>): Ohaeng | n
   const min = Math.min(...ORDER.map((k) => ohaeng[k]));
   const max = Math.max(...ORDER.map((k) => ohaeng[k]));
   if (min === max) return null;
-  return ORDER.find((k) => ohaeng[k] === min) ?? null;
+  return ORDER.find((k) => ohaeng[k] === min) || null;
 }
