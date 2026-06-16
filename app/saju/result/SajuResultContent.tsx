@@ -18,6 +18,7 @@ import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import SajuGrid from '@/components/SajuGrid';
 import OhaengChart from '@/components/OhaengChart';
 import OhaengAdvice from '@/components/OhaengAdvice';
+import SinsalCard from '@/components/SinsalCard';
 import DaewoonChart from '@/components/DaewoonChart';
 import AiSections from '@/components/AiSections';
 import ShareButton from '@/components/ShareButton';
@@ -257,6 +258,8 @@ export default function SajuResultContent() {
         </div>
 
         <OhaengAdvice ohaeng={result.ohaeng} />
+
+        <SinsalCard saju={result} />
 
         <SeunSection
           ilganElement={GAN_OHAENG[result.ilgan]}
