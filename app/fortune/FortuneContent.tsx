@@ -126,10 +126,12 @@ export default function FortuneContent() {
         </h1>
       </header>
 
-      <div className="flex border-b border-border">
+      <div className="flex border-b border-border" role="tablist" aria-label="운세 기간 선택">
         {PERIODS.map((period) => (
           <button
             key={period}
+            role="tab"
+            aria-selected={activeTab === period}
             onClick={() => handleTabChange(period)}
             className={`flex-1 py-3 text-sm font-medium transition-colors relative ${
               activeTab === period ? 'text-primary' : 'text-muted'
@@ -137,13 +139,20 @@ export default function FortuneContent() {
           >
             {period}
             {activeTab === period && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-gradient" />
+              <span
+                className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-gradient"
+                aria-hidden="true"
+              />
             )}
           </button>
         ))}
       </div>
 
-      <div className="flex flex-col gap-4 px-4 py-6 flex-1">
+      <div
+        className="flex flex-col gap-4 px-4 py-6 flex-1"
+        role="tabpanel"
+        aria-label={`${activeTab} 운세`}
+      >
         <div className="bg-card rounded-2xl overflow-hidden">
           <div className="p-4">
             <div className="flex items-center justify-between mb-2">
