@@ -97,7 +97,9 @@ export default function CompatibilityLoader() {
           setCopied(true);
           setTimeout(() => setCopied(false), 2000);
         },
-        () => {}
+        () => {
+          setError('링크 복사에 실패했습니다. URL을 직접 복사해 주세요.');
+        }
       );
     }
   }
