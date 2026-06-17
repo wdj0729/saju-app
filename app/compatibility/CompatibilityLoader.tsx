@@ -7,6 +7,7 @@ import { calcCompatibility, saveCompatSession } from '@/lib/compatibility';
 import { loadProfiles } from '@/lib/profiles';
 import type { Profile } from '@/lib/profiles';
 import { getPrefillA, clearPrefillA } from '@/lib/compatibility-prefill';
+import { encodeInvite } from '@/lib/invite';
 import BackButton from '@/components/BackButton';
 import PersonInputFields from '@/components/PersonInputFields';
 
@@ -30,6 +31,7 @@ export default function CompatibilityLoader() {
   const [monthB, setMonthB] = useState(1);
   const [dayB, setDayB] = useState(1);
   const [hourValueB, setHourValueB] = useState<number | null>(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     setProfiles(loadProfiles());
@@ -70,6 +72,28 @@ export default function CompatibilityLoader() {
   const maxDayB = isLunarB ? 30 : new Date(yearB, monthB, 0).getDate();
   const clampedDayA = Math.min(dayA, maxDayA);
   const clampedDayB = Math.min(dayB, maxDayB);
+
+  function handleInvite() {
+    const encoded = encodeInvite({
+      name: nameA,
+      year: yearA,
+      month: monthA,
+      day: clampedDayA,
+      hour: hourValueA,
+      isLunar: isLunarA,
+      gender: genderA,
+    });
+    const url = `${window.location.origin}/compatibility/invite?from=${encoded}`;
+
+    if (navigator.share) {
+      navigator.share({ title: '궁합 초대', text: `${nameA || '누군가'}가 궁합을 보자고 했어요!`, url });
+    } else {
+      navigator.clipboard.writeText(url).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      });
+    }
+  }
 
   function handleSubmit() {
     setError('');
@@ -195,12 +219,19 @@ export default function CompatibilityLoader() {
         {error && <p className="text-sm text-hwa text-center">{error}</p>}
       </div>
 
-      <div className="px-4 pb-8">
+      <div className="px-4 pb-8 flex flex-col gap-3">
         <button
           onClick={handleSubmit}
           className="w-full py-4 rounded-2xl bg-primary-gradient text-white font-semibold text-sm"
         >
           궁합 분석하기
+        </button>
+        <button
+          onClick={handleInvite}
+          disabled={!nameA.trim()}
+          className="w-full py-3 rounded-2xl border border-border text-sm font-medium text-primary disabled:opacity-40"
+        >
+          {copied ? '링크 복사됨!' : '링크로 초대하기'}
         </button>
       </div>
     </div>
