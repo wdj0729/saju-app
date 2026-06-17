@@ -86,7 +86,9 @@ export default function CompatibilityLoader() {
     const url = `${window.location.origin}/compatibility/invite?from=${encoded}`;
 
     if (navigator.share) {
-      navigator.share({ title: '궁합 초대', text: `${nameA || '누군가'}가 궁합을 보자고 했어요!`, url }).catch(() => {});
+      navigator
+        .share({ title: '궁합 초대', text: `${nameA || '누군가'}가 궁합을 보자고 했어요!`, url })
+        .catch(() => {});
     } else {
       navigator.clipboard.writeText(url).then(() => {
         setCopied(true);

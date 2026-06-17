@@ -46,8 +46,7 @@ function isInvitePayload(v: unknown): v is InvitePayload {
     typeof r.day === 'number' &&
     r.day >= 1 &&
     r.day <= 31 &&
-    (r.hour === null ||
-      (typeof r.hour === 'number' && r.hour >= 0 && r.hour <= 23)) &&
+    (r.hour === null || (typeof r.hour === 'number' && r.hour >= 0 && r.hour <= 23)) &&
     typeof r.isLunar === 'boolean' &&
     (r.gender === 'M' || r.gender === 'F')
   );
