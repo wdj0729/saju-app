@@ -64,3 +64,25 @@ describe('makeMonthlyFortuneCacheKey', () => {
     );
   });
 });
+
+describe('캐시 TTL 만료', () => {
+  const key = 'saju-ai-cache:ttl-test';
+  const sections = { 성격분석: '용감한', 재물운: '좋음', 건강운: '', 연애운: '', 직업운: '' };
+
+  it('30일 이내 캐시는 반환됨', () => {
+    const recent = Date.now() - 1000 * 60 * 60 * 24 * 29; // 29일 전
+    localStorage.setItem(key, JSON.stringify({ v: 2, savedAt: recent, sections }));
+    expect(loadAiCache(key)).toEqual(sections);
+  });
+
+  it('30일 초과 캐시는 null 반환', () => {
+    const old = Date.now() - 1000 * 60 * 60 * 24 * 31; // 31일 전
+    localStorage.setItem(key, JSON.stringify({ v: 2, savedAt: old, sections }));
+    expect(loadAiCache(key)).toBeNull();
+  });
+
+  it('savedAt 없으면 null 반환', () => {
+    localStorage.setItem(key, JSON.stringify({ v: 2, sections }));
+    expect(loadAiCache(key)).toBeNull();
+  });
+});
