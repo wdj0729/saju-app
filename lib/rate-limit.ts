@@ -5,6 +5,10 @@ const store = new Map<string, number[]>();
 
 function cleanup(ip: string, now: number): number[] {
   const timestamps = (store.get(ip) ?? []).filter((t) => now - t < WINDOW_MS);
+  if (timestamps.length === 0) {
+    store.delete(ip);
+    return [];
+  }
   store.set(ip, timestamps);
   return timestamps;
 }
@@ -20,4 +24,8 @@ export function checkRateLimit(ip: string): boolean {
 
 export function _injectTimestampsForTest(ip: string, timestamps: number[]): void {
   store.set(ip, [...timestamps]);
+}
+
+export function _clearStoreForTest(): void {
+  store.clear();
 }
