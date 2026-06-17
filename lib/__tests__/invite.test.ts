@@ -61,4 +61,12 @@ describe('encodeInvite / decodeInvite', () => {
   it('gender 잘못된 값 → null', () => {
     expect(decodeInvite(encodeRaw({ ...valid, gender: 'X' }))).toBeNull();
   });
+
+  it('이름 50자 초과 → null', () => {
+    expect(decodeInvite(encodeRaw({ ...valid, name: 'a'.repeat(51) }))).toBeNull();
+  });
+
+  it('이름에 < 포함 → null', () => {
+    expect(decodeInvite(encodeRaw({ ...valid, name: '<script>' }))).toBeNull();
+  });
 });

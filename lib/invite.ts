@@ -37,6 +37,8 @@ function isInvitePayload(v: unknown): v is InvitePayload {
   const currentYear = new Date().getFullYear();
   return (
     typeof r.name === 'string' &&
+    r.name.length <= 50 &&
+    !/[<>]/.test(r.name) &&
     typeof r.year === 'number' &&
     r.year >= 1900 &&
     r.year <= currentYear &&

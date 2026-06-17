@@ -88,7 +88,9 @@ export default function CompatibilityLoader() {
     if (navigator.share) {
       navigator
         .share({ title: '궁합 초대', text: `${nameA || '누군가'}가 궁합을 보자고 했어요!`, url })
-        .catch(() => {});
+        .catch((err: unknown) => {
+          if (err instanceof Error && err.name !== 'AbortError') console.error(err);
+        });
     } else {
       navigator.clipboard.writeText(url).then(
         () => {
