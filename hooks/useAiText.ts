@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { saveAiCache, loadAiCache } from '@/lib/ai-cache';
 import { useStreamingRequest } from './useStreamingRequest';
 
@@ -12,20 +12,14 @@ interface UseAiTextReturn {
 }
 
 export function useAiText(cacheKey?: string): UseAiTextReturn {
-  const [aiText, setAiText] = useState<string>(() => {
-    if (!cacheKey || typeof window === 'undefined') return '';
-    const cached = loadAiCache(cacheKey);
-    return (cached?.ai as string) ?? '';
-  });
+  const [aiText, setAiText] = useState('');
   const [aiError, setAiError] = useState('');
-  const cacheKeyRef = useRef(cacheKey);
-  cacheKeyRef.current = cacheKey;
 
   useEffect(() => {
-    if (!cacheKey || aiText) return; // 이미 텍스트가 있으면 스킵
+    if (!cacheKey) return;
     const cached = loadAiCache(cacheKey);
     if (cached?.ai) setAiText(cached.ai as string);
-  }, [cacheKey]); // aiText는 의존성에서 제외 (한 번만 체크)
+  }, [cacheKey]);
 
   const { isStreaming, request } = useStreamingRequest({
     onStart: () => {
@@ -35,9 +29,16 @@ export function useAiText(cacheKey?: string): UseAiTextReturn {
     onChunk: (text) => setAiText(text),
     onComplete: (text) => {
       setAiText(text);
-      if (cacheKeyRef.current) saveAiCache(cacheKeyRef.current, { ai: text });
+      if (cacheKey) saveAiCache(cacheKey, { ai: text });
     },
     onError: (msg) => {
+      if (cacheKey) {
+        const cached = loadAiCache(cacheKey);
+        if (cached?.ai) {
+          setAiError(msg);
+          return;
+        }
+      }
       setAiText('');
       setAiError(msg);
     },
