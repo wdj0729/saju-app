@@ -90,10 +90,13 @@ export default function CompatibilityLoader() {
         .share({ title: '궁합 초대', text: `${nameA || '누군가'}가 궁합을 보자고 했어요!`, url })
         .catch(() => {});
     } else {
-      navigator.clipboard.writeText(url).then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      });
+      navigator.clipboard.writeText(url).then(
+        () => {
+          setCopied(true);
+          setTimeout(() => setCopied(false), 2000);
+        },
+        () => {}
+      );
     }
   }
 
