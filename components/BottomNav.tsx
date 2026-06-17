@@ -24,7 +24,10 @@ export default function BottomNav() {
   const activeTab = getActiveTab(pathname);
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border">
+    <nav
+      className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border"
+      aria-label="주요 메뉴"
+    >
       <div className="max-w-md mx-auto flex">
         {TABS.map(({ tab, icon, href }) => {
           const isActive = activeTab === tab;
@@ -32,9 +35,13 @@ export default function BottomNav() {
             <Link
               key={tab}
               href={href}
+              aria-current={isActive ? 'page' : undefined}
+              aria-label={tab}
               className="flex-1 flex flex-col items-center gap-1 py-2 pb-3"
             >
-              <span className="text-xl leading-none">{icon}</span>
+              <span className="text-xl leading-none" aria-hidden="true">
+                {icon}
+              </span>
               <span
                 className={`text-[10px] font-medium transition-colors ${
                   isActive ? 'text-primary' : 'text-muted'
@@ -55,6 +62,7 @@ export default function BottomNav() {
                 <span
                   className="w-1 h-1 rounded-full"
                   style={{ background: 'linear-gradient(to right, #667eea, #764ba2)' }}
+                  aria-hidden="true"
                 />
               )}
             </Link>

@@ -61,7 +61,10 @@ export function useStreamingRequest(options: StreamingRequestOptions): UseStream
         signal: controller.signal,
         body: JSON.stringify(body),
       });
-      if (!res.ok) throw new Error('분석 요청에 실패했어요.');
+      if (!res.ok) {
+        const msg = await res.text().catch(() => '');
+        throw new Error(msg || '분석 요청에 실패했어요.');
+      }
       if (!res.body) throw new Error('Response body is missing');
       const reader = res.body.getReader();
       const decoder = new TextDecoder();

@@ -44,9 +44,18 @@ export default function AiContent({
   if (aiText) {
     return (
       <>
-        <div className="text-sm text-primary leading-relaxed whitespace-pre-wrap">
+        <div
+          className="text-sm text-primary leading-relaxed whitespace-pre-wrap"
+          aria-live="polite"
+          aria-atomic="false"
+          aria-busy={isStreaming}
+        >
           {aiText}
-          {isStreaming && <span className="animate-pulse opacity-70">▌</span>}
+          {isStreaming && (
+            <span className="animate-pulse opacity-70" aria-hidden="true">
+              ▌
+            </span>
+          )}
         </div>
         {!isStreaming && (
           <button

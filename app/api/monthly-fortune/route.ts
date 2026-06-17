@@ -8,6 +8,8 @@ import {
   type PillarData,
 } from '@/lib/stream-anthropic';
 import { getFortuneYear } from '@/lib/constants';
+import { AI_MODEL } from '@/lib/anthropic';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 const ILGAN_VALUES = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'] as const;
 const MONTHLY_FORTUNE_MAX_TOKENS = 1000;
@@ -52,6 +54,13 @@ function isMonthlyFortuneRequest(v: unknown): v is MonthlyFortuneRequest {
 }
 
 export async function POST(req: NextRequest): Promise<Response> {
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'anonymous';
+  if (!checkRateLimit(ip)) {
+    return new Response('요청이 너무 많습니다. 잠시 후 다시 시도해주세요.', {
+      status: 429,
+      headers: { 'Retry-After': '60' },
+    });
+  }
   const parsed = await parseBody(req, isMonthlyFortuneRequest);
   if (parsed instanceof Response) return parsed;
   const { ilgan, ohaeng, pillars, month, name, gender } = parsed.data;
@@ -96,7 +105,7 @@ export async function POST(req: NextRequest): Promise<Response> {
 
   try {
     return streamAnthropicResponse({
-      model: 'claude-sonnet-4-6',
+      model: AI_MODEL,
       max_tokens: MONTHLY_FORTUNE_MAX_TOKENS,
       messages: [{ role: 'user', content: lines }],
     });

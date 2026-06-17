@@ -7,6 +7,8 @@ import {
   isPillarData,
   type PillarData,
 } from '@/lib/stream-anthropic';
+import { AI_MODEL } from '@/lib/anthropic';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 interface CurrentDaewoon {
   gan: string;
@@ -50,6 +52,13 @@ function isSajuAnalysisRequest(v: unknown): v is SajuAnalysisRequest {
 }
 
 export async function POST(req: NextRequest): Promise<Response> {
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'anonymous';
+  if (!checkRateLimit(ip)) {
+    return new Response('요청이 너무 많습니다. 잠시 후 다시 시도해주세요.', {
+      status: 429,
+      headers: { 'Retry-After': '60' },
+    });
+  }
   const parsed = await parseBody(req, isSajuAnalysisRequest);
   if (parsed instanceof Response) return parsed;
   const { ilgan, ohaeng, pillars, name, gender, birthYear, currentAge, currentDaewoon } =
@@ -102,7 +111,7 @@ export async function POST(req: NextRequest): Promise<Response> {
 
   try {
     return streamAnthropicResponse({
-      model: 'claude-sonnet-4-6',
+      model: AI_MODEL,
       max_tokens: 2048,
       messages: [{ role: 'user', content: lines }],
     });
