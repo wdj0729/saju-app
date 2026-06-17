@@ -5,6 +5,10 @@ describe('checkRateLimit', () => {
     _clearStoreForTest();
   });
 
+  afterEach(() => {
+    _clearStoreForTest();
+  });
+
   it('한도 내 요청은 허용됨', () => {
     const ip = 'test-ip-1';
     for (let i = 0; i < 10; i++) {

@@ -48,6 +48,7 @@ export default function AiContent({
           className="text-sm text-primary leading-relaxed whitespace-pre-wrap"
           aria-live="polite"
           aria-atomic="false"
+          aria-busy={isStreaming}
         >
           {aiText}
           {isStreaming && (
