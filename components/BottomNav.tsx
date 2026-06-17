@@ -28,15 +28,13 @@ export default function BottomNav() {
       className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border"
       aria-label="주요 메뉴"
     >
-      <div className="max-w-md mx-auto flex" role="tablist">
+      <div className="max-w-md mx-auto flex">
         {TABS.map(({ tab, icon, href }) => {
           const isActive = activeTab === tab;
           return (
             <Link
               key={tab}
               href={href}
-              role="tab"
-              aria-selected={isActive}
               aria-current={isActive ? 'page' : undefined}
               aria-label={tab}
               className="flex-1 flex flex-col items-center gap-1 py-2 pb-3"

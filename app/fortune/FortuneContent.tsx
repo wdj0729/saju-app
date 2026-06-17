@@ -130,8 +130,10 @@ export default function FortuneContent() {
         {PERIODS.map((period) => (
           <button
             key={period}
+            id={`fortune-tab-${period}`}
             role="tab"
             aria-selected={activeTab === period}
+            aria-controls="fortune-tabpanel"
             onClick={() => handleTabChange(period)}
             className={`flex-1 py-3 text-sm font-medium transition-colors relative ${
               activeTab === period ? 'text-primary' : 'text-muted'
@@ -149,9 +151,10 @@ export default function FortuneContent() {
       </div>
 
       <div
+        id="fortune-tabpanel"
         className="flex flex-col gap-4 px-4 py-6 flex-1"
         role="tabpanel"
-        aria-label={`${activeTab} 운세`}
+        aria-labelledby={`fortune-tab-${activeTab}`}
       >
         <div className="bg-card rounded-2xl overflow-hidden">
           <div className="p-4">
