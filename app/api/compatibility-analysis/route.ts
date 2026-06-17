@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server';
 import { parseBody, streamAnthropicResponse, formatOhaeng } from '@/lib/stream-anthropic';
+import { AI_MODEL } from '@/lib/anthropic';
 
 interface PersonData {
   name: string;
@@ -49,7 +50,7 @@ export async function POST(req: NextRequest): Promise<Response> {
 
   try {
     return streamAnthropicResponse({
-      model: 'claude-sonnet-4-6',
+      model: AI_MODEL,
       max_tokens: 1024,
       messages: [
         {

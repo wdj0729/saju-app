@@ -8,6 +8,7 @@ import {
   type PillarData,
 } from '@/lib/stream-anthropic';
 import { getFortuneYear } from '@/lib/constants';
+import { AI_MODEL } from '@/lib/anthropic';
 
 const ILGAN_VALUES = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'] as const;
 const MONTHLY_FORTUNE_MAX_TOKENS = 1000;
@@ -96,7 +97,7 @@ export async function POST(req: NextRequest): Promise<Response> {
 
   try {
     return streamAnthropicResponse({
-      model: 'claude-sonnet-4-6',
+      model: AI_MODEL,
       max_tokens: MONTHLY_FORTUNE_MAX_TOKENS,
       messages: [{ role: 'user', content: lines }],
     });

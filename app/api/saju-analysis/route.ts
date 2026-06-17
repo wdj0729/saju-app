@@ -7,6 +7,7 @@ import {
   isPillarData,
   type PillarData,
 } from '@/lib/stream-anthropic';
+import { AI_MODEL } from '@/lib/anthropic';
 
 interface CurrentDaewoon {
   gan: string;
@@ -102,7 +103,7 @@ export async function POST(req: NextRequest): Promise<Response> {
 
   try {
     return streamAnthropicResponse({
-      model: 'claude-sonnet-4-6',
+      model: AI_MODEL,
       max_tokens: 2048,
       messages: [{ role: 'user', content: lines }],
     });
