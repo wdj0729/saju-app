@@ -16,11 +16,7 @@ function OhaengChart({ ohaeng }: OhaengChartProps) {
   }).join(', ');
 
   return (
-    <div
-      className="flex flex-col gap-2 w-full"
-      role="img"
-      aria-label={`오행 분포: ${summary}`}
-    >
+    <div className="flex flex-col gap-2 w-full" role="img" aria-label={`오행 분포: ${summary}`}>
       {OHAENG_ORDER.map((key) => {
         const pct = total > 0 ? Math.round((ohaeng[key] / total) * 100) : 0;
         return (

@@ -51,7 +51,9 @@ export default function AiContent({
         >
           {aiText}
           {isStreaming && (
-            <span className="animate-pulse opacity-70" aria-hidden="true">▌</span>
+            <span className="animate-pulse opacity-70" aria-hidden="true">
+              ▌
+            </span>
           )}
         </div>
         {!isStreaming && (

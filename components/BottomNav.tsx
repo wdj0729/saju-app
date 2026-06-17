@@ -39,7 +39,9 @@ export default function BottomNav() {
               aria-label={tab}
               className="flex-1 flex flex-col items-center gap-1 py-2 pb-3"
             >
-              <span className="text-xl leading-none" aria-hidden="true">{icon}</span>
+              <span className="text-xl leading-none" aria-hidden="true">
+                {icon}
+              </span>
               <span
                 className={`text-[10px] font-medium transition-colors ${
                   isActive ? 'text-primary' : 'text-muted'

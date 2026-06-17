@@ -48,7 +48,10 @@ describe('saveAiCache / loadAiCache', () => {
   });
 
   it('sections가 배열이면 null 반환', () => {
-    localStorage.setItem('saju-ai-cache:arr-sections', JSON.stringify({ v: 2, savedAt: Date.now(), sections: [] }));
+    localStorage.setItem(
+      'saju-ai-cache:arr-sections',
+      JSON.stringify({ v: 2, savedAt: Date.now(), sections: [] })
+    );
     expect(loadAiCache('saju-ai-cache:arr-sections')).toBeNull();
   });
 });
