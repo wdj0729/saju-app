@@ -1,4 +1,10 @@
-import { makeAiCacheKey, saveAiCache, loadAiCache, makeMonthlyFortuneCacheKey } from '../ai-cache';
+import {
+  makeAiCacheKey,
+  makeMonthlyFortuneCacheKey,
+  makeFortuneDayCacheKey,
+  saveAiCache,
+  loadAiCache,
+} from '../ai-cache';
 import { setupStorageMock } from './test-utils';
 
 setupStorageMock('localStorage');
@@ -62,6 +68,26 @@ describe('makeMonthlyFortuneCacheKey', () => {
     expect(makeMonthlyFortuneCacheKey('甲子', null, 2026, 6)).not.toBe(
       makeMonthlyFortuneCacheKey('甲午', null, 2026, 6)
     );
+  });
+});
+
+describe('makeFortuneDayCacheKey', () => {
+  it('생일과 오늘 날짜 조합으로 키 생성', () => {
+    expect(makeFortuneDayCacheKey(1990, 6, 15, null, false, 2026, 6, 17)).toBe(
+      'fortune-day:1990-6-15-x-S:2026-6-17'
+    );
+  });
+
+  it('시주 있으면 포함', () => {
+    expect(makeFortuneDayCacheKey(1990, 6, 15, 9, true, 2026, 6, 17)).toBe(
+      'fortune-day:1990-6-15-9-L:2026-6-17'
+    );
+  });
+
+  it('오늘 날짜가 다르면 다른 키', () => {
+    const key1 = makeFortuneDayCacheKey(1990, 6, 15, null, false, 2026, 6, 17);
+    const key2 = makeFortuneDayCacheKey(1990, 6, 15, null, false, 2026, 6, 18);
+    expect(key1).not.toBe(key2);
   });
 });
 

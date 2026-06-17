@@ -9,7 +9,8 @@ import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import ShareButton from '@/components/ShareButton';
 import BackButton from '@/components/BackButton';
 import AiContent from '@/components/AiContent';
-import { useAiStream } from '@/hooks/useAiStream';
+import { useAiText } from '@/hooks/useAiText';
+import { makeFortuneDayCacheKey } from '@/lib/ai-cache';
 import { SkeletonBox } from '@/components/Skeleton';
 import SessionExpiredPage from '@/components/SessionExpiredPage';
 import { getDayPillar } from '@/lib/saju-calculator';
@@ -58,9 +59,24 @@ export default function FortuneContent() {
   const session = useSessionOrRedirect(loadSession, null);
   const [activeTab, setActiveTab] = useState<Period>('오늘');
   const [isExpanded, setIsExpanded] = useState(false);
-  const { aiText, isStreaming, aiError, request } = useAiStream();
 
   const [todayDate] = useState(() => new Date());
+
+  const fortuneDayCacheKey = useMemo(() => {
+    if (!session || session === 'not-found') return undefined;
+    return makeFortuneDayCacheKey(
+      session.input.year,
+      session.input.month,
+      session.input.day,
+      session.input.hour,
+      session.input.isLunar,
+      todayDate.getFullYear(),
+      todayDate.getMonth() + 1,
+      todayDate.getDate()
+    );
+  }, [session, todayDate]);
+
+  const { aiText, isStreaming, aiError, request } = useAiText(fortuneDayCacheKey);
   const todayDateStr = `${todayDate.getFullYear()}년 ${todayDate.getMonth() + 1}월 ${todayDate.getDate()}일`;
 
   const todayIljin = useMemo(() => {
@@ -75,7 +91,7 @@ export default function FortuneContent() {
   const handleAiRequest = useCallback(() => {
     if (!session || session === 'not-found') return;
     const { ilgan, ohaeng, year, month, day, hour } = session.result;
-    request('/api/ai-analysis', {
+    void request('/api/ai-analysis', {
       ilgan,
       ohaeng,
       pillars: { year, month, day, hour: hour ?? null },
