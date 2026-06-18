@@ -1,6 +1,7 @@
 'use client';
 
-import { usePathname, useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const TABS = [
   {
@@ -19,7 +20,6 @@ const TABS = [
 
 export default function CompatibilityTabs() {
   const pathname = usePathname();
-  const router = useRouter();
 
   const activeHref =
     TABS.find((t) => t.match.some((m) => pathname === m || pathname.startsWith(m + '/')))?.href ??
@@ -30,11 +30,11 @@ export default function CompatibilityTabs() {
       {TABS.map(({ label, icon, href }) => {
         const isActive = activeHref === href;
         return (
-          <button
+          <Link
             key={href}
+            href={href}
             role="tab"
             aria-selected={isActive}
-            onClick={() => router.push(href)}
             className={`flex-1 py-3 text-sm font-medium transition-colors relative flex items-center justify-center gap-1.5 ${
               isActive ? 'text-primary' : 'text-muted'
             }`}
@@ -47,7 +47,7 @@ export default function CompatibilityTabs() {
                 aria-hidden="true"
               />
             )}
-          </button>
+          </Link>
         );
       })}
     </div>

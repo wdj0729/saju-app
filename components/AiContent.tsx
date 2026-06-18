@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import { SkeletonBox } from './Skeleton';
 
 interface AiContentProps {
@@ -10,7 +11,7 @@ interface AiContentProps {
   requestLabel?: string;
 }
 
-export default function AiContent({
+function AiContent({
   aiText,
   isStreaming,
   aiError,
@@ -78,3 +79,5 @@ export default function AiContent({
     </button>
   );
 }
+
+export default memo(AiContent);

@@ -9,7 +9,7 @@ export function makeAiCacheKey(
   hour: number | null,
   isLunar: boolean
 ): string {
-  return `${PREFIX}${year}-${month}-${day}-${hour ?? 'x'}-${isLunar ? 'L' : 'S'}`;
+  return `${PREFIX}v${CACHE_VERSION}:${year}-${month}-${day}-${hour ?? 'x'}-${isLunar ? 'L' : 'S'}`;
 }
 
 const MONTHLY_PREFIX = 'monthly-fortune:';
@@ -20,7 +20,7 @@ export function makeMonthlyFortuneCacheKey(
   year: number,
   month: number
 ): string {
-  return `${MONTHLY_PREFIX}${dayPillar}-${hourPillar ?? 'x'}:${year}:${month}`;
+  return `${MONTHLY_PREFIX}v${CACHE_VERSION}:${dayPillar}-${hourPillar ?? 'x'}:${year}:${month}`;
 }
 
 const FORTUNE_DAY_PREFIX = 'fortune-day:';
@@ -35,7 +35,7 @@ export function makeFortuneDayCacheKey(
   todayMonth: number,
   todayDay: number
 ): string {
-  return `${FORTUNE_DAY_PREFIX}${birthYear}-${birthMonth}-${birthDay}-${hour ?? 'x'}-${isLunar ? 'L' : 'S'}:${todayYear}-${todayMonth}-${todayDay}`;
+  return `${FORTUNE_DAY_PREFIX}v${CACHE_VERSION}:${birthYear}-${birthMonth}-${birthDay}-${hour ?? 'x'}-${isLunar ? 'L' : 'S'}:${todayYear}-${todayMonth}-${todayDay}`;
 }
 
 export function saveAiCache(key: string, sections: Record<string, string>): void {
