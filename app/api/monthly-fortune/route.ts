@@ -53,7 +53,7 @@ function isMonthlyFortuneRequest(v: unknown): v is MonthlyFortuneRequest {
 }
 
 export async function POST(req: NextRequest): Promise<Response> {
-  const rateLimitRes = getRateLimitResponse(req);
+  const rateLimitRes = await getRateLimitResponse(req);
   if (rateLimitRes) return rateLimitRes;
   const parsed = await parseBody(req, isMonthlyFortuneRequest);
   if (parsed instanceof Response) return parsed;

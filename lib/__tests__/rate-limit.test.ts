@@ -1,49 +1,69 @@
-import { checkRateLimit, _injectTimestampsForTest, _clearStoreForTest } from '../rate-limit';
+const mockLimit = jest.fn();
+
+jest.mock('@upstash/ratelimit', () => {
+  const MockRatelimit = jest.fn(() => ({ limit: (...args: unknown[]) => mockLimit(...args) }));
+  (MockRatelimit as unknown as Record<string, unknown>).slidingWindow = jest.fn();
+  return { Ratelimit: MockRatelimit };
+});
+
+jest.mock('@upstash/redis', () => ({
+  Redis: { fromEnv: jest.fn(() => ({})) },
+}));
+
+import { checkRateLimit, getRateLimitResponse } from '../rate-limit';
+import { NextRequest } from 'next/server';
 
 describe('checkRateLimit', () => {
-  beforeEach(() => {
-    _clearStoreForTest();
+  beforeEach(() => mockLimit.mockReset());
+
+  it('허용 응답 시 true 반환', async () => {
+    mockLimit.mockResolvedValueOnce({ success: true });
+    expect(await checkRateLimit('1.2.3.4')).toBe(true);
   });
 
-  afterEach(() => {
-    _clearStoreForTest();
+  it('차단 응답 시 false 반환', async () => {
+    mockLimit.mockResolvedValueOnce({ success: false });
+    expect(await checkRateLimit('1.2.3.4')).toBe(false);
   });
 
-  it('한도 내 요청은 허용됨', () => {
-    const ip = 'test-ip-1';
-    for (let i = 0; i < 10; i++) {
-      expect(checkRateLimit(ip)).toBe(true);
-    }
+  it('IP별로 독립적으로 limit 호출', async () => {
+    mockLimit.mockResolvedValue({ success: true });
+    await checkRateLimit('1.1.1.1');
+    await checkRateLimit('2.2.2.2');
+    expect(mockLimit).toHaveBeenNthCalledWith(1, '1.1.1.1');
+    expect(mockLimit).toHaveBeenNthCalledWith(2, '2.2.2.2');
+  });
+});
+
+describe('getRateLimitResponse', () => {
+  beforeEach(() => mockLimit.mockReset());
+
+  it('허용 시 null 반환', async () => {
+    mockLimit.mockResolvedValueOnce({ success: true });
+    const req = new NextRequest('http://localhost/api/test');
+    expect(await getRateLimitResponse(req)).toBeNull();
   });
 
-  it('한도 초과 요청은 차단됨', () => {
-    const ip = 'test-ip-2';
-    for (let i = 0; i < 10; i++) checkRateLimit(ip);
-    expect(checkRateLimit(ip)).toBe(false);
+  it('차단 시 429 응답 반환', async () => {
+    mockLimit.mockResolvedValueOnce({ success: false });
+    const req = new NextRequest('http://localhost/api/test');
+    const res = await getRateLimitResponse(req);
+    expect(res?.status).toBe(429);
   });
 
-  it('IP별로 독립적으로 계산', () => {
-    const ip1 = 'test-ip-3';
-    const ip2 = 'test-ip-4';
-    for (let i = 0; i < 10; i++) checkRateLimit(ip1);
-    expect(checkRateLimit(ip2)).toBe(true);
+  it('x-forwarded-for IP 추출', async () => {
+    mockLimit.mockResolvedValueOnce({ success: true });
+    const req = new NextRequest('http://localhost/api/test', {
+      headers: { 'x-forwarded-for': '5.5.5.5, 6.6.6.6' },
+    });
+    await getRateLimitResponse(req);
+    expect(mockLimit).toHaveBeenCalledWith('5.5.5.5');
   });
 
-  it('윈도우(1분) 밖 요청은 카운트 안됨', () => {
-    const ip = 'test-ip-5';
-    const old = Date.now() - 1000 * 70; // 70초 전
-    _injectTimestampsForTest(ip, Array(9).fill(old));
-    // 70초 전 요청 9개는 윈도우 밖이므로 만료 → 현재 요청 1개만 카운트 → 허용
-    expect(checkRateLimit(ip)).toBe(true);
-  });
-
-  it('윈도우 안 요청은 카운트됨', () => {
-    const ip = 'test-ip-6';
-    const recent = Date.now() - 1000 * 30; // 30초 전
-    _injectTimestampsForTest(ip, Array(9).fill(recent));
-    // 30초 전 요청 9개 + 현재 1개 = 10개 → 허용 (정확히 한도)
-    expect(checkRateLimit(ip)).toBe(true);
-    // 11번째 → 차단
-    expect(checkRateLimit(ip)).toBe(false);
+  it('IP 없으면 anonymous 사용', async () => {
+    mockLimit.mockResolvedValueOnce({ success: true });
+    const req = new NextRequest('http://localhost/api/test');
+    await getRateLimitResponse(req);
+    expect(mockLimit).toHaveBeenCalledWith('anonymous');
   });
 });

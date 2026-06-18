@@ -38,7 +38,7 @@ function isAiAnalysisRequest(v: unknown): v is AiAnalysisRequest {
 }
 
 export async function POST(req: NextRequest): Promise<Response> {
-  const rateLimitRes = getRateLimitResponse(req);
+  const rateLimitRes = await getRateLimitResponse(req);
   if (rateLimitRes) return rateLimitRes;
   const parsed = await parseBody(req, isAiAnalysisRequest);
   if (parsed instanceof Response) return parsed;
