@@ -10,15 +10,18 @@ const PAYLOAD = JSON.stringify({
 
 export async function POST(req: NextRequest): Promise<Response> {
   const authHeader = req.headers.get('authorization');
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  const secret = process.env.CRON_SECRET;
+  if (!secret || authHeader !== `Bearer ${secret}`) {
     return new Response('Unauthorized', { status: 401 });
   }
 
-  webpush.setVapidDetails(
-    process.env.VAPID_SUBJECT!,
-    process.env.VAPID_PUBLIC_KEY!,
-    process.env.VAPID_PRIVATE_KEY!
-  );
+  const vapidSubject = process.env.VAPID_SUBJECT;
+  const vapidPublicKey = process.env.VAPID_PUBLIC_KEY;
+  const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY;
+  if (!vapidSubject || !vapidPublicKey || !vapidPrivateKey) {
+    return new Response('VAPID not configured', { status: 500 });
+  }
+  webpush.setVapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey);
 
   const subs = await redis.hvals('push:subs');
   const results = await Promise.allSettled(
@@ -27,14 +30,15 @@ export async function POST(req: NextRequest): Promise<Response> {
       try {
         await webpush.sendNotification(sub, PAYLOAD);
       } catch (err: unknown) {
-        if (
-          typeof err === 'object' &&
-          err !== null &&
-          'statusCode' in err &&
-          (err as { statusCode: number }).statusCode === 410
-        ) {
+        const status =
+          typeof err === 'object' && err !== null && 'statusCode' in err
+            ? (err as { statusCode: number }).statusCode
+            : undefined;
+        if (status === 410) {
           const field = createHash('sha256').update(sub.endpoint as string).digest('hex');
           await redis.hdel('push:subs', field);
+        } else {
+          console.error('[push/send] sendNotification failed:', status, sub.endpoint);
         }
         throw err;
       }

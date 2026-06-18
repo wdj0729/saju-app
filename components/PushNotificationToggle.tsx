@@ -23,7 +23,20 @@ export default function PushNotificationToggle() {
   useEffect(() => {
     if (!('PushManager' in window) || !('serviceWorker' in navigator)) return;
     setSupported(true);
-    setSubscribed(localStorage.getItem(STORAGE_KEY) === 'true');
+    navigator.serviceWorker.ready
+      .then((reg) => reg.pushManager.getSubscription())
+      .then((sub) => {
+        const isSubscribed = !!sub;
+        setSubscribed(isSubscribed);
+        if (isSubscribed) {
+          localStorage.setItem(STORAGE_KEY, 'true');
+        } else {
+          localStorage.removeItem(STORAGE_KEY);
+        }
+      })
+      .catch(() => {
+        setSubscribed(localStorage.getItem(STORAGE_KEY) === 'true');
+      });
   }, []);
 
   if (!supported) return null;
