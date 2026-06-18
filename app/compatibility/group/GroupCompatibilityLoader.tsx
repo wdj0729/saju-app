@@ -11,6 +11,7 @@ import PersonInputFields from '@/components/PersonInputFields';
 import CompatibilityTabs from '@/components/CompatibilityTabs';
 
 interface MemberForm {
+  id: string;
   name: string;
   gender: 'M' | 'F';
   isLunar: boolean;
@@ -22,6 +23,7 @@ interface MemberForm {
 
 function defaultMember(): MemberForm {
   return {
+    id: crypto.randomUUID(),
     name: '',
     gender: 'M',
     isLunar: false,
@@ -98,7 +100,7 @@ export default function GroupCompatibilityLoader() {
 
       <div className="flex flex-col gap-4 px-4 py-6 flex-1">
         {members.map((m, index) => (
-          <div key={index} className="relative">
+          <div key={m.id} className="relative">
             <PersonInputFields
               label={`👤 ${index + 1}번째 인물`}
               profileChips={
