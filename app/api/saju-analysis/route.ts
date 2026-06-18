@@ -53,7 +53,7 @@ function isSajuAnalysisRequest(v: unknown): v is SajuAnalysisRequest {
 }
 
 export async function POST(req: NextRequest): Promise<Response> {
-  const rateLimitRes = getRateLimitResponse(req);
+  const rateLimitRes = await getRateLimitResponse(req);
   if (rateLimitRes) return rateLimitRes;
   const parsed = await parseBody(req, isSajuAnalysisRequest);
   if (parsed instanceof Response) return parsed;

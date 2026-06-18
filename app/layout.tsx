@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Geist } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/react';
 import './globals.css';
 import ServiceWorkerRegistrar from '@/components/ServiceWorkerRegistrar';
 import BottomNav from '@/components/BottomNav';
@@ -60,6 +61,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <ServiceWorkerRegistrar />
         <div className="max-w-md mx-auto min-h-screen flex flex-col pb-20">{children}</div>
         <BottomNav />
+        <Analytics />
       </body>
     </html>
   );
