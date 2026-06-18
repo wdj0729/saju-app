@@ -16,6 +16,21 @@ const CENTER = SVG_SIZE / 2;
 const LAYOUT_R = 100; // 원형 배치 반지름
 const NODE_R = 22; // 노드 원 반지름
 
+const JIJI_ANIMAL: Record<string, string> = {
+  子: '🐭',
+  丑: '🐂',
+  寅: '🐯',
+  卯: '🐰',
+  辰: '🐉',
+  巳: '🐍',
+  午: '🐴',
+  未: '🐑',
+  申: '🐵',
+  酉: '🐓',
+  戌: '🐕',
+  亥: '🐷',
+};
+
 const GRADE_STYLE: Record<PairResult['grade'], { color: string; width: number }> = {
   최상: { color: '#4ade80', width: 3.5 },
   상: { color: '#60a5fa', width: 2.5 },
@@ -189,8 +204,8 @@ export default function GroupResultContent() {
                   >
                     {getMemberName(session, i).slice(0, 4)}
                   </text>
-                  <text x={pos.x} y={pos.y + 8} textAnchor="middle" fontSize="7" fill="#a78bfa">
-                    {member.result.ilgan}
+                  <text x={pos.x} y={pos.y + 8} textAnchor="middle" fontSize="11" fill="#a78bfa">
+                    {JIJI_ANIMAL[member.result.year.ji] ?? ''}
                   </text>
                 </g>
               );
