@@ -14,20 +14,20 @@ import SessionExpiredPage from '@/components/SessionExpiredPage';
 const SVG_SIZE = 300;
 const CENTER = SVG_SIZE / 2;
 const LAYOUT_R = 100; // 원형 배치 반지름
-const NODE_R = 22;    // 노드 원 반지름
+const NODE_R = 22; // 노드 원 반지름
 
 const GRADE_STYLE: Record<PairResult['grade'], { color: string; width: number }> = {
-  '최상': { color: '#4ade80', width: 3.5 },
-  '상':   { color: '#60a5fa', width: 2.5 },
-  '중':   { color: '#facc15', width: 2 },
-  '하':   { color: '#f87171', width: 1.5 },
+  최상: { color: '#4ade80', width: 3.5 },
+  상: { color: '#60a5fa', width: 2.5 },
+  중: { color: '#facc15', width: 2 },
+  하: { color: '#f87171', width: 1.5 },
 };
 
 const OVERALL_LABEL: Record<string, string> = {
   '85': '천생연분 모임',
   '70': '좋은 모임',
   '50': '보통 모임',
-  '0':  '주의 필요',
+  '0': '주의 필요',
 };
 
 function getOverallLabel(score: number): string {
@@ -81,9 +81,7 @@ export default function GroupResultContent() {
   }, [request, session]);
 
   if (session === 'not-found') {
-    return (
-      <SessionExpiredPage redirectPath="/compatibility/group" redirectLabel="다시 입력하기" />
-    );
+    return <SessionExpiredPage redirectPath="/compatibility/group" redirectLabel="다시 입력하기" />;
   }
 
   if (!session) return null;
@@ -114,7 +112,9 @@ export default function GroupResultContent() {
           >
             {session.averageScore}
           </p>
-          <p className="text-sm font-semibold text-primary">{getOverallLabel(session.averageScore)}</p>
+          <p className="text-sm font-semibold text-primary">
+            {getOverallLabel(session.averageScore)}
+          </p>
           <p className="text-xs text-muted">
             {session.members.length}명 · {session.pairs.length}쌍 분석
           </p>
@@ -189,13 +189,7 @@ export default function GroupResultContent() {
                   >
                     {getMemberName(session, i).slice(0, 4)}
                   </text>
-                  <text
-                    x={pos.x}
-                    y={pos.y + 8}
-                    textAnchor="middle"
-                    fontSize="7"
-                    fill="#a78bfa"
-                  >
+                  <text x={pos.x} y={pos.y + 8} textAnchor="middle" fontSize="7" fill="#a78bfa">
                     {member.result.ilgan}
                   </text>
                 </g>
@@ -205,23 +199,26 @@ export default function GroupResultContent() {
 
           {/* 범례 */}
           <div className="flex justify-center gap-3 mt-2 flex-wrap">
-            {(Object.entries(GRADE_STYLE) as [PairResult['grade'], { color: string; width: number }][]).map(
-              ([grade, { color }]) => (
-                <span key={grade} className="flex items-center gap-1 text-xs text-muted">
-                  <span
-                    style={{
-                      display: 'inline-block',
-                      width: 16,
-                      height: 2,
-                      background: color,
-                      borderRadius: 1,
-                    }}
-                    aria-hidden="true"
-                  />
-                  {grade}
-                </span>
-              )
-            )}
+            {(
+              Object.entries(GRADE_STYLE) as [
+                PairResult['grade'],
+                { color: string; width: number },
+              ][]
+            ).map(([grade, { color }]) => (
+              <span key={grade} className="flex items-center gap-1 text-xs text-muted">
+                <span
+                  style={{
+                    display: 'inline-block',
+                    width: 16,
+                    height: 2,
+                    background: color,
+                    borderRadius: 1,
+                  }}
+                  aria-hidden="true"
+                />
+                {grade}
+              </span>
+            ))}
           </div>
         </div>
 
@@ -236,9 +233,7 @@ export default function GroupResultContent() {
               const style = GRADE_STYLE[pair.grade];
               return (
                 <div key={i} className="flex items-center justify-between">
-                  <span className="text-sm text-primary">
-                    {getMemberName(session, otherIndex)}
-                  </span>
+                  <span className="text-sm text-primary">{getMemberName(session, otherIndex)}</span>
                   <span
                     className="text-xs font-semibold rounded-full px-3 py-1"
                     style={{ color: style.color, background: `${style.color}22` }}

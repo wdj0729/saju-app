@@ -34,7 +34,11 @@ function defaultMember(): MemberForm {
   };
 }
 
-function updateMember(members: MemberForm[], index: number, patch: Partial<MemberForm>): MemberForm[] {
+function updateMember(
+  members: MemberForm[],
+  index: number,
+  patch: Partial<MemberForm>
+): MemberForm[] {
   return members.map((m, i) => (i === index ? { ...m, ...patch } : m));
 }
 
@@ -78,7 +82,13 @@ export default function GroupCompatibilityLoader() {
       const groupMembers = members.map((m) => {
         const maxDay = m.isLunar ? 30 : new Date(m.year, m.month, 0).getDate();
         const day = Math.min(m.day, maxDay);
-        const result = calculateSaju({ year: m.year, month: m.month, day, hour: m.hour, isLunar: m.isLunar });
+        const result = calculateSaju({
+          year: m.year,
+          month: m.month,
+          day,
+          hour: m.hour,
+          isLunar: m.isLunar,
+        });
         return { name: m.name, gender: m.gender, result };
       });
       const { pairs, averageScore } = calcGroupCompatibility(groupMembers);
@@ -127,7 +137,9 @@ export default function GroupCompatibilityLoader() {
               gender={m.gender}
               onGenderChange={(v) => setMembers((prev) => updateMember(prev, index, { gender: v }))}
               isLunar={m.isLunar}
-              onIsLunarChange={(v) => setMembers((prev) => updateMember(prev, index, { isLunar: v }))}
+              onIsLunarChange={(v) =>
+                setMembers((prev) => updateMember(prev, index, { isLunar: v }))
+              }
               year={m.year}
               month={m.month}
               day={m.day}

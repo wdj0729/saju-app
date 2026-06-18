@@ -40,9 +40,7 @@ export function calcGroupCompatibility(members: GroupMember[]): {
     }
   }
   const averageScore =
-    pairs.length > 0
-      ? Math.round(pairs.reduce((sum, p) => sum + p.score, 0) / pairs.length)
-      : 0;
+    pairs.length > 0 ? Math.round(pairs.reduce((sum, p) => sum + p.score, 0) / pairs.length) : 0;
   return { pairs, averageScore };
 }
 

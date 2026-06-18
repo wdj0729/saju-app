@@ -2,7 +2,10 @@ import { calcGroupCompatibility } from '../group-compatibility';
 import type { GroupMember } from '../group-compatibility';
 import type { SajuResult } from '../saju-calculator';
 
-function makeMember(ilgan: string, ohaengValues: [number, number, number, number, number]): GroupMember {
+function makeMember(
+  ilgan: string,
+  ohaengValues: [number, number, number, number, number]
+): GroupMember {
   const [목, 화, 토, 금, 수] = ohaengValues;
   const result: SajuResult = {
     year: { gan: '갑', ji: '자', ganElement: '목', jiElement: '수' },
@@ -17,10 +20,7 @@ function makeMember(ilgan: string, ohaengValues: [number, number, number, number
 
 describe('calcGroupCompatibility', () => {
   it('2명: 쌍 1개 반환', () => {
-    const members = [
-      makeMember('갑', [4, 2, 1, 1, 1]),
-      makeMember('병', [1, 4, 2, 1, 1]),
-    ];
+    const members = [makeMember('갑', [4, 2, 1, 1, 1]), makeMember('병', [1, 4, 2, 1, 1])];
     const { pairs, averageScore } = calcGroupCompatibility(members);
     expect(pairs).toHaveLength(1);
     expect(pairs[0].indexA).toBe(0);
@@ -44,9 +44,7 @@ describe('calcGroupCompatibility', () => {
   });
 
   it('4명: 쌍 6개 반환', () => {
-    const members = Array.from({ length: 4 }, (_, i) =>
-      makeMember('갑', [4 - i, i + 1, 1, 1, 1])
-    );
+    const members = Array.from({ length: 4 }, (_, i) => makeMember('갑', [4 - i, i + 1, 1, 1, 1]));
     const { pairs } = calcGroupCompatibility(members);
     expect(pairs).toHaveLength(6);
   });
@@ -63,10 +61,7 @@ describe('calcGroupCompatibility', () => {
   });
 
   it('각 pair에 gradeLabel 포함', () => {
-    const members = [
-      makeMember('갑', [4, 2, 1, 1, 1]),
-      makeMember('병', [1, 4, 2, 1, 1]),
-    ];
+    const members = [makeMember('갑', [4, 2, 1, 1, 1]), makeMember('병', [1, 4, 2, 1, 1])];
     const { pairs } = calcGroupCompatibility(members);
     expect(typeof pairs[0].gradeLabel).toBe('string');
     expect(pairs[0].gradeLabel.length).toBeGreaterThan(0);
