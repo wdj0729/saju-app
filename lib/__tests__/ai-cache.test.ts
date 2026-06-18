@@ -11,16 +11,16 @@ setupStorageMock('localStorage');
 
 describe('makeAiCacheKey', () => {
   it('양력, 시 없음', () => {
-    expect(makeAiCacheKey(1990, 6, 15, null, false)).toBe('saju-ai-cache:1990-6-15-x-S');
+    expect(makeAiCacheKey(1990, 6, 15, null, false)).toBe('saju-ai-cache:v2:1990-6-15-x-S');
   });
 
   it('음력, 시 있음', () => {
-    expect(makeAiCacheKey(1990, 6, 15, 9, true)).toBe('saju-ai-cache:1990-6-15-9-L');
+    expect(makeAiCacheKey(1990, 6, 15, 9, true)).toBe('saju-ai-cache:v2:1990-6-15-9-L');
   });
 });
 
 describe('saveAiCache / loadAiCache', () => {
-  const key = 'saju-ai-cache:1990-6-15-x-S';
+  const key = 'saju-ai-cache:v2:1990-6-15-x-S';
   const sections = { 성격분석: '용감한', 재물운: '좋음', 건강운: '', 연애운: '', 직업운: '' };
 
   it('저장 후 불러오기', () => {
@@ -29,41 +29,41 @@ describe('saveAiCache / loadAiCache', () => {
   });
 
   it('없는 키는 null 반환', () => {
-    expect(loadAiCache('saju-ai-cache:missing')).toBeNull();
+    expect(loadAiCache('saju-ai-cache:v2:missing')).toBeNull();
   });
 
   it('손상된 JSON은 null 반환', () => {
-    localStorage.setItem('saju-ai-cache:bad', '{bad json');
-    expect(loadAiCache('saju-ai-cache:bad')).toBeNull();
+    localStorage.setItem('saju-ai-cache:v2:bad', '{bad json');
+    expect(loadAiCache('saju-ai-cache:v2:bad')).toBeNull();
   });
 
   it('배열은 null 반환', () => {
-    localStorage.setItem('saju-ai-cache:arr', '[]');
-    expect(loadAiCache('saju-ai-cache:arr')).toBeNull();
+    localStorage.setItem('saju-ai-cache:v2:arr', '[]');
+    expect(loadAiCache('saju-ai-cache:v2:arr')).toBeNull();
   });
 
   it('버전 불일치 시 null 반환', () => {
-    localStorage.setItem('saju-ai-cache:old', JSON.stringify({ v: 0, sections }));
-    expect(loadAiCache('saju-ai-cache:old')).toBeNull();
+    localStorage.setItem('saju-ai-cache:v2:old', JSON.stringify({ v: 0, sections }));
+    expect(loadAiCache('saju-ai-cache:v2:old')).toBeNull();
   });
 
   it('sections가 배열이면 null 반환', () => {
     localStorage.setItem(
-      'saju-ai-cache:arr-sections',
+      'saju-ai-cache:v2:arr-sections',
       JSON.stringify({ v: 2, savedAt: Date.now(), sections: [] })
     );
-    expect(loadAiCache('saju-ai-cache:arr-sections')).toBeNull();
+    expect(loadAiCache('saju-ai-cache:v2:arr-sections')).toBeNull();
   });
 });
 
 describe('makeMonthlyFortuneCacheKey', () => {
   it('일주·연도·월로 캐시 키 생성', () => {
-    expect(makeMonthlyFortuneCacheKey('甲子', null, 2026, 6)).toBe('monthly-fortune:甲子-x:2026:6');
+    expect(makeMonthlyFortuneCacheKey('甲子', null, 2026, 6)).toBe('monthly-fortune:v2:甲子-x:2026:6');
   });
 
   it('시주 있으면 포함', () => {
     expect(makeMonthlyFortuneCacheKey('甲子', '壬午', 2026, 1)).toBe(
-      'monthly-fortune:甲子-壬午:2026:1'
+      'monthly-fortune:v2:甲子-壬午:2026:1'
     );
   });
 
@@ -77,13 +77,13 @@ describe('makeMonthlyFortuneCacheKey', () => {
 describe('makeFortuneDayCacheKey', () => {
   it('생일과 오늘 날짜 조합으로 키 생성', () => {
     expect(makeFortuneDayCacheKey(1990, 6, 15, null, false, 2026, 6, 17)).toBe(
-      'fortune-day:1990-6-15-x-S:2026-6-17'
+      'fortune-day:v2:1990-6-15-x-S:2026-6-17'
     );
   });
 
   it('시주 있으면 포함', () => {
     expect(makeFortuneDayCacheKey(1990, 6, 15, 9, true, 2026, 6, 17)).toBe(
-      'fortune-day:1990-6-15-9-L:2026-6-17'
+      'fortune-day:v2:1990-6-15-9-L:2026-6-17'
     );
   });
 

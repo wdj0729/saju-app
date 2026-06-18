@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadCompatSession } from '@/lib/compatibility';
 import { useSessionOrRedirect } from '@/hooks/useSessionOrRedirect';
@@ -58,6 +58,17 @@ export default function CompatibilityResultContent() {
   const session = useSessionOrRedirect(loadCompatSession, null);
   const { aiText, isStreaming, aiError, request } = useAiText();
 
+  const handleAiRequest = useCallback(() => {
+    if (!session || session === 'not-found') return;
+    const { personA, personB, compatibility } = session;
+    request('/api/compatibility-analysis', {
+      personA: { name: personA.name || '나', ilgan: personA.result.ilgan, ohaeng: compatibility.ohaengA },
+      personB: { name: personB.name || '상대', ilgan: personB.result.ilgan, ohaeng: compatibility.ohaengB },
+      score: compatibility.score,
+      grade: compatibility.grade,
+    });
+  }, [request, session]);
+
   const { maxA, maxB } = useMemo(() => {
     if (!session || session === 'not-found') return { maxA: 1, maxB: 1 };
     return {
@@ -85,15 +96,6 @@ export default function CompatibilityResultContent() {
 
   const nameA = personA.name || '나';
   const nameB = personB.name || '상대';
-
-  function handleAiRequest() {
-    request('/api/compatibility-analysis', {
-      personA: { name: nameA, ilgan: personA.result.ilgan, ohaeng: ohaengA },
-      personB: { name: nameB, ilgan: personB.result.ilgan, ohaeng: ohaengB },
-      score,
-      grade,
-    });
-  }
 
   return (
     <div className="flex flex-col flex-1">

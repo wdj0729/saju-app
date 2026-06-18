@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import { useMonthlyFortune } from '@/hooks/useMonthlyFortune';
 import type { MonthlyFortuneInput } from '@/hooks/useMonthlyFortune';
 import { YEARLY_SECTION_KEYS } from '@/lib/yearly-sections';
@@ -16,7 +17,7 @@ const SECTION_META: Record<YearlySectionKey, { emoji: string; label: string }> =
   연애운: { emoji: '💕', label: '연애운' },
 };
 
-export default function MonthlyFortune(props: MonthlyFortuneInput) {
+function MonthlyFortune(props: MonthlyFortuneInput) {
   const {
     selectedMonth,
     setSelectedMonth,
@@ -107,3 +108,5 @@ export default function MonthlyFortune(props: MonthlyFortuneInput) {
     </div>
   );
 }
+
+export default memo(MonthlyFortune);

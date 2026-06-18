@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import { SkeletonBox } from './Skeleton';
 import { YEARLY_SECTION_KEYS } from '@/lib/yearly-sections';
 import type { YearlySectionKey } from '@/lib/yearly-sections';
@@ -23,7 +24,7 @@ interface YearlySectionsProps {
   onRequest: () => void;
 }
 
-export default function YearlySections({
+function YearlySections({
   sections,
   activeSection,
   isStreaming,
@@ -88,3 +89,5 @@ export default function YearlySections({
     </div>
   );
 }
+
+export default memo(YearlySections);

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { getFortuneYear } from '@/lib/constants';
-import YearlyFortuneContent from './YearlyFortuneContent';
+import YearlyFortuneLoader from './YearlyFortuneLoader';
 
 const year = getFortuneYear();
 
@@ -10,5 +10,5 @@ export const metadata: Metadata = {
 };
 
 export default function YearlyFortunePage() {
-  return <YearlyFortuneContent />;
+  return <YearlyFortuneLoader />;
 }

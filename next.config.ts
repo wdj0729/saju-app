@@ -11,4 +11,5 @@ const withPWA = withPWAInit({
 
 export default withPWA({
   turbopack: {},
+  compress: false,
 });
