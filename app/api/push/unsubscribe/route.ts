@@ -11,7 +11,9 @@ export async function DELETE(req: NextRequest): Promise<Response> {
   if (!body?.endpoint) {
     return new Response('Invalid request', { status: 400 });
   }
-  const field = createHash('sha256').update(body.endpoint as string).digest('hex');
+  const field = createHash('sha256')
+    .update(body.endpoint as string)
+    .digest('hex');
   await redis.hdel('push:subs', field);
   return new Response(null, { status: 200 });
 }

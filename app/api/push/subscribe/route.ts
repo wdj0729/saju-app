@@ -11,7 +11,9 @@ export async function POST(req: NextRequest): Promise<Response> {
   if (!body?.endpoint || !body?.keys) {
     return new Response('Invalid subscription', { status: 400 });
   }
-  const field = createHash('sha256').update(body.endpoint as string).digest('hex');
+  const field = createHash('sha256')
+    .update(body.endpoint as string)
+    .digest('hex');
   await redis.hset('push:subs', { [field]: JSON.stringify(body) });
   return new Response(null, { status: 201 });
 }

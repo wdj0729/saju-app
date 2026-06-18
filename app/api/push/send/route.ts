@@ -35,7 +35,9 @@ export async function POST(req: NextRequest): Promise<Response> {
             ? (err as { statusCode: number }).statusCode
             : undefined;
         if (status === 410) {
-          const field = createHash('sha256').update(sub.endpoint as string).digest('hex');
+          const field = createHash('sha256')
+            .update(sub.endpoint as string)
+            .digest('hex');
           await redis.hdel('push:subs', field);
         } else {
           console.error('[push/send] sendNotification failed:', status, sub.endpoint);
