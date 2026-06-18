@@ -32,6 +32,12 @@ export async function parseBody<T>(
   return { data: body };
 }
 
+export function formatGender(gender?: 'M' | 'F'): string | undefined {
+  if (gender === 'M') return '남성';
+  if (gender === 'F') return '여성';
+  return undefined;
+}
+
 export function formatOhaeng(ohaeng: Record<string, number>): string {
   return Object.entries(ohaeng)
     .map(([k, v]) => `${k} ${Number(v).toFixed(1)}`)

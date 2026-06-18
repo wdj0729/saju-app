@@ -4,12 +4,13 @@ import {
   streamAnthropicResponse,
   formatOhaeng,
   formatPillars,
+  formatGender,
   isPillarData,
   type PillarData,
 } from '@/lib/stream-anthropic';
 import { getFortuneYear, getFortuneGanjee } from '@/lib/constants';
 import { AI_MODEL } from '@/lib/anthropic';
-import { checkRateLimit } from '@/lib/rate-limit';
+import { getRateLimitResponse } from '@/lib/rate-limit';
 
 interface YearlyFortuneRequest {
   ilgan: string;
@@ -41,13 +42,8 @@ function isYearlyFortuneRequest(v: unknown): v is YearlyFortuneRequest {
 }
 
 export async function POST(req: NextRequest): Promise<Response> {
-  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'anonymous';
-  if (!checkRateLimit(ip)) {
-    return new Response('요청이 너무 많습니다. 잠시 후 다시 시도해주세요.', {
-      status: 429,
-      headers: { 'Retry-After': '60' },
-    });
-  }
+  const rateLimitRes = getRateLimitResponse(req);
+  if (rateLimitRes) return rateLimitRes;
   const parsed = await parseBody(req, isYearlyFortuneRequest);
   if (parsed instanceof Response) return parsed;
   const { ilgan, ohaeng, pillars, name, gender } = parsed.data;
@@ -57,7 +53,7 @@ export async function POST(req: NextRequest): Promise<Response> {
   const pillarText = formatPillars(pillars);
 
   const ohaengText = formatOhaeng(ohaeng);
-  const genderText = gender === 'M' ? '남성' : gender === 'F' ? '여성' : undefined;
+  const genderText = formatGender(gender);
 
   const lines = [
     '당신은 30년 경력의 명리학 전문가입니다.',

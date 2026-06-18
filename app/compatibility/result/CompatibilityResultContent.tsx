@@ -7,7 +7,7 @@ import { useSessionOrRedirect } from '@/hooks/useSessionOrRedirect';
 import ShareButton from '@/components/ShareButton';
 import BackButton from '@/components/BackButton';
 import AiContent from '@/components/AiContent';
-import { useAiStream } from '@/hooks/useAiStream';
+import { useAiText } from '@/hooks/useAiText';
 import { OHAENG_ORDER, OHAENG_LABEL, OHAENG_BAR } from '@/lib/constants';
 import { SkeletonBox } from '@/components/Skeleton';
 import SessionExpiredPage from '@/components/SessionExpiredPage';
@@ -56,7 +56,7 @@ function CompatibilityResultSkeleton() {
 export default function CompatibilityResultContent() {
   const router = useRouter();
   const session = useSessionOrRedirect(loadCompatSession, null);
-  const { aiText, isStreaming, aiError, request } = useAiStream();
+  const { aiText, isStreaming, aiError, request } = useAiText();
 
   const { maxA, maxB } = useMemo(() => {
     if (!session || session === 'not-found') return { maxA: 1, maxB: 1 };

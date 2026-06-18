@@ -5,20 +5,22 @@ export function emptySections(): Record<SectionKey, string> {
   return { 성격분석: '', 재물운: '', 건강운: '', 연애운: '', 직업운: '' };
 }
 
-const SECTION_MARKER_RE = /\[(성격분석|재물운|건강운|연애운|직업운)\]/g;
-
-export function parseSections(text: string): Record<SectionKey, string> {
-  SECTION_MARKER_RE.lastIndex = 0;
-  const result = emptySections();
+export function parseSectionsByKeys<K extends string>(
+  text: string,
+  keys: readonly K[]
+): Record<K, string> {
+  const result = Object.fromEntries(keys.map((k) => [k, ''])) as Record<K, string>;
+  const pattern = keys.map((k) => k.replace(/[[\]]/g, '\\$&')).join('|');
+  const re = new RegExp(`\\[(${pattern})\\]`, 'g');
   let match: RegExpExecArray | null;
-  let lastKey: SectionKey | null = null;
+  let lastKey: K | null = null;
   let lastIndex = 0;
 
-  while ((match = SECTION_MARKER_RE.exec(text)) !== null) {
+  while ((match = re.exec(text)) !== null) {
     if (lastKey !== null) {
       result[lastKey] = text.slice(lastIndex, match.index).trim();
     }
-    lastKey = match[1] as SectionKey;
+    lastKey = match[1] as K;
     lastIndex = match.index + match[0].length;
   }
 
@@ -27,4 +29,8 @@ export function parseSections(text: string): Record<SectionKey, string> {
   }
 
   return result;
+}
+
+export function parseSections(text: string): Record<SectionKey, string> {
+  return parseSectionsByKeys(text, SECTION_KEYS);
 }

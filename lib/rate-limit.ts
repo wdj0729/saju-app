@@ -1,3 +1,5 @@
+import type { NextRequest } from 'next/server';
+
 const WINDOW_MS = 60 * 1000; // 1분
 const MAX_REQUESTS = 10;
 
@@ -20,6 +22,17 @@ export function checkRateLimit(ip: string): boolean {
   timestamps.push(now);
   store.set(ip, timestamps);
   return true;
+}
+
+export function getRateLimitResponse(req: NextRequest): Response | null {
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'anonymous';
+  if (!checkRateLimit(ip)) {
+    return new Response('요청이 너무 많습니다. 잠시 후 다시 시도해주세요.', {
+      status: 429,
+      headers: { 'Retry-After': '60' },
+    });
+  }
+  return null;
 }
 
 export function _injectTimestampsForTest(ip: string, timestamps: number[]): void {
