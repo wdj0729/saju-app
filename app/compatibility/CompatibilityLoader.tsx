@@ -10,6 +10,7 @@ import { getPrefillA, clearPrefillA } from '@/lib/compatibility-prefill';
 import { encodeInvite } from '@/lib/invite';
 import BackButton from '@/components/BackButton';
 import PersonInputFields from '@/components/PersonInputFields';
+import CompatibilityTabs from '@/components/CompatibilityTabs';
 
 export default function CompatibilityLoader() {
   const router = useRouter();
@@ -139,6 +140,8 @@ export default function CompatibilityLoader() {
         <BackButton href="/" label="뒤로" />
         <h1 className="text-sm font-semibold text-primary">궁합 보기</h1>
       </header>
+
+      <CompatibilityTabs />
 
       <div className="flex flex-col gap-4 px-4 py-6 flex-1">
         <PersonInputFields
