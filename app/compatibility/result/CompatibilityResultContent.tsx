@@ -62,8 +62,16 @@ export default function CompatibilityResultContent() {
     if (!session || session === 'not-found') return;
     const { personA, personB, compatibility } = session;
     request('/api/compatibility-analysis', {
-      personA: { name: personA.name || '나', ilgan: personA.result.ilgan, ohaeng: compatibility.ohaengA },
-      personB: { name: personB.name || '상대', ilgan: personB.result.ilgan, ohaeng: compatibility.ohaengB },
+      personA: {
+        name: personA.name || '나',
+        ilgan: personA.result.ilgan,
+        ohaeng: compatibility.ohaengA,
+      },
+      personB: {
+        name: personB.name || '상대',
+        ilgan: personB.result.ilgan,
+        ohaeng: compatibility.ohaengB,
+      },
       score: compatibility.score,
       grade: compatibility.grade,
     });

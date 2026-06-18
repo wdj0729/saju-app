@@ -58,7 +58,9 @@ describe('saveAiCache / loadAiCache', () => {
 
 describe('makeMonthlyFortuneCacheKey', () => {
   it('일주·연도·월로 캐시 키 생성', () => {
-    expect(makeMonthlyFortuneCacheKey('甲子', null, 2026, 6)).toBe('monthly-fortune:v2:甲子-x:2026:6');
+    expect(makeMonthlyFortuneCacheKey('甲子', null, 2026, 6)).toBe(
+      'monthly-fortune:v2:甲子-x:2026:6'
+    );
   });
 
   it('시주 있으면 포함', () => {
