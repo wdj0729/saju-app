@@ -10,6 +10,7 @@ import { saveSession } from '@/lib/session';
 import { getFortuneYear } from '@/lib/constants';
 import { setPrefillA } from '@/lib/compatibility-prefill';
 import ProfileEditForm from '@/components/ProfileEditForm';
+import PushNotificationToggle from '@/components/PushNotificationToggle';
 
 const fortuneYear = getFortuneYear();
 
@@ -162,6 +163,9 @@ export default function Home() {
         </div>
       )}
 
+      <div className="w-full mb-4">
+        <PushNotificationToggle />
+      </div>
       <div className="flex flex-col gap-3 w-full">
         {CARDS.map((card) => (
           <button
