@@ -14,6 +14,11 @@ export async function POST(req: NextRequest): Promise<Response> {
   const field = createHash('sha256')
     .update(body.endpoint as string)
     .digest('hex');
-  await redis.hset('push:subs', { [field]: JSON.stringify(body) });
-  return new Response(null, { status: 201 });
+  try {
+    await redis.hset('push:subs', { [field]: JSON.stringify(body) });
+    return new Response(null, { status: 201 });
+  } catch (err) {
+    console.error('[push] subscribe failed:', err);
+    return new Response('Failed to save subscription', { status: 500 });
+  }
 }

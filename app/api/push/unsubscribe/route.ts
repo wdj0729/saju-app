@@ -14,6 +14,11 @@ export async function DELETE(req: NextRequest): Promise<Response> {
   const field = createHash('sha256')
     .update(body.endpoint as string)
     .digest('hex');
-  await redis.hdel('push:subs', field);
-  return new Response(null, { status: 200 });
+  try {
+    await redis.hdel('push:subs', field);
+    return new Response(null, { status: 200 });
+  } catch (err) {
+    console.error('[push] unsubscribe failed:', err);
+    return new Response('Failed to remove subscription', { status: 500 });
+  }
 }

@@ -59,7 +59,10 @@ export default function PushNotificationToggle() {
         setSubscribed(false);
       } else {
         const permission = await Notification.requestPermission();
-        if (permission !== 'granted') return;
+        if (permission !== 'granted') {
+          alert('알림을 받으려면 브라우저에서 알림 권한을 허용해주세요.');
+          return;
+        }
         const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
         if (!vapidKey) return;
         const sub = await reg.pushManager.subscribe({

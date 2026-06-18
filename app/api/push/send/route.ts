@@ -27,6 +27,10 @@ export async function POST(req: NextRequest): Promise<Response> {
   const results = await Promise.allSettled(
     (subs as string[]).map(async (raw: string) => {
       const sub = typeof raw === 'string' ? JSON.parse(raw) : raw;
+      if (!sub || typeof sub !== 'object' || !sub.endpoint) {
+        console.warn('[push/send] invalid subscription format, skipping');
+        return;
+      }
       try {
         await webpush.sendNotification(sub, PAYLOAD);
       } catch (err: unknown) {
