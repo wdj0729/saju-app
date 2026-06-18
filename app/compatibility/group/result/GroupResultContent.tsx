@@ -160,6 +160,13 @@ export default function GroupResultContent() {
                 <g
                   key={i}
                   onClick={() => setSelectedIndex(isSelected ? null : i)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setSelectedIndex(isSelected ? null : i);
+                    }
+                  }}
+                  tabIndex={0}
                   style={{ cursor: 'pointer' }}
                   role="button"
                   aria-label={`${getMemberName(session, i)} 관계 보기`}
