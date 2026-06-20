@@ -82,3 +82,34 @@ export function streamAnthropicResponse(params: MessageStreamParams): Response {
     headers: { 'Content-Type': 'text/plain; charset=utf-8' },
   });
 }
+
+export function streamAnthropicResponseWithCache(
+  params: MessageStreamParams,
+  saveFn: (text: string) => Promise<void>
+): Response {
+  const stream = anthropic.messages.stream(params);
+
+  const readable = new ReadableStream({
+    async start(controller) {
+      const encoder = new TextEncoder();
+      const chunks: string[] = [];
+      try {
+        for await (const event of stream) {
+          if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
+            chunks.push(event.delta.text);
+            controller.enqueue(encoder.encode(event.delta.text));
+          }
+        }
+        controller.close();
+        void saveFn(chunks.join(''));
+      } catch (err) {
+        console.error('[stream-anthropic] error:', err);
+        controller.error(err);
+      }
+    },
+  });
+
+  return new Response(readable, {
+    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+  });
+}

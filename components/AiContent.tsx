@@ -18,17 +18,14 @@ function AiContent({
   onRequest,
   requestLabel = '분석 요청하기',
 }: AiContentProps) {
-  if (aiError && !aiText) {
+  if (!aiText && !isStreaming && !aiError) {
     return (
-      <div>
-        <p className="text-sm text-hwa mb-2">{aiError}</p>
-        <button
-          onClick={onRequest}
-          className="mt-1 w-full py-2 rounded-xl bg-card-hover text-sm text-muted hover:text-primary transition-colors"
-        >
-          🔄 다시 분석하기
-        </button>
-      </div>
+      <button
+        onClick={onRequest}
+        className="w-full py-3 rounded-xl bg-primary-gradient text-white text-sm font-medium"
+      >
+        {requestLabel}
+      </button>
     );
   }
 
@@ -42,41 +39,53 @@ function AiContent({
     );
   }
 
-  if (aiText) {
-    return (
-      <>
+  return (
+    <div className="flex flex-col gap-3">
+      {aiError && (
         <div
-          className="text-sm text-primary leading-relaxed whitespace-pre-wrap"
-          aria-live="polite"
-          aria-atomic="false"
-          aria-busy={isStreaming}
+          className="rounded-xl px-3 py-2 flex items-center justify-between gap-2"
+          style={{
+            background: 'rgba(255,100,100,0.08)',
+            border: '1px solid rgba(255,100,100,0.2)',
+          }}
         >
-          {aiText}
-          {isStreaming && (
-            <span className="animate-pulse opacity-70" aria-hidden="true">
-              ▌
-            </span>
-          )}
-        </div>
-        {!isStreaming && (
+          <p className="text-xs" style={{ color: '#ff6b6b' }}>
+            {aiError}
+          </p>
           <button
             onClick={onRequest}
-            className="mt-3 w-full py-2 rounded-xl bg-card-hover text-sm text-muted hover:text-primary transition-colors"
+            className="text-xs text-muted hover:text-primary shrink-0 transition-colors"
           >
-            🔄 다시 분석하기
+            🔄 재시도
           </button>
-        )}
-      </>
-    );
-  }
-
-  return (
-    <button
-      onClick={onRequest}
-      className="w-full py-3 rounded-xl bg-primary-gradient text-white text-sm font-medium"
-    >
-      {requestLabel}
-    </button>
+        </div>
+      )}
+      {aiText && (
+        <>
+          <div
+            className="text-sm text-primary leading-relaxed whitespace-pre-wrap"
+            aria-live="polite"
+            aria-atomic="false"
+            aria-busy={isStreaming}
+          >
+            {aiText}
+            {isStreaming && (
+              <span className="animate-pulse opacity-70" aria-hidden="true">
+                ▌
+              </span>
+            )}
+          </div>
+          {!isStreaming && !aiError && (
+            <button
+              onClick={onRequest}
+              className="w-full py-2 rounded-xl bg-card-hover text-sm text-muted hover:text-primary transition-colors"
+            >
+              🔄 다시 분석하기
+            </button>
+          )}
+        </>
+      )}
+    </div>
   );
 }
 

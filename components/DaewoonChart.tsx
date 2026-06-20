@@ -10,9 +10,10 @@ interface DaewoonChartProps {
   result: DaewoonResult;
   currentAge: number;
   ilganElement: Ohaeng;
+  birthYear: number;
 }
 
-function DaewoonChart({ result, currentAge, ilganElement }: DaewoonChartProps) {
+function DaewoonChart({ result, currentAge, ilganElement, birthYear }: DaewoonChartProps) {
   const { pillars, daewoonSu, direction } = result;
 
   const currentIdx = pillars.findIndex((p) => currentAge >= p.startAge && currentAge <= p.endAge);
@@ -80,6 +81,9 @@ function DaewoonChart({ result, currentAge, ilganElement }: DaewoonChartProps) {
                 <div className="text-muted mt-1.5" style={{ fontSize: '9px' }}>
                   {pillar.startAge}~{pillar.endAge}
                 </div>
+                <div className="text-muted mt-0.5" style={{ fontSize: '9px' }}>
+                  {birthYear + pillar.startAge}~{birthYear + pillar.endAge}
+                </div>
               </button>
             );
           })}
@@ -119,6 +123,9 @@ function DaewoonChart({ result, currentAge, ilganElement }: DaewoonChartProps) {
             <p className="text-sm font-semibold text-primary mb-0.5">{interpretation.label}</p>
             <p className="text-xs text-muted">
               {selected.startAge} ~ {selected.endAge}세
+            </p>
+            <p className="text-xs text-muted">
+              {birthYear + selected.startAge} ~ {birthYear + selected.endAge}년
             </p>
             <p className="text-xs text-muted mt-0.5">
               {selected.ganElement}({OHAENG_LABEL[selected.ganElement]}) · {selected.jiElement}(

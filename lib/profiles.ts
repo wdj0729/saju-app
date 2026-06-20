@@ -104,3 +104,51 @@ export function updateProfile(id: string, patch: Partial<Omit<Profile, 'id' | 'c
   if (typeof window === 'undefined') return;
   persist(loadProfiles().map((p) => (p.id === id ? { ...p, ...patch } : p)));
 }
+
+export interface ImportResult {
+  added: number;
+  skipped: number;
+}
+
+export function parseImportedProfiles(raw: unknown): { profiles: Profile[]; total: number } {
+  if (typeof raw !== 'object' || raw === null) throw new Error('올바른 프로필 파일이 아니에요.');
+  const data = raw as Record<string, unknown>;
+  if (!Array.isArray(data.profiles)) throw new Error('올바른 프로필 파일이 아니에요.');
+  const profiles = (data.profiles as unknown[]).filter(isProfile);
+  return { profiles, total: (data.profiles as unknown[]).length };
+}
+
+export function exportProfiles(): void {
+  if (typeof window === 'undefined') return;
+  const profiles = loadProfiles();
+  const data = JSON.stringify({ version: 1, profiles }, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'saju-profiles.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+export async function importProfiles(file: File): Promise<ImportResult> {
+  const text = await file.text();
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(text);
+  } catch {
+    throw new Error('올바른 프로필 파일이 아니에요.');
+  }
+  let toMerge: Profile[];
+  let total: number;
+  try {
+    ({ profiles: toMerge, total } = parseImportedProfiles(parsed));
+  } catch {
+    throw new Error('올바른 프로필 파일이 아니에요.');
+  }
+  const existing = loadProfiles();
+  const existingIds = new Set(existing.map((p) => p.id));
+  const toAdd = toMerge.filter((p) => !existingIds.has(p.id));
+  persist([...existing, ...toAdd]);
+  return { added: toAdd.length, skipped: total - toAdd.length };
+}

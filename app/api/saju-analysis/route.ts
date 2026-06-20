@@ -1,15 +1,16 @@
 import { NextRequest } from 'next/server';
 import {
   parseBody,
-  streamAnthropicResponse,
   formatOhaeng,
   formatPillars,
   formatGender,
   isPillarData,
   type PillarData,
+  streamAnthropicResponseWithCache,
 } from '@/lib/stream-anthropic';
 import { AI_MODEL } from '@/lib/anthropic';
 import { getRateLimitResponse } from '@/lib/rate-limit';
+import { getRedisAiCache, setRedisAiCache, makeSajuAnalysisCacheKey } from '@/lib/redis-ai-cache';
 
 interface CurrentDaewoon {
   gan: string;
@@ -60,6 +61,13 @@ export async function POST(req: NextRequest): Promise<Response> {
   const { ilgan, ohaeng, pillars, name, gender, birthYear, currentAge, currentDaewoon } =
     parsed.data;
 
+  const today = new Date();
+  const cacheKey = makeSajuAnalysisCacheKey(pillars, gender, birthYear, today.getFullYear());
+  const cached = await getRedisAiCache(cacheKey);
+  if (cached) {
+    return new Response(cached, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
+  }
+
   const pillarText = formatPillars(pillars);
 
   const dayPillar = `${pillars.day.gan}${pillars.day.ji}`;
@@ -106,11 +114,10 @@ export async function POST(req: NextRequest): Promise<Response> {
     .join('\n');
 
   try {
-    return streamAnthropicResponse({
-      model: AI_MODEL,
-      max_tokens: 2048,
-      messages: [{ role: 'user', content: lines }],
-    });
+    return streamAnthropicResponseWithCache(
+      { model: AI_MODEL, max_tokens: 2048, messages: [{ role: 'user', content: lines }] },
+      (text) => setRedisAiCache(cacheKey, text, 2592000)
+    );
   } catch (error) {
     console.error('[saju-analysis] AI request failed:', error);
     return new Response('AI 분석 요청에 실패했어요.', { status: 500 });
