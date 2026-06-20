@@ -56,7 +56,7 @@ function CompatibilityResultSkeleton() {
 export default function CompatibilityResultContent() {
   const router = useRouter();
   const session = useSessionOrRedirect(loadCompatSession, null);
-  const { aiText, isStreaming, aiError, request } = useAiText();
+  const { aiText, isStreaming, aiError, request, abort } = useAiText();
 
   const handleAiRequest = useCallback(() => {
     if (!session || session === 'not-found') return;
@@ -175,6 +175,7 @@ export default function CompatibilityResultContent() {
             isStreaming={isStreaming}
             aiError={aiError}
             onRequest={handleAiRequest}
+            onAbort={abort}
             requestLabel="AI 궁합 분석 요청하기"
           />
         </div>

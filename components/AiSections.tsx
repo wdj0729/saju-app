@@ -19,9 +19,17 @@ interface AiSectionsProps {
   isStreaming: boolean;
   aiError: string;
   onRequest: () => void;
+  onAbort?: () => void;
 }
 
-function AiSections({ sections, activeSection, isStreaming, aiError, onRequest }: AiSectionsProps) {
+function AiSections({
+  sections,
+  activeSection,
+  isStreaming,
+  aiError,
+  onRequest,
+  onAbort,
+}: AiSectionsProps) {
   const hasContent = SECTION_KEYS.some((k) => sections[k]);
 
   if (!hasContent && !isStreaming && !aiError) {
@@ -79,6 +87,14 @@ function AiSections({ sections, activeSection, isStreaming, aiError, onRequest }
           </div>
         );
       })}
+      {isStreaming && onAbort && (
+        <button
+          onClick={onAbort}
+          className="mt-1 w-full py-2 rounded-xl bg-card-hover text-sm text-muted hover:text-primary transition-colors"
+        >
+          ✕ 분석 중단
+        </button>
+      )}
       {!isStreaming && !aiError && hasContent && (
         <button
           onClick={onRequest}

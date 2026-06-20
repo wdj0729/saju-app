@@ -35,7 +35,7 @@ function YearlyFortuneSkeleton() {
 
 export default function YearlyFortuneContent() {
   const session = useSessionOrRedirect(loadSession, null);
-  const { sections, activeSection, isStreaming, aiError, request } = useYearlySections();
+  const { sections, activeSection, isStreaming, aiError, request, abort } = useYearlySections();
   const pillars = useMemo(
     () =>
       session && session !== 'not-found'
@@ -102,6 +102,7 @@ export default function YearlyFortuneContent() {
           isStreaming={isStreaming}
           aiError={aiError}
           onRequest={handleRequest}
+          onAbort={abort}
         />
 
         <div className="border-t border-border pt-4">

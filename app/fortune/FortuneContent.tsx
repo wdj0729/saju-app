@@ -76,7 +76,7 @@ export default function FortuneContent() {
     );
   }, [session, todayDate]);
 
-  const { aiText, isStreaming, aiError, request } = useAiText(fortuneDayCacheKey);
+  const { aiText, isStreaming, aiError, request, abort } = useAiText(fortuneDayCacheKey);
   const todayDateStr = `${todayDate.getFullYear()}년 ${todayDate.getMonth() + 1}월 ${todayDate.getDate()}일`;
 
   const todayIljin = useMemo(() => {
@@ -194,6 +194,7 @@ export default function FortuneContent() {
             isStreaming={isStreaming}
             aiError={aiError}
             onRequest={handleAiRequest}
+            onAbort={abort}
           />
         </div>
       </div>

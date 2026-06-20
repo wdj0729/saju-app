@@ -75,7 +75,7 @@ function getMemberName(session: GroupCompatibilitySession, index: number): strin
 export default function GroupResultContent() {
   const router = useRouter();
   const session = useSessionOrRedirect(loadGroupCompatSession, null);
-  const { aiText, isStreaming, aiError, request } = useAiText();
+  const { aiText, isStreaming, aiError, request, abort } = useAiText();
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   const positions = useMemo(() => {
@@ -269,6 +269,7 @@ export default function GroupResultContent() {
             isStreaming={isStreaming}
             aiError={aiError}
             onRequest={handleAiRequest}
+            onAbort={abort}
             requestLabel="모임 분석 요청하기"
           />
         </div>

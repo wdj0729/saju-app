@@ -149,7 +149,7 @@ export default function SajuResultContent() {
     return makeAiCacheKey(s.input.year, s.input.month, s.input.day, s.input.hour, s.input.isLunar);
   }, []);
 
-  const { sections, activeSection, isStreaming, aiError, request } = useAiSections(cacheKey);
+  const { sections, activeSection, isStreaming, aiError, request, abort } = useAiSections(cacheKey);
   const session = useSessionOrRedirect(loadSession, null, (s) =>
     setIsSaved(isProfileSaved(s.input))
   );
@@ -302,6 +302,7 @@ export default function SajuResultContent() {
             isStreaming={isStreaming}
             aiError={aiError}
             onRequest={handleAiRequest}
+            onAbort={abort}
           />
         </div>
 
