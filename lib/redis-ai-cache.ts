@@ -46,7 +46,9 @@ export async function getRedisAiCache(key: string): Promise<string | null> {
   }
 }
 
-export async function setRedisAiCache(key: string, text: string, ttlSeconds = 2592000): Promise<void> {
+const DEFAULT_TTL_SECONDS = 60 * 60 * 24 * 30; // 30일
+
+export async function setRedisAiCache(key: string, text: string, ttlSeconds = DEFAULT_TTL_SECONDS): Promise<void> {
   try {
     await redis.set(key, text, { ex: ttlSeconds });
   } catch {
