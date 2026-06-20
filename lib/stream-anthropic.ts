@@ -73,7 +73,13 @@ export function streamAnthropicResponse(params: MessageStreamParams): Response {
         controller.close();
       } catch (err) {
         console.error('[stream-anthropic] error:', err);
-        controller.error(err);
+        let message = '분석 중 오류가 발생했어요. 잠시 후 다시 시도해주세요.';
+        if (err && typeof err === 'object' && 'status' in err) {
+          const status = (err as { status: number }).status;
+          if (status === 429) message = '요청이 너무 많아요. 잠시 후 다시 시도해주세요.';
+          else if (status >= 500) message = 'AI 서비스에 일시적인 오류가 발생했어요.';
+        }
+        controller.error(new Error(message));
       }
     },
   });
@@ -104,7 +110,13 @@ export function streamAnthropicResponseWithCache(
         void saveFn(chunks.join(''));
       } catch (err) {
         console.error('[stream-anthropic] error:', err);
-        controller.error(err);
+        let message = '분석 중 오류가 발생했어요. 잠시 후 다시 시도해주세요.';
+        if (err && typeof err === 'object' && 'status' in err) {
+          const status = (err as { status: number }).status;
+          if (status === 429) message = '요청이 너무 많아요. 잠시 후 다시 시도해주세요.';
+          else if (status >= 500) message = 'AI 서비스에 일시적인 오류가 발생했어요.';
+        }
+        controller.error(new Error(message));
       }
     },
   });
