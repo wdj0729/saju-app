@@ -1,4 +1,4 @@
-import { loadProfiles, saveProfile, deleteProfile, isProfileSaved } from '../profiles';
+import { loadProfiles, saveProfile, deleteProfile, isProfileSaved, parseImportedProfiles, importProfiles } from '../profiles';
 import type { SajuSessionInput } from '../session';
 import { setupStorageMock } from './test-utils';
 
@@ -130,5 +130,66 @@ describe('SSR 환경 (window 없음)', () => {
 
   it('isProfileSaved는 false 반환', () => {
     expect(isProfileSaved(INPUT)).toBe(false);
+  });
+});
+
+describe('parseImportedProfiles', () => {
+  it('유효한 데이터에서 프로필 파싱', () => {
+    saveProfile(INPUT, '甲');
+    const existing = loadProfiles();
+    const data = { version: 1, profiles: existing };
+    const result = parseImportedProfiles(data);
+    expect(result.profiles).toHaveLength(1);
+    expect(result.total).toBe(1);
+  });
+
+  it('profiles 필드 없으면 에러', () => {
+    expect(() => parseImportedProfiles({ version: 1 })).toThrow();
+  });
+
+  it('배열이 아닌 profiles → 에러', () => {
+    expect(() => parseImportedProfiles({ profiles: 'wrong' })).toThrow();
+  });
+
+  it('invalid 프로필은 필터링됨', () => {
+    saveProfile(INPUT, '甲');
+    const existing = loadProfiles();
+    const data = { version: 1, profiles: [{ invalid: true }, ...existing] };
+    const result = parseImportedProfiles(data);
+    expect(result.total).toBe(2);
+    expect(result.profiles).toHaveLength(1);
+  });
+
+  it('null 입력 → 에러', () => {
+    expect(() => parseImportedProfiles(null)).toThrow();
+  });
+});
+
+describe('importProfiles', () => {
+  it('새 프로필이 기존에 추가됨', async () => {
+    saveProfile(INPUT, '甲');
+    const existing = loadProfiles();
+    const newProfile = { ...existing[0], id: 'new-id-123', name: '새사람' };
+    const json = JSON.stringify({ version: 1, profiles: [newProfile] });
+    const file = new File([json], 'test.json', { type: 'application/json' });
+    const result = await importProfiles(file);
+    expect(result.added).toBe(1);
+    expect(result.skipped).toBe(0);
+    expect(loadProfiles()).toHaveLength(2);
+  });
+
+  it('중복 id는 skip됨', async () => {
+    saveProfile(INPUT, '甲');
+    const existing = loadProfiles();
+    const json = JSON.stringify({ version: 1, profiles: existing });
+    const file = new File([json], 'test.json', { type: 'application/json' });
+    const result = await importProfiles(file);
+    expect(result.added).toBe(0);
+    expect(result.skipped).toBe(1);
+  });
+
+  it('잘못된 JSON → reject', async () => {
+    const file = new File(['{bad json'], 'test.json', { type: 'application/json' });
+    await expect(importProfiles(file)).rejects.toThrow();
   });
 });
