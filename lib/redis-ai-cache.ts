@@ -59,3 +59,7 @@ export async function setRedisAiCache(
     // Redis 실패가 응답을 막지 않도록 무시
   }
 }
+
+export function makeGroupAnalysisCacheKey(memberIlgans: string[], averageScore: number): string {
+  return `server-ai:group:v1:${memberIlgans.join('.')}:${averageScore}`;
+}
