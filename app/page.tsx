@@ -1,9 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { loadProfiles, deleteProfile, updateProfile, profileToSessionInput } from '@/lib/profiles';
+import {
+  loadProfiles,
+  deleteProfile,
+  updateProfile,
+  profileToSessionInput,
+  exportProfiles,
+  importProfiles,
+} from '@/lib/profiles';
 import type { Profile } from '@/lib/profiles';
 import { calculateSaju } from '@/lib/saju-calculator';
 import { saveSession } from '@/lib/session';
@@ -34,6 +41,8 @@ export default function Home() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [expandedProfileId, setExpandedProfileId] = useState<string | null>(null);
+  const [importMsg, setImportMsg] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setProfiles(loadProfiles());
@@ -70,6 +79,24 @@ export default function Home() {
     setIsEditing(false);
   }
 
+  const handleImport = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = '';
+    try {
+      const result = await importProfiles(file);
+      setProfiles(loadProfiles());
+      setImportMsg(
+        result.skipped > 0
+          ? `${result.added}개 가져왔어요 · ${result.skipped}개 중복 건너뜀`
+          : `${result.added}개 가져왔어요`
+      );
+    } catch (err: unknown) {
+      setImportMsg(err instanceof Error ? err.message : '가져오기 실패');
+    }
+    setTimeout(() => setImportMsg(''), 3000);
+  }, []);
+
   return (
     <main className="flex flex-col items-center justify-center min-h-screen px-6">
       <div className="flex flex-col items-center mb-8">
@@ -82,15 +109,29 @@ export default function Home() {
         <div className="w-full bg-card rounded-2xl px-4 py-3 mb-4">
           <div className="flex justify-between items-center mb-2">
             <span className="text-xs text-muted">저장된 프로필</span>
-            <button
-              onClick={() => {
-                setIsEditing(!isEditing);
-                setExpandedProfileId(null);
-              }}
-              className={`text-xs transition-colors ${isEditing ? 'text-hwa' : 'text-primary'}`}
-            >
-              {isEditing ? '완료' : '편집'}
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={exportProfiles}
+                className="text-xs text-muted hover:text-primary transition-colors"
+              >
+                내보내기
+              </button>
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="text-xs text-muted hover:text-primary transition-colors"
+              >
+                가져오기
+              </button>
+              <button
+                onClick={() => {
+                  setIsEditing(!isEditing);
+                  setExpandedProfileId(null);
+                }}
+                className={`text-xs transition-colors ${isEditing ? 'text-hwa' : 'text-primary'}`}
+              >
+                {isEditing ? '완료' : '편집'}
+              </button>
+            </div>
           </div>
           <div className="flex flex-col gap-2">
             {profiles.map((profile) => (
@@ -160,6 +201,14 @@ export default function Home() {
               </Link>
             )}
           </div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".json"
+            className="hidden"
+            onChange={handleImport}
+          />
+          {importMsg && <p className="text-xs text-muted mt-2 text-center">{importMsg}</p>}
         </div>
       )}
 
