@@ -4,7 +4,8 @@ import nextJest from 'next/jest.js';
 const createJestConfig = nextJest({ dir: './' });
 
 const config: Config = {
-  testEnvironment: 'node',
+  testEnvironment: 'jsdom',
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   testPathIgnorePatterns: ['/node_modules/', '/.next/', '/lib/__tests__/test-utils\\.ts$'],
 };
 
