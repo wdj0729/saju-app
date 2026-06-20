@@ -235,10 +235,15 @@ export default function SajuResultContent() {
       name: input.name || undefined,
     });
     const url = `${window.location.origin}/saju/share?d=${encoded}`;
-    void navigator.clipboard.writeText(url).then(() => {
-      setLinkCopied(true);
-      setTimeout(() => setLinkCopied(false), 2000);
-    });
+    navigator.clipboard.writeText(url).then(
+      () => {
+        setLinkCopied(true);
+        setTimeout(() => setLinkCopied(false), 2000);
+      },
+      () => {
+        // clipboard 접근 거부 또는 HTTPS 미지원 — silent fail
+      }
+    );
   }, [session]);
 
   const docTitle =
