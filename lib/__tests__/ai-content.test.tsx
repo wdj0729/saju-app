@@ -21,17 +21,13 @@ describe('AiContent', () => {
 
   it('분석 요청 버튼 클릭 시 onRequest 호출', () => {
     const onRequest = jest.fn();
-    render(
-      <AiContent aiText="" isStreaming={false} aiError="" onRequest={onRequest} />
-    );
+    render(<AiContent aiText="" isStreaming={false} aiError="" onRequest={onRequest} />);
     fireEvent.click(screen.getByRole('button'));
     expect(onRequest).toHaveBeenCalledTimes(1);
   });
 
   it('isStreaming=true이고 aiText=""이면 스켈레톤 표시 (버튼 없음)', () => {
-    render(
-      <AiContent aiText="" isStreaming={true} aiError="" onRequest={jest.fn()} />
-    );
+    render(<AiContent aiText="" isStreaming={true} aiError="" onRequest={jest.fn()} />);
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 

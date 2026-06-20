@@ -18,24 +18,12 @@ const mockCardProps = {
 
 describe('ShareButton', () => {
   it('공유 버튼이 렌더됨', () => {
-    render(
-      <ShareButton
-        cardProps={mockCardProps}
-        filename="test.png"
-        shareTitle="테스트 공유"
-      />
-    );
+    render(<ShareButton cardProps={mockCardProps} filename="test.png" shareTitle="테스트 공유" />);
     expect(screen.getByRole('button', { name: '결과 공유하기' })).toBeInTheDocument();
   });
 
   it('초기 상태에서 에러 메시지 없음', () => {
-    render(
-      <ShareButton
-        cardProps={mockCardProps}
-        filename="test.png"
-        shareTitle="테스트 공유"
-      />
-    );
+    render(<ShareButton cardProps={mockCardProps} filename="test.png" shareTitle="테스트 공유" />);
     expect(screen.queryByText(/공유에 실패했어요/)).not.toBeInTheDocument();
   });
 });

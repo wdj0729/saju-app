@@ -144,9 +144,8 @@ export async function importProfiles(file: File): Promise<ImportResult> {
     throw new Error('올바른 프로필 파일이 아니에요.');
   }
   let toMerge: Profile[];
-  let total: number;
   try {
-    ({ profiles: toMerge, total } = parseImportedProfiles(parsed));
+    ({ profiles: toMerge } = parseImportedProfiles(parsed));
   } catch {
     throw new Error('올바른 프로필 파일이 아니에요.');
   }

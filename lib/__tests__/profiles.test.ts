@@ -75,7 +75,9 @@ describe('saveProfile', () => {
 
   it('localStorage.setItem이 throw해도 앱이 crash하지 않음', () => {
     const original = localStorage.setItem;
-    localStorage.setItem = () => { throw new DOMException('QuotaExceededError'); };
+    localStorage.setItem = () => {
+      throw new DOMException('QuotaExceededError');
+    };
     expect(() => saveProfile(INPUT, '甲')).not.toThrow();
     localStorage.setItem = original;
   });

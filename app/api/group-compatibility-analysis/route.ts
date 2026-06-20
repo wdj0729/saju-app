@@ -45,7 +45,10 @@ export async function POST(req: NextRequest): Promise<Response> {
   if (parsed instanceof Response) return parsed;
 
   const { members, averageScore } = parsed.data;
-  const cacheKey = makeGroupAnalysisCacheKey(members.map((m) => m.ilgan), averageScore);
+  const cacheKey = makeGroupAnalysisCacheKey(
+    members.map((m) => m.ilgan),
+    averageScore
+  );
   const cached = await getRedisAiCache(cacheKey);
   if (cached) {
     return new Response(cached, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
