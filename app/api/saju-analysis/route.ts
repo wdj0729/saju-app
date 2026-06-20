@@ -45,6 +45,7 @@ function isSajuAnalysisRequest(v: unknown): v is SajuAnalysisRequest {
     r.ohaeng !== null &&
     typeof r.birthYear === 'number' &&
     typeof r.currentAge === 'number' &&
+    (r.name === undefined || (typeof r.name === 'string' && r.name.length <= 20)) &&
     typeof pillars === 'object' &&
     pillars !== null &&
     isPillarData(pillars.year) &&
@@ -85,7 +86,7 @@ export async function POST(req: NextRequest): Promise<Response> {
     `- 일간: ${ilgan}`,
     `- 일주: ${dayPillar}`,
     `- 오행 분포: ${ohaengText}`,
-    name ? `- 이름: ${name}` : null,
+    name ? `- 이름: ${name.trim().slice(0, 20)}` : null,
     genderText ? `- 성별: ${genderText}` : null,
     `- 출생 연도: ${birthYear}년`,
     `- 만 나이: ${currentAge}세`,
