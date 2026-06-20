@@ -11,6 +11,7 @@ import { getYearPillar } from '@/lib/saju-calculator';
 import type { Ohaeng } from '@/lib/saju-data';
 import { getOhaengRelationKey } from '@/lib/ohaeng-relations';
 import { saveProfile, isProfileSaved } from '@/lib/profiles';
+import { encodeSajuShare } from '@/lib/saju-share';
 import { calculateDaewoon, calcMadeAge } from '@/lib/daewoon';
 import { useSessionOrRedirect } from '@/hooks/useSessionOrRedirect';
 import { useAiSections } from '@/hooks/useAiSections';
@@ -140,6 +141,7 @@ function SajuResultSkeleton() {
 export default function SajuResultContent() {
   const router = useRouter();
   const [isSaved, setIsSaved] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
 
   const cacheKey = useMemo(() => {
     const s = loadSession();
@@ -218,6 +220,25 @@ export default function SajuResultContent() {
     } catch {
       // localStorage unavailable or quota exceeded — ignore silently
     }
+  }, [session]);
+
+  const handleLinkShare = useCallback(() => {
+    if (!session || session === 'not-found') return;
+    const { input } = session;
+    const encoded = encodeSajuShare({
+      year: input.year,
+      month: input.month,
+      day: input.day,
+      hour: input.hour,
+      isLunar: input.isLunar,
+      gender: input.gender,
+      name: input.name || undefined,
+    });
+    const url = `${window.location.origin}/saju/share?d=${encoded}`;
+    void navigator.clipboard.writeText(url).then(() => {
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2000);
+    });
   }, [session]);
 
   const docTitle =
@@ -317,6 +338,13 @@ export default function SajuResultContent() {
             aria-label="프로필 저장"
           >
             {isSaved ? '✓' : '💾'}
+          </button>
+          <button
+            onClick={handleLinkShare}
+            className="bg-card text-muted py-3 px-4 rounded-2xl hover:bg-card-hover transition-colors"
+            aria-label="링크 복사"
+          >
+            {linkCopied ? '✓' : '🔗'}
           </button>
           <ShareButton
             cardProps={{
