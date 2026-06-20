@@ -310,6 +310,7 @@ export default function SajuResultContent() {
             result={daewoon}
             currentAge={currentAge}
             ilganElement={GAN_OHAENG[result.ilgan]}
+            birthYear={input.year}
           />
         )}
       </div>
