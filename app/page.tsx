@@ -221,7 +221,9 @@ export default function Home() {
             key={card.title}
             onClick={() => {
               const dest = card.href === '/fortune' ? 'fortune' : 'yearly';
-              if (profiles.length === 1) {
+              if (profiles.length === 0) {
+                router.push('/saju');
+              } else if (profiles.length === 1) {
                 handleProfileNav(profiles[0], dest);
               } else {
                 router.push(card.href);
