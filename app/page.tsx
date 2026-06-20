@@ -41,6 +41,7 @@ export default function Home() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [expandedProfileId, setExpandedProfileId] = useState<string | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [importMsg, setImportMsg] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -126,6 +127,7 @@ export default function Home() {
                 onClick={() => {
                   setIsEditing(!isEditing);
                   setExpandedProfileId(null);
+                  setPendingDeleteId(null);
                 }}
                 className={`text-xs transition-colors ${isEditing ? 'text-hwa' : 'text-primary'}`}
               >
@@ -140,19 +142,42 @@ export default function Home() {
                   <button
                     onClick={() => {
                       setExpandedProfileId(expandedProfileId === profile.id ? null : profile.id);
+                      setPendingDeleteId(null);
                     }}
                     className="flex-1 text-left text-xs text-primary"
                   >
                     🔮 {profile.name || '이름 없음'} · {profile.ilgan}
                   </button>
                   {isEditing && expandedProfileId !== profile.id ? (
-                    <button
-                      onClick={() => handleDelete(profile.id)}
-                      className="w-4 h-4 bg-hwa rounded-full text-white text-xs flex items-center justify-center leading-none shrink-0"
-                      aria-label={`${profile.name || '이름 없음'} 삭제`}
-                    >
-                      ×
-                    </button>
+                    pendingDeleteId === profile.id ? (
+                      <div className="flex items-center gap-1 shrink-0">
+                        <button
+                          onClick={() => setPendingDeleteId(null)}
+                          className="text-xs text-muted px-1.5 py-0.5 rounded-md hover:text-primary transition-colors"
+                          aria-label="삭제 취소"
+                        >
+                          취소
+                        </button>
+                        <button
+                          onClick={() => {
+                            handleDelete(profile.id);
+                            setPendingDeleteId(null);
+                          }}
+                          className="text-xs text-hwa px-1.5 py-0.5 rounded-md bg-hwa/10 hover:bg-hwa/20 transition-colors"
+                          aria-label="삭제 확인"
+                        >
+                          삭제
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => setPendingDeleteId(profile.id)}
+                        className="w-4 h-4 bg-hwa rounded-full text-white text-xs flex items-center justify-center leading-none shrink-0"
+                        aria-label={`${profile.name || '이름 없음'} 삭제`}
+                      >
+                        ×
+                      </button>
+                    )
                   ) : (
                     <span className="text-muted text-xs shrink-0">
                       {expandedProfileId === profile.id ? '∧' : '∨'}
@@ -221,7 +246,9 @@ export default function Home() {
             key={card.title}
             onClick={() => {
               const dest = card.href === '/fortune' ? 'fortune' : 'yearly';
-              if (profiles.length === 1) {
+              if (profiles.length === 0) {
+                router.push('/saju');
+              } else if (profiles.length === 1) {
                 handleProfileNav(profiles[0], dest);
               } else {
                 router.push(card.href);

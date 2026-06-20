@@ -22,6 +22,7 @@ interface YearlySectionsProps {
   isStreaming: boolean;
   aiError: string;
   onRequest: () => void;
+  onAbort?: () => void;
 }
 
 function YearlySections({
@@ -30,6 +31,7 @@ function YearlySections({
   isStreaming,
   aiError,
   onRequest,
+  onAbort,
 }: YearlySectionsProps) {
   const hasContent = YEARLY_SECTION_KEYS.some((k) => sections[k]);
 
@@ -81,6 +83,14 @@ function YearlySections({
           </div>
         );
       })}
+      {isStreaming && onAbort && (
+        <button
+          onClick={onAbort}
+          className="mt-1 w-full py-2 rounded-xl bg-card-hover text-sm text-muted hover:text-primary transition-colors"
+        >
+          ✕ 분석 중단
+        </button>
+      )}
       {!isStreaming && hasContent && (
         <button onClick={onRequest} className="mt-1 text-xs text-muted underline text-center">
           다시 요청

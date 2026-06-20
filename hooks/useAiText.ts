@@ -9,6 +9,7 @@ interface UseAiTextReturn {
   isStreaming: boolean;
   aiError: string;
   request: (url: string, body: unknown) => Promise<void>;
+  abort: () => void;
 }
 
 export function useAiText(cacheKey?: string): UseAiTextReturn {
@@ -21,7 +22,7 @@ export function useAiText(cacheKey?: string): UseAiTextReturn {
     if (cached?.ai) setAiText(cached.ai as string);
   }, [cacheKey]);
 
-  const { isStreaming, request } = useStreamingRequest({
+  const { isStreaming, request, abort } = useStreamingRequest({
     onStart: () => {
       setAiText('');
       setAiError('');
@@ -36,5 +37,5 @@ export function useAiText(cacheKey?: string): UseAiTextReturn {
     },
   });
 
-  return { aiText, isStreaming, aiError, request };
+  return { aiText, isStreaming, aiError, request, abort };
 }

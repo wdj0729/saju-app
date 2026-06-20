@@ -46,7 +46,11 @@ export function loadProfiles(): Profile[] {
 
 function persist(profiles: Profile[]): void {
   if (typeof window === 'undefined') return;
-  localStorage.setItem(KEY, JSON.stringify(profiles));
+  try {
+    localStorage.setItem(KEY, JSON.stringify(profiles));
+  } catch {
+    // 할당량 초과 또는 접근 불가 시 무시
+  }
 }
 
 function isSameProfile(p: Profile, input: SajuSessionInput): boolean {
@@ -140,9 +144,8 @@ export async function importProfiles(file: File): Promise<ImportResult> {
     throw new Error('올바른 프로필 파일이 아니에요.');
   }
   let toMerge: Profile[];
-  let total: number;
   try {
-    ({ profiles: toMerge, total } = parseImportedProfiles(parsed));
+    ({ profiles: toMerge } = parseImportedProfiles(parsed));
   } catch {
     throw new Error('올바른 프로필 파일이 아니에요.');
   }
@@ -150,5 +153,5 @@ export async function importProfiles(file: File): Promise<ImportResult> {
   const existingIds = new Set(existing.map((p) => p.id));
   const toAdd = toMerge.filter((p) => !existingIds.has(p.id));
   persist([...existing, ...toAdd]);
-  return { added: toAdd.length, skipped: total - toAdd.length };
+  return { added: toAdd.length, skipped: toMerge.length - toAdd.length };
 }

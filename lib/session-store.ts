@@ -11,7 +11,11 @@ export function createSessionStore<T>(
   return {
     save(data: T): void {
       if (typeof window === 'undefined') return;
-      sessionStorage.setItem(key, JSON.stringify(data));
+      try {
+        sessionStorage.setItem(key, JSON.stringify(data));
+      } catch {
+        // 할당량 초과 또는 접근 불가 시 무시
+      }
     },
     load(): T | null {
       if (typeof window === 'undefined') return null;

@@ -8,6 +8,7 @@ interface AiContentProps {
   isStreaming: boolean;
   aiError: string;
   onRequest: () => void;
+  onAbort?: () => void;
   requestLabel?: string;
 }
 
@@ -16,6 +17,7 @@ function AiContent({
   isStreaming,
   aiError,
   onRequest,
+  onAbort,
   requestLabel = '분석 요청하기',
 }: AiContentProps) {
   if (!aiText && !isStreaming && !aiError) {
@@ -75,6 +77,14 @@ function AiContent({
               </span>
             )}
           </div>
+          {isStreaming && onAbort && (
+            <button
+              onClick={onAbort}
+              className="w-full py-2 rounded-xl bg-card-hover text-sm text-muted hover:text-primary transition-colors"
+            >
+              ✕ 분석 중단
+            </button>
+          )}
           {!isStreaming && !aiError && (
             <button
               onClick={onRequest}

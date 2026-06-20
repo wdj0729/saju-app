@@ -10,6 +10,7 @@ interface UseSectionsReturn<K extends string> {
   isStreaming: boolean;
   aiError: string;
   request: (url: string, body: unknown) => Promise<void>;
+  abort: () => void;
 }
 
 export function useSections<K extends string>(
@@ -34,7 +35,7 @@ export function useSections<K extends string>(
     if (cached) setSections(cached as Record<K, string>);
   }, [cacheKey]);
 
-  const { isStreaming, request } = useStreamingRequest({
+  const { isStreaming, request, abort } = useStreamingRequest({
     onStart: () => {
       setSections(empty());
       setActiveSection(null);
@@ -57,5 +58,5 @@ export function useSections<K extends string>(
     },
   });
 
-  return { sections, activeSection, isStreaming, aiError, request };
+  return { sections, activeSection, isStreaming, aiError, request, abort };
 }
