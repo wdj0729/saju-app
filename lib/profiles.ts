@@ -46,7 +46,11 @@ export function loadProfiles(): Profile[] {
 
 function persist(profiles: Profile[]): void {
   if (typeof window === 'undefined') return;
-  localStorage.setItem(KEY, JSON.stringify(profiles));
+  try {
+    localStorage.setItem(KEY, JSON.stringify(profiles));
+  } catch {
+    // 할당량 초과 또는 접근 불가 시 무시
+  }
 }
 
 function isSameProfile(p: Profile, input: SajuSessionInput): boolean {
