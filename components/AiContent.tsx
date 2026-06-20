@@ -44,9 +44,14 @@ function AiContent({
       {aiError && (
         <div
           className="rounded-xl px-3 py-2 flex items-center justify-between gap-2"
-          style={{ background: 'rgba(255,100,100,0.08)', border: '1px solid rgba(255,100,100,0.2)' }}
+          style={{
+            background: 'rgba(255,100,100,0.08)',
+            border: '1px solid rgba(255,100,100,0.2)',
+          }}
         >
-          <p className="text-xs" style={{ color: '#ff6b6b' }}>{aiError}</p>
+          <p className="text-xs" style={{ color: '#ff6b6b' }}>
+            {aiError}
+          </p>
           <button
             onClick={onRequest}
             className="text-xs text-muted hover:text-primary shrink-0 transition-colors"
