@@ -52,7 +52,6 @@ export function useSections<K extends string>(
       setActiveSection(null);
     },
     onError: (msg) => {
-      setSections(empty());
       setActiveSection(null);
       setAiError(msg);
     },

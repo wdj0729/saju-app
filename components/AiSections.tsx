@@ -24,21 +24,7 @@ interface AiSectionsProps {
 function AiSections({ sections, activeSection, isStreaming, aiError, onRequest }: AiSectionsProps) {
   const hasContent = SECTION_KEYS.some((k) => sections[k]);
 
-  if (aiError && !hasContent) {
-    return (
-      <div>
-        <p className="text-sm text-hwa mb-2">{aiError}</p>
-        <button
-          onClick={onRequest}
-          className="mt-1 w-full py-2 rounded-xl bg-card-hover text-sm text-muted hover:text-primary transition-colors"
-        >
-          🔄 다시 분석하기
-        </button>
-      </div>
-    );
-  }
-
-  if (!hasContent && !isStreaming) {
+  if (!hasContent && !isStreaming && !aiError) {
     return (
       <button
         onClick={onRequest}
@@ -51,10 +37,23 @@ function AiSections({ sections, activeSection, isStreaming, aiError, onRequest }
 
   return (
     <div className="flex flex-col gap-4">
+      {aiError && (
+        <div
+          className="rounded-xl px-3 py-2 flex items-center justify-between gap-2"
+          style={{ background: 'rgba(255,100,100,0.08)', border: '1px solid rgba(255,100,100,0.2)' }}
+        >
+          <p className="text-xs" style={{ color: '#ff6b6b' }}>{aiError}</p>
+          <button
+            onClick={onRequest}
+            className="text-xs text-muted hover:text-primary shrink-0 transition-colors"
+          >
+            🔄 재시도
+          </button>
+        </div>
+      )}
       {SECTION_KEYS.map((key) => {
         const { emoji, title } = SECTION_META[key];
         const text = sections[key];
-
         return (
           <div key={key} className="bg-card rounded-2xl p-4">
             <p className="text-xs text-muted mb-2">
@@ -75,7 +74,7 @@ function AiSections({ sections, activeSection, isStreaming, aiError, onRequest }
           </div>
         );
       })}
-      {!isStreaming && hasContent && (
+      {!isStreaming && !aiError && hasContent && (
         <button
           onClick={onRequest}
           className="mt-1 w-full py-2 rounded-xl bg-card-hover text-sm text-muted hover:text-primary transition-colors"

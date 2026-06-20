@@ -32,14 +32,6 @@ export function useAiText(cacheKey?: string): UseAiTextReturn {
       if (cacheKey) saveAiCache(cacheKey, { ai: text });
     },
     onError: (msg) => {
-      if (cacheKey) {
-        const cached = loadAiCache(cacheKey);
-        if (cached?.ai) {
-          setAiError(msg);
-          return;
-        }
-      }
-      setAiText('');
       setAiError(msg);
     },
   });
