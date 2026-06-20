@@ -154,5 +154,5 @@ export async function importProfiles(file: File): Promise<ImportResult> {
   const existingIds = new Set(existing.map((p) => p.id));
   const toAdd = toMerge.filter((p) => !existingIds.has(p.id));
   persist([...existing, ...toAdd]);
-  return { added: toAdd.length, skipped: total - toAdd.length };
+  return { added: toAdd.length, skipped: toMerge.length - toAdd.length };
 }

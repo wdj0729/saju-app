@@ -142,6 +142,7 @@ export default function Home() {
                   <button
                     onClick={() => {
                       setExpandedProfileId(expandedProfileId === profile.id ? null : profile.id);
+                      setPendingDeleteId(null);
                     }}
                     className="flex-1 text-left text-xs text-primary"
                   >

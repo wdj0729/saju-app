@@ -12,15 +12,8 @@ const mockCardProps = {
     year: '甲子',
     month: '乙丑',
     day: '丙寅',
-    hour: undefined,
   },
-  ohaeng: {
-    mok: 1,
-    hwa: 2,
-    to: 1,
-    geum: 1,
-    su: 1,
-  },
+  ohaeng: { 목: 1, 화: 2, 토: 1, 금: 1, 수: 1 } as Record<import('@/lib/saju-data').Ohaeng, number>,
 };
 
 describe('ShareButton', () => {
