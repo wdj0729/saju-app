@@ -13,11 +13,13 @@ interface ShareButtonProps {
 export default function ShareButton({ cardProps, filename, shareTitle }: ShareButtonProps) {
   const [isCapturing, setIsCapturing] = useState(false);
   const [showCard, setShowCard] = useState(false);
+  const [shareError, setShareError] = useState('');
   const cardRef = useRef<HTMLDivElement>(null);
 
   async function handleShare() {
     if (isCapturing) return;
     setIsCapturing(true);
+    setShareError('');
     flushSync(() => setShowCard(true));
     try {
       const html2canvas = (await import('html2canvas')).default;
@@ -45,6 +47,8 @@ export default function ShareButton({ cardProps, filename, shareTitle }: ShareBu
     } catch (err) {
       if (err instanceof Error && err.name === 'AbortError') return;
       console.error('공유 실패:', err);
+      setShareError('공유에 실패했어요. 다시 시도해주세요.');
+      setTimeout(() => setShareError(''), 3000);
     } finally {
       setShowCard(false);
       setIsCapturing(false);
@@ -52,7 +56,7 @@ export default function ShareButton({ cardProps, filename, shareTitle }: ShareBu
   }
 
   return (
-    <>
+    <div className="flex flex-col items-center gap-1">
       {showCard && <ShareCard ref={cardRef} {...cardProps} />}
       <button
         onClick={handleShare}
@@ -62,6 +66,11 @@ export default function ShareButton({ cardProps, filename, shareTitle }: ShareBu
       >
         {isCapturing ? '⏳' : '⬆'}
       </button>
-    </>
+      {shareError && (
+        <p className="text-xs text-center" style={{ color: '#ff6b6b' }}>
+          {shareError}
+        </p>
+      )}
+    </div>
   );
 }
