@@ -111,12 +111,11 @@ export interface ImportResult {
 }
 
 export function parseImportedProfiles(raw: unknown): { profiles: Profile[]; total: number } {
-  if (typeof raw !== 'object' || raw === null) throw new Error('invalid');
+  if (typeof raw !== 'object' || raw === null) throw new Error('올바른 프로필 파일이 아니에요.');
   const data = raw as Record<string, unknown>;
-  if (!Array.isArray(data.profiles)) throw new Error('invalid');
-  const allItems = data.profiles as unknown[];
-  const profiles = allItems.filter(isProfile);
-  return { profiles, total: allItems.length };
+  if (!Array.isArray(data.profiles)) throw new Error('올바른 프로필 파일이 아니에요.');
+  const profiles = (data.profiles as unknown[]).filter(isProfile);
+  return { profiles, total: (data.profiles as unknown[]).length };
 }
 
 export function exportProfiles(): void {
@@ -140,7 +139,13 @@ export async function importProfiles(file: File): Promise<ImportResult> {
   } catch {
     throw new Error('올바른 프로필 파일이 아니에요.');
   }
-  const { profiles: toMerge, total } = parseImportedProfiles(parsed);
+  let toMerge: Profile[];
+  let total: number;
+  try {
+    ({ profiles: toMerge, total } = parseImportedProfiles(parsed));
+  } catch {
+    throw new Error('올바른 프로필 파일이 아니에요.');
+  }
   const existing = loadProfiles();
   const existingIds = new Set(existing.map((p) => p.id));
   const toAdd = toMerge.filter((p) => !existingIds.has(p.id));
