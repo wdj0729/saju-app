@@ -48,6 +48,7 @@ function isSajuSharePayload(v: unknown): v is SajuSharePayload {
     (r.hour === null || (typeof r.hour === 'number' && r.hour >= 0 && r.hour <= 23)) &&
     typeof r.isLunar === 'boolean' &&
     (r.gender === 'M' || r.gender === 'F') &&
-    (r.name === undefined || typeof r.name === 'string')
+    (r.name === undefined ||
+      (typeof r.name === 'string' && r.name.length <= 50 && !/[<>]/.test(r.name)))
   );
 }

@@ -62,4 +62,12 @@ describe('encodeSajuShare / decodeSajuShare', () => {
   it('필드 누락 → null', () => {
     expect(decodeSajuShare(encodeRaw({ year: 1990, month: 5 }))).toBeNull();
   });
+
+  it('이름 50자 초과 → null', () => {
+    expect(decodeSajuShare(encodeRaw({ ...valid, name: 'a'.repeat(51) }))).toBeNull();
+  });
+
+  it('이름에 < 포함 → null', () => {
+    expect(decodeSajuShare(encodeRaw({ ...valid, name: '<script>' }))).toBeNull();
+  });
 });
