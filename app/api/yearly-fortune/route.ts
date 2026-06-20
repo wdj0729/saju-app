@@ -11,11 +11,7 @@ import {
 import { getFortuneYear, getFortuneGanjee } from '@/lib/constants';
 import { AI_MODEL } from '@/lib/anthropic';
 import { getRateLimitResponse } from '@/lib/rate-limit';
-import {
-  getRedisAiCache,
-  setRedisAiCache,
-  makeYearlyFortuneCacheKey,
-} from '@/lib/redis-ai-cache';
+import { getRedisAiCache, setRedisAiCache, makeYearlyFortuneCacheKey } from '@/lib/redis-ai-cache';
 
 interface YearlyFortuneRequest {
   ilgan: string;

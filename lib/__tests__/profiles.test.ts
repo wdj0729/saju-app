@@ -1,4 +1,11 @@
-import { loadProfiles, saveProfile, deleteProfile, isProfileSaved, parseImportedProfiles, importProfiles } from '../profiles';
+import {
+  loadProfiles,
+  saveProfile,
+  deleteProfile,
+  isProfileSaved,
+  parseImportedProfiles,
+  importProfiles,
+} from '../profiles';
 import type { SajuSessionInput } from '../session';
 import { setupStorageMock } from './test-utils';
 

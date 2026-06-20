@@ -9,11 +9,7 @@ import {
 } from '@/lib/stream-anthropic';
 import { AI_MODEL } from '@/lib/anthropic';
 import { getRateLimitResponse } from '@/lib/rate-limit';
-import {
-  getRedisAiCache,
-  setRedisAiCache,
-  makeAiAnalysisCacheKey,
-} from '@/lib/redis-ai-cache';
+import { getRedisAiCache, setRedisAiCache, makeAiAnalysisCacheKey } from '@/lib/redis-ai-cache';
 
 interface AiAnalysisRequest {
   ilgan: string;
