@@ -230,9 +230,7 @@ function CompatibilityInner({
         style={{
           fontSize: 52,
           fontWeight: 800,
-          background: 'linear-gradient(to right, #667eea, #764ba2)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
+          color: '#8b85e0',
           lineHeight: 1,
           marginBottom: 6,
         }}
