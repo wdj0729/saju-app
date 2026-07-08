@@ -91,9 +91,11 @@ async function createAnthropicStreamResponse(
   let firstChunk: string | null = null;
   let iteratorDone = false;
   let iterator: AsyncIterator<MessageStreamEvent>;
+  let abortUpstream: (() => void) | null = null;
 
   try {
     const stream = anthropic.messages.stream(params);
+    abortUpstream = () => stream.abort();
     const streamIterator = stream[Symbol.asyncIterator]();
     while (firstChunk === null) {
       const { value, done } = await streamIterator.next();
@@ -129,9 +131,22 @@ async function createAnthropicStreamResponse(
         if (onComplete) onComplete(chunks.join(''));
       } catch (err) {
         console.error('[stream-anthropic] error:', err);
-        controller.enqueue(encoder.encode(STREAM_ERROR_MARKER + toFriendlyStreamErrorMessage(err)));
-        controller.close();
+        try {
+          controller.enqueue(
+            encoder.encode(STREAM_ERROR_MARKER + toFriendlyStreamErrorMessage(err))
+          );
+          controller.close();
+        } catch {
+          // client already disconnected (see cancel() below) — nothing left to deliver
+        }
       }
+    },
+    // Fires when the client disconnects mid-stream (tab closed, navigated
+    // away). Without this the loop above keeps pulling from Anthropic and
+    // the upstream request runs to completion server-side for nothing.
+    cancel(reason) {
+      console.error('[stream-anthropic] client disconnected, aborting upstream:', reason);
+      abortUpstream?.();
     },
   });
 

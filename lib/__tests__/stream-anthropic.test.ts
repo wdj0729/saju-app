@@ -15,6 +15,28 @@ function textDelta(text: string) {
   return { type: 'content_block_delta', index: 0, delta: { type: 'text_delta', text } };
 }
 
+// Like fakeAnthropicStream, but the iterator hangs forever once `events` is
+// exhausted instead of completing — simulates an Anthropic request that's
+// still in flight, so a test can call res.body.cancel() mid-stream and
+// observe whether the upstream call gets aborted.
+function hangingAnthropicStream(events: unknown[]) {
+  const abort = jest.fn();
+  let i = 0;
+  return {
+    abort,
+    [Symbol.asyncIterator]() {
+      return {
+        async next() {
+          if (i < events.length) {
+            return { value: events[i++], done: false };
+          }
+          return new Promise<never>(() => {});
+        },
+      };
+    },
+  };
+}
+
 // Builds a fake Anthropic MessageStream: yields `events` in order, then
 // either ends normally or throws `errorAfter` once events are exhausted.
 function fakeAnthropicStream(events: unknown[], errorAfter?: unknown) {
@@ -87,6 +109,17 @@ describe('streamAnthropicResponse', () => {
     expect(body).toBe(
       '부분 결과' + STREAM_ERROR_MARKER + 'AI 서비스에 일시적인 오류가 발생했어요.'
     );
+  });
+
+  it('클라이언트가 스트리밍 도중 연결을 끊으면 상위 Anthropic 요청도 abort() 호출', async () => {
+    const fake = hangingAnthropicStream([textDelta('첫 청크')]);
+    mockStream.mockReturnValue(fake);
+
+    const res = await streamAnthropicResponse({} as never);
+    // 두 번째 청크를 기다리는(=스트리밍 도중) 상태에서 클라이언트가 연결을 끊는다.
+    await res.body!.cancel('client disconnected');
+
+    expect(fake.abort).toHaveBeenCalledTimes(1);
   });
 });
 
