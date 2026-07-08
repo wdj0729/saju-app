@@ -1,6 +1,10 @@
 import type { NextRequest } from 'next/server';
-import type { MessageStreamParams } from '@anthropic-ai/sdk/resources/messages/messages';
+import type {
+  MessageStreamEvent,
+  MessageStreamParams,
+} from '@anthropic-ai/sdk/resources/messages/messages';
 import { anthropic } from './anthropic';
+import { STREAM_ERROR_MARKER } from './stream-error-marker';
 
 export interface PillarData {
   gan: string;
@@ -58,28 +62,75 @@ export function formatPillars(pillars: {
   ].join(' / ');
 }
 
-export function streamAnthropicResponse(params: MessageStreamParams): Response {
-  const stream = anthropic.messages.stream(params);
+function toFriendlyStreamErrorMessage(err: unknown): string {
+  let message = '분석 중 오류가 발생했어요. 잠시 후 다시 시도해주세요.';
+  if (err && typeof err === 'object' && 'status' in err) {
+    const status = (err as { status: number }).status;
+    if (status === 429) message = '요청이 너무 많아요. 잠시 후 다시 시도해주세요.';
+    else if (typeof status === 'number' && status >= 500)
+      message = 'AI 서비스에 일시적인 오류가 발생했어요.';
+  }
+  return message;
+}
+
+// Errors that happen before any bytes are sent can be reported with a normal
+// error Response (status + text), which the client already handles via
+// `!res.ok`. But once streaming has started, the response is committed to
+// status 200 — calling controller.error() at that point just resets the
+// connection (net::ERR_EMPTY_RESPONSE) and the message never reaches the
+// client. So we buffer the first content chunk before creating the
+// Response: a connect/auth/rate-limit error surfaces as a proper error
+// Response, and only a failure *after* that first chunk falls back to the
+// in-stream STREAM_ERROR_MARKER, which the client parses out of the text.
+async function createAnthropicStreamResponse(
+  params: MessageStreamParams,
+  onComplete?: (text: string) => void
+): Promise<Response> {
+  const encoder = new TextEncoder();
+  const chunks: string[] = [];
+  let firstChunk: string | null = null;
+  let iteratorDone = false;
+  let iterator: AsyncIterator<MessageStreamEvent>;
+
+  try {
+    const stream = anthropic.messages.stream(params);
+    const streamIterator = stream[Symbol.asyncIterator]();
+    while (firstChunk === null) {
+      const { value, done } = await streamIterator.next();
+      if (done) {
+        iteratorDone = true;
+        break;
+      }
+      if (value.type === 'content_block_delta' && value.delta.type === 'text_delta') {
+        firstChunk = value.delta.text;
+      }
+    }
+    iterator = streamIterator;
+  } catch (err) {
+    console.error('[stream-anthropic] error:', err);
+    return new Response(toFriendlyStreamErrorMessage(err), { status: 502 });
+  }
+
+  if (firstChunk !== null) chunks.push(firstChunk);
 
   const readable = new ReadableStream({
     async start(controller) {
-      const encoder = new TextEncoder();
       try {
-        for await (const event of stream) {
-          if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
-            controller.enqueue(encoder.encode(event.delta.text));
+        if (firstChunk !== null) controller.enqueue(encoder.encode(firstChunk));
+        while (!iteratorDone) {
+          const { value, done } = await iterator.next();
+          if (done) break;
+          if (value.type === 'content_block_delta' && value.delta.type === 'text_delta') {
+            chunks.push(value.delta.text);
+            controller.enqueue(encoder.encode(value.delta.text));
           }
         }
         controller.close();
+        if (onComplete) onComplete(chunks.join(''));
       } catch (err) {
         console.error('[stream-anthropic] error:', err);
-        let message = '분석 중 오류가 발생했어요. 잠시 후 다시 시도해주세요.';
-        if (err && typeof err === 'object' && 'status' in err) {
-          const status = (err as { status: number }).status;
-          if (status === 429) message = '요청이 너무 많아요. 잠시 후 다시 시도해주세요.';
-          else if (status >= 500) message = 'AI 서비스에 일시적인 오류가 발생했어요.';
-        }
-        controller.error(new Error(message));
+        controller.enqueue(encoder.encode(STREAM_ERROR_MARKER + toFriendlyStreamErrorMessage(err)));
+        controller.close();
       }
     },
   });
@@ -89,39 +140,13 @@ export function streamAnthropicResponse(params: MessageStreamParams): Response {
   });
 }
 
+export function streamAnthropicResponse(params: MessageStreamParams): Promise<Response> {
+  return createAnthropicStreamResponse(params);
+}
+
 export function streamAnthropicResponseWithCache(
   params: MessageStreamParams,
   saveFn: (text: string) => Promise<void>
-): Response {
-  const stream = anthropic.messages.stream(params);
-
-  const readable = new ReadableStream({
-    async start(controller) {
-      const encoder = new TextEncoder();
-      const chunks: string[] = [];
-      try {
-        for await (const event of stream) {
-          if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
-            chunks.push(event.delta.text);
-            controller.enqueue(encoder.encode(event.delta.text));
-          }
-        }
-        controller.close();
-        void saveFn(chunks.join(''));
-      } catch (err) {
-        console.error('[stream-anthropic] error:', err);
-        let message = '분석 중 오류가 발생했어요. 잠시 후 다시 시도해주세요.';
-        if (err && typeof err === 'object' && 'status' in err) {
-          const status = (err as { status: number }).status;
-          if (status === 429) message = '요청이 너무 많아요. 잠시 후 다시 시도해주세요.';
-          else if (status >= 500) message = 'AI 서비스에 일시적인 오류가 발생했어요.';
-        }
-        controller.error(new Error(message));
-      }
-    },
-  });
-
-  return new Response(readable, {
-    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-  });
+): Promise<Response> {
+  return createAnthropicStreamResponse(params, (text) => void saveFn(text));
 }
