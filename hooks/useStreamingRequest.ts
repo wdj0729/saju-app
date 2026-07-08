@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { STREAM_ERROR_MARKER } from '@/lib/stream-error-marker';
 
 interface StreamingRequestOptions {
   onStart: () => void;
@@ -73,6 +74,24 @@ export function useStreamingRequest(options: StreamingRequestOptions): UseStream
         const { done, value } = await reader.read();
         if (done) break;
         textRef.current += decoder.decode(value, { stream: true });
+
+        const markerIndex = textRef.current.indexOf(STREAM_ERROR_MARKER);
+        if (markerIndex !== -1) {
+          const cleanText = textRef.current.slice(0, markerIndex);
+          const errorMessage =
+            textRef.current.slice(markerIndex + STREAM_ERROR_MARKER.length) ||
+            '분석 중 오류가 발생했어요. 잠시 후 다시 시도해주세요.';
+          if (rafRef.current !== null) {
+            cancelAnimationFrame(rafRef.current);
+            rafRef.current = null;
+          }
+          textRef.current = cleanText;
+          optionsRef.current.onChunk(cleanText);
+          optionsRef.current.onError(errorMessage);
+          await reader.cancel().catch(() => {});
+          return;
+        }
+
         if (rafRef.current === null) {
           rafRef.current = requestAnimationFrame(() => {
             optionsRef.current.onChunk(textRef.current);
