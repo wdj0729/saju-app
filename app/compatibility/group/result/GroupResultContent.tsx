@@ -9,6 +9,7 @@ import { useAiText } from '@/hooks/useAiText';
 import AiContent from '@/components/AiContent';
 import BackButton from '@/components/BackButton';
 import SessionExpiredPage from '@/components/SessionExpiredPage';
+import { GroupResultSkeleton } from './GroupResultSkeleton';
 
 // SVG 설정
 const SVG_SIZE = 300;
@@ -99,7 +100,7 @@ export default function GroupResultContent() {
     return <SessionExpiredPage redirectPath="/compatibility/group" redirectLabel="다시 입력하기" />;
   }
 
-  if (!session) return null;
+  if (!session) return <GroupResultSkeleton />;
 
   const selectedPairs =
     selectedIndex !== null

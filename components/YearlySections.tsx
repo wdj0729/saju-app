@@ -35,18 +35,7 @@ function YearlySections({
 }: YearlySectionsProps) {
   const hasContent = YEARLY_SECTION_KEYS.some((k) => sections[k]);
 
-  if (aiError && !hasContent) {
-    return (
-      <div>
-        <p className="text-sm text-hwa mb-2">{aiError}</p>
-        <button onClick={onRequest} className="text-xs text-muted underline">
-          다시 시도
-        </button>
-      </div>
-    );
-  }
-
-  if (!hasContent && !isStreaming) {
+  if (!hasContent && !isStreaming && !aiError) {
     return (
       <button
         onClick={onRequest}
@@ -59,6 +48,14 @@ function YearlySections({
 
   return (
     <div className="flex flex-col gap-4">
+      {aiError && (
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-sm text-hwa">{aiError}</p>
+          <button onClick={onRequest} className="text-xs text-muted underline shrink-0">
+            다시 시도
+          </button>
+        </div>
+      )}
       {YEARLY_SECTION_KEYS.map((key) => {
         const { emoji, title } = SECTION_META[key];
         const text = sections[key];
@@ -91,7 +88,7 @@ function YearlySections({
           ✕ 분석 중단
         </button>
       )}
-      {!isStreaming && hasContent && (
+      {!isStreaming && !aiError && hasContent && (
         <button onClick={onRequest} className="mt-1 text-xs text-muted underline text-center">
           다시 요청
         </button>
