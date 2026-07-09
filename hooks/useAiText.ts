@@ -13,7 +13,11 @@ interface UseAiTextReturn {
 }
 
 export function useAiText(cacheKey?: string): UseAiTextReturn {
-  const [aiText, setAiText] = useState('');
+  const [aiText, setAiText] = useState(() => {
+    if (!cacheKey) return '';
+    const cached = loadAiCache(cacheKey);
+    return cached?.ai ? (cached.ai as string) : '';
+  });
   const [aiError, setAiError] = useState('');
 
   useEffect(() => {
