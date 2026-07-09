@@ -21,9 +21,18 @@ const TABS = [
 export default function CompatibilityTabs() {
   const pathname = usePathname();
 
+  // Pick the longest matching pattern across all tabs so that a more specific
+  // route (e.g. '/compatibility/group') wins over a shorter prefix that also
+  // matches it (e.g. '/compatibility'), regardless of tab order.
   const activeHref =
-    TABS.find((t) => t.match.some((m) => pathname === m || pathname.startsWith(m + '/')))?.href ??
-    '/compatibility';
+    TABS.reduce<{ href: string; len: number } | null>((best, t) => {
+      for (const m of t.match) {
+        if ((pathname === m || pathname.startsWith(m + '/')) && (!best || m.length > best.len)) {
+          best = { href: t.href, len: m.length };
+        }
+      }
+      return best;
+    }, null)?.href ?? '/compatibility';
 
   return (
     <div className="flex border-b border-border" role="tablist" aria-label="궁합 유형 선택">

@@ -113,7 +113,6 @@ export function useMonthlyFortune(input: MonthlyFortuneInput): UseMonthlyFortune
       saveAiCache(makeCacheKey(requestedMonthRef.current), final);
     },
     onError: (msg) => {
-      setSections(emptyYearlySections());
       setActiveSection(null);
       setAiError(msg);
     },
