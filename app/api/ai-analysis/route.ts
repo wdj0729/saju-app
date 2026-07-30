@@ -8,7 +8,10 @@ import {
 } from '@/lib/stream-anthropic';
 import { AI_MODEL } from '@/lib/anthropic';
 import { getRateLimitResponse } from '@/lib/rate-limit';
-import { makeAiAnalysisCacheKey, streamAnthropicResponseWithRedisCache } from '@/lib/redis-ai-cache';
+import {
+  makeAiAnalysisCacheKey,
+  streamAnthropicResponseWithRedisCache,
+} from '@/lib/redis-ai-cache';
 
 interface AiAnalysisRequest {
   ilgan: string;

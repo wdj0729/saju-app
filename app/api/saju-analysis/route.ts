@@ -9,7 +9,10 @@ import {
 } from '@/lib/stream-anthropic';
 import { AI_MODEL } from '@/lib/anthropic';
 import { getRateLimitResponse } from '@/lib/rate-limit';
-import { makeSajuAnalysisCacheKey, streamAnthropicResponseWithRedisCache } from '@/lib/redis-ai-cache';
+import {
+  makeSajuAnalysisCacheKey,
+  streamAnthropicResponseWithRedisCache,
+} from '@/lib/redis-ai-cache';
 
 interface CurrentDaewoon {
   gan: string;
