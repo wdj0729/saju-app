@@ -109,14 +109,9 @@ export async function POST(req: NextRequest): Promise<Response> {
     .filter((l): l is string => l !== null)
     .join('\n');
 
-  try {
-    return streamAnthropicResponseWithRedisCache(
-      { model: AI_MODEL, max_tokens: 2048, messages: [{ role: 'user', content: lines }] },
-      cacheKey,
-      2592000
-    );
-  } catch (error) {
-    console.error('[saju-analysis] AI request failed:', error);
-    return new Response('AI 분석 요청에 실패했어요.', { status: 500 });
-  }
+  return streamAnthropicResponseWithRedisCache(
+    { model: AI_MODEL, max_tokens: 2048, messages: [{ role: 'user', content: lines }] },
+    cacheKey,
+    2592000
+  );
 }

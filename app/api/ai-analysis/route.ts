@@ -58,15 +58,14 @@ export async function POST(req: NextRequest): Promise<Response> {
     today.getDate()
   );
 
-  try {
-    return streamAnthropicResponseWithRedisCache(
-      {
-        model: AI_MODEL,
-        max_tokens: 1024,
-        messages: [
-          {
-            role: 'user',
-            content: `당신은 30년 경력의 명리학 전문가입니다. 아래 사주를 보고 오늘의 운세를 한국어로 해석해주세요.
+  return streamAnthropicResponseWithRedisCache(
+    {
+      model: AI_MODEL,
+      max_tokens: 1024,
+      messages: [
+        {
+          role: 'user',
+          content: `당신은 30년 경력의 명리학 전문가입니다. 아래 사주를 보고 오늘의 운세를 한국어로 해석해주세요.
 
 오늘 날짜: ${todayStr}
 사주 원국: ${pillarText}
@@ -74,14 +73,10 @@ export async function POST(req: NextRequest): Promise<Response> {
 오행 분포: ${ohaengText}
 
 **대운**, **재물**, **건강**, **인간관계** 항목별로 각 2~3문장씩 구체적이고 친근한 말투로 설명해주세요.`,
-          },
-        ],
-      },
-      cacheKey,
-      86400
-    );
-  } catch (error) {
-    console.error('[ai-analysis] AI request failed:', error);
-    return new Response('AI 분석 요청에 실패했어요.', { status: 500 });
-  }
+        },
+      ],
+    },
+    cacheKey,
+    86400
+  );
 }

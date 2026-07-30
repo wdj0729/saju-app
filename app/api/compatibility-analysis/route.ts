@@ -51,25 +51,20 @@ export async function POST(req: NextRequest): Promise<Response> {
   const ohaengTextA = formatOhaeng(personA.ohaeng);
   const ohaengTextB = formatOhaeng(personB.ohaeng);
 
-  try {
-    return streamAnthropicResponse({
-      model: AI_MODEL,
-      max_tokens: 1024,
-      messages: [
-        {
-          role: 'user',
-          content: `당신은 30년 경력의 명리학 전문가입니다. 두 사람의 사주 오행을 바탕으로 궁합을 한국어로 해석해주세요.
+  return streamAnthropicResponse({
+    model: AI_MODEL,
+    max_tokens: 1024,
+    messages: [
+      {
+        role: 'user',
+        content: `당신은 30년 경력의 명리학 전문가입니다. 두 사람의 사주 오행을 바탕으로 궁합을 한국어로 해석해주세요.
 
 ${nameA}: 일간 ${personA.ilgan}, 오행 분포 ${ohaengTextA}
 ${nameB}: 일간 ${personB.ilgan}, 오행 분포 ${ohaengTextB}
 궁합 점수: ${score}점 (${grade})
 
 **연애·감정**, **결혼·생활**, **직업·사회** 측면에서 각 2~3문장씩 구체적이고 친근한 말투로 설명해주세요.`,
-        },
-      ],
-    });
-  } catch (error) {
-    console.error('[compatibility-analysis] AI request failed:', error);
-    return new Response('AI 분석 요청에 실패했어요.', { status: 500 });
-  }
+      },
+    ],
+  });
 }
