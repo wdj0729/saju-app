@@ -26,10 +26,6 @@ export function getOhaengRelationKey(ilganEl: Ohaeng, ganEl: Ohaeng): RelationKe
   return 'i_ctrl';
 }
 
-export function getRelationText<T>(
-  map: Record<RelationKey, T>,
-  ilganEl: Ohaeng,
-  ganEl: Ohaeng
-): T {
+export function getRelationText<T>(map: Record<RelationKey, T>, ilganEl: Ohaeng, ganEl: Ohaeng): T {
   return map[getOhaengRelationKey(ilganEl, ganEl)];
 }
