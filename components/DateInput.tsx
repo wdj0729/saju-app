@@ -37,6 +37,7 @@ export default function DateInput({
   const [yearStr, setYearStr] = useState(String(year));
   const [monthStr, setMonthStr] = useState(String(month).padStart(2, '0'));
   const [dayStr, setDayStr] = useState(String(day).padStart(2, '0'));
+  const [notice, setNotice] = useState('');
 
   // Refs track the latest input value synchronously so onBlur closures
   // are not stale when focus() triggers blur mid-onChange batch.
@@ -45,6 +46,19 @@ export default function DateInput({
 
   const monthRef = useRef<HTMLInputElement>(null);
   const dayRef = useRef<HTMLInputElement>(null);
+  const noticeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (noticeTimerRef.current) clearTimeout(noticeTimerRef.current);
+    };
+  }, []);
+
+  function flashNotice(message: string) {
+    setNotice(message);
+    if (noticeTimerRef.current) clearTimeout(noticeTimerRef.current);
+    noticeTimerRef.current = setTimeout(() => setNotice(''), 2000);
+  }
 
   // Sync from parent when a profile is loaded externally
   useEffect(() => {
@@ -62,98 +76,113 @@ export default function DateInput({
   }, [day]);
 
   return (
-    <div className="flex items-center gap-1.5">
-      <input
-        type="text"
-        inputMode="numeric"
-        pattern="[0-9]*"
-        maxLength={4}
-        value={yearStr}
-        className={`${FIELD_CLASS} w-20 px-2`}
-        placeholder="1993"
-        aria-label="년도"
-        onChange={(e) => {
-          const v = e.target.value.replace(/\D/g, '').slice(0, 4);
-          yearStrRef.current = v;
-          setYearStr(v);
-          if (v.length === 4) {
-            onYearChange(clampYear(Number(v)));
-            monthRef.current?.focus();
-            monthRef.current?.select();
-          }
-        }}
-        onBlur={() => {
-          const current = yearStrRef.current;
-          if (current.length < 4) {
-            const reset = String(year);
-            yearStrRef.current = reset;
-            setYearStr(reset);
-            return;
-          }
-          const clamped = clampYear(Number(current));
-          const clamped_str = String(clamped);
-          yearStrRef.current = clamped_str;
-          setYearStr(clamped_str);
-          onYearChange(clamped);
-        }}
-      />
-      <span className="text-muted text-sm shrink-0">년</span>
-      <input
-        ref={monthRef}
-        type="text"
-        inputMode="numeric"
-        pattern="[0-9]*"
-        maxLength={2}
-        value={monthStr}
-        className={`${FIELD_CLASS} w-12 px-1`}
-        placeholder="06"
-        aria-label="월"
-        onFocus={(e) => e.target.select()}
-        onChange={(e) => {
-          const v = e.target.value.replace(/\D/g, '').slice(0, 2);
-          monthStrRef.current = v;
-          setMonthStr(v);
-          if (v.length === 2) {
-            const clamped = clampMonth(Number(v));
+    <div className="flex flex-col gap-1">
+      <div className="flex items-center gap-1.5">
+        <input
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          maxLength={4}
+          value={yearStr}
+          className={`${FIELD_CLASS} w-20 px-2`}
+          placeholder="1993"
+          aria-label="년도"
+          onChange={(e) => {
+            const v = e.target.value.replace(/\D/g, '').slice(0, 4);
+            yearStrRef.current = v;
+            setYearStr(v);
+            if (v.length === 4) {
+              onYearChange(clampYear(Number(v)));
+              monthRef.current?.focus();
+              monthRef.current?.select();
+            }
+          }}
+          onBlur={() => {
+            const current = yearStrRef.current;
+            if (current.length < 4) {
+              const reset = String(year);
+              yearStrRef.current = reset;
+              setYearStr(reset);
+              if (current.length > 0) flashNotice('년도 4자리를 입력해주세요');
+              return;
+            }
+            const clamped = clampYear(Number(current));
+            const clamped_str = String(clamped);
+            yearStrRef.current = clamped_str;
+            setYearStr(clamped_str);
+            onYearChange(clamped);
+            if (clamped !== Number(current)) {
+              flashNotice(`년도는 1900~${new Date().getFullYear()} 사이여야 해요`);
+            }
+          }}
+        />
+        <span className="text-muted text-sm shrink-0">년</span>
+        <input
+          ref={monthRef}
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          maxLength={2}
+          value={monthStr}
+          className={`${FIELD_CLASS} w-12 px-1`}
+          placeholder="06"
+          aria-label="월"
+          onFocus={(e) => e.target.select()}
+          onChange={(e) => {
+            const v = e.target.value.replace(/\D/g, '').slice(0, 2);
+            monthStrRef.current = v;
+            setMonthStr(v);
+            if (v.length === 2) {
+              const clamped = clampMonth(Number(v));
+              onMonthChange(clamped);
+              dayRef.current?.focus();
+              dayRef.current?.select();
+            }
+          }}
+          onBlur={() => {
+            const raw = Number(monthStrRef.current) || 1;
+            const clamped = clampMonth(raw);
+            const padded = String(clamped).padStart(2, '0');
+            monthStrRef.current = padded;
+            setMonthStr(padded);
             onMonthChange(clamped);
-            dayRef.current?.focus();
-            dayRef.current?.select();
-          }
-        }}
-        onBlur={() => {
-          const clamped = clampMonth(Number(monthStrRef.current) || 1);
-          const padded = String(clamped).padStart(2, '0');
-          monthStrRef.current = padded;
-          setMonthStr(padded);
-          onMonthChange(clamped);
-        }}
-      />
-      <span className="text-muted text-sm shrink-0">월</span>
-      <input
-        ref={dayRef}
-        type="text"
-        inputMode="numeric"
-        pattern="[0-9]*"
-        maxLength={2}
-        value={dayStr}
-        className={`${FIELD_CLASS} w-12 px-1`}
-        placeholder="15"
-        aria-label="일"
-        onFocus={(e) => e.target.select()}
-        onChange={(e) => {
-          const v = e.target.value.replace(/\D/g, '').slice(0, 2);
-          setDayStr(v);
-          if (v.length === 2) {
-            onDayChange(clampDay(Number(v), maxDay));
-          }
-        }}
-        onBlur={() => {
-          const clamped = clampDay(Number(dayStr) || 1, maxDay);
-          setDayStr(String(clamped).padStart(2, '0'));
-          onDayChange(clamped);
-        }}
-      />
-      <span className="text-muted text-sm shrink-0">일</span>
+            if (clamped !== raw) flashNotice('월은 1~12 사이여야 해요');
+          }}
+        />
+        <span className="text-muted text-sm shrink-0">월</span>
+        <input
+          ref={dayRef}
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          maxLength={2}
+          value={dayStr}
+          className={`${FIELD_CLASS} w-12 px-1`}
+          placeholder="15"
+          aria-label="일"
+          onFocus={(e) => e.target.select()}
+          onChange={(e) => {
+            const v = e.target.value.replace(/\D/g, '').slice(0, 2);
+            setDayStr(v);
+            if (v.length === 2) {
+              onDayChange(clampDay(Number(v), maxDay));
+            }
+          }}
+          onBlur={() => {
+            const raw = Number(dayStr) || 1;
+            const clamped = clampDay(raw, maxDay);
+            setDayStr(String(clamped).padStart(2, '0'));
+            onDayChange(clamped);
+            if (clamped !== raw) flashNotice(`일은 1~${maxDay} 사이여야 해요`);
+          }}
+        />
+        <span className="text-muted text-sm shrink-0">일</span>
+      </div>
+      {notice && (
+        <p role="status" className="text-xs" style={{ color: '#facc15' }}>
+          {notice}
+        </p>
+      )}
     </div>
   );
 }

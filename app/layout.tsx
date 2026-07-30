@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/react';
 import './globals.css';
 import ServiceWorkerRegistrar from '@/components/ServiceWorkerRegistrar';
 import BottomNav from '@/components/BottomNav';
+import PageTransition from '@/components/PageTransition';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -59,7 +60,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="ko" className={`${geistSans.variable} h-full antialiased`}>
       <body className="bg-base min-h-screen text-primary">
         <ServiceWorkerRegistrar />
-        <div className="max-w-md mx-auto min-h-screen flex flex-col pb-20">{children}</div>
+        <div className="max-w-md mx-auto min-h-screen flex flex-col pb-20">
+          <PageTransition>{children}</PageTransition>
+        </div>
         <BottomNav />
         <Analytics />
       </body>
