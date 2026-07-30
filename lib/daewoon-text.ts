@@ -1,5 +1,5 @@
 import type { Ohaeng } from './saju-data';
-import { type RelationKey, getOhaengRelationKey } from './ohaeng-relations';
+import { type RelationKey, getRelationText } from './ohaeng-relations';
 
 const RELATION_TEXT: Record<RelationKey, { label: string; relDesc: string }> = {
   same: {
@@ -47,7 +47,6 @@ export function getDaewoonInterpretation(
   ganEl: Ohaeng,
   jiEl: Ohaeng
 ): DaewoonInterpretation {
-  const key = getOhaengRelationKey(ilganEl, ganEl);
-  const { label, relDesc } = RELATION_TEXT[key];
+  const { label, relDesc } = getRelationText(RELATION_TEXT, ilganEl, ganEl);
   return { label, desc: `${relDesc} ${JI_FLAVOR[jiEl]}` };
 }

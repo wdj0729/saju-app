@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { loadGroupCompatSession } from '@/lib/group-compatibility';
 import type { GroupCompatibilitySession, PairResult } from '@/lib/group-compatibility';
 import { useSessionOrRedirect } from '@/hooks/useSessionOrRedirect';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import { useAiText } from '@/hooks/useAiText';
 import AiContent from '@/components/AiContent';
 import BackButton from '@/components/BackButton';
@@ -95,6 +96,12 @@ export default function GroupResultContent() {
       averageScore: session.averageScore,
     });
   }, [request, session]);
+
+  const docTitle =
+    session && session !== 'not-found'
+      ? `${session.members.length}명 모임 궁합 결과 — 사주팔자`
+      : undefined;
+  useDocumentTitle(docTitle);
 
   if (session === 'not-found') {
     return <SessionExpiredPage redirectPath="/compatibility/group" redirectLabel="다시 입력하기" />;

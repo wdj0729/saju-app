@@ -20,6 +20,23 @@ export function isPillarData(v: unknown): v is PillarData {
   );
 }
 
+export interface NamedOhaengData {
+  name: string;
+  ilgan: string;
+  ohaeng: Record<string, number>;
+}
+
+export function isNamedOhaengData(v: unknown): v is NamedOhaengData {
+  return (
+    typeof v === 'object' &&
+    v !== null &&
+    typeof (v as Record<string, unknown>).name === 'string' &&
+    typeof (v as Record<string, unknown>).ilgan === 'string' &&
+    typeof (v as Record<string, unknown>).ohaeng === 'object' &&
+    (v as Record<string, unknown>).ohaeng !== null
+  );
+}
+
 export async function parseBody<T>(
   req: NextRequest,
   validate: (v: unknown) => v is T

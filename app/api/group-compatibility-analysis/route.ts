@@ -1,5 +1,10 @@
 import { NextRequest } from 'next/server';
-import { parseBody, formatOhaeng } from '@/lib/stream-anthropic';
+import {
+  parseBody,
+  formatOhaeng,
+  isNamedOhaengData,
+  type NamedOhaengData,
+} from '@/lib/stream-anthropic';
 import { AI_MODEL } from '@/lib/anthropic';
 import { getRateLimitResponse } from '@/lib/rate-limit';
 import {
@@ -7,26 +12,11 @@ import {
   streamAnthropicResponseWithRedisCache,
 } from '@/lib/redis-ai-cache';
 
-interface MemberData {
-  name: string;
-  ilgan: string;
-  ohaeng: Record<string, number>;
-}
+type MemberData = NamedOhaengData;
 
 interface GroupAnalysisRequest {
   members: MemberData[];
   averageScore: number;
-}
-
-function isMemberData(v: unknown): v is MemberData {
-  return (
-    typeof v === 'object' &&
-    v !== null &&
-    typeof (v as Record<string, unknown>).name === 'string' &&
-    typeof (v as Record<string, unknown>).ilgan === 'string' &&
-    typeof (v as Record<string, unknown>).ohaeng === 'object' &&
-    (v as Record<string, unknown>).ohaeng !== null
-  );
 }
 
 function isGroupAnalysisRequest(v: unknown): v is GroupAnalysisRequest {
@@ -35,7 +25,7 @@ function isGroupAnalysisRequest(v: unknown): v is GroupAnalysisRequest {
   return (
     Array.isArray(r.members) &&
     r.members.length >= 2 &&
-    r.members.every(isMemberData) &&
+    r.members.every(isNamedOhaengData) &&
     typeof r.averageScore === 'number'
   );
 }
