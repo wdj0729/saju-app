@@ -75,7 +75,6 @@ const compatStore = createSessionStore('compatibility-session', isCompatibilityS
 
 export const saveCompatSession = compatStore.save;
 export const loadCompatSession = compatStore.load;
-export const clearCompatSession = compatStore.clear;
 
 export function calcCompatibility(a: SajuResult, b: SajuResult): CompatibilityResult {
   const ohaengA = a.ohaeng;

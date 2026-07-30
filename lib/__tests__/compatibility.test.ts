@@ -1,9 +1,4 @@
-import {
-  calcCompatibility,
-  saveCompatSession,
-  loadCompatSession,
-  clearCompatSession,
-} from '../compatibility';
+import { calcCompatibility, saveCompatSession, loadCompatSession } from '../compatibility';
 import type { CompatibilitySession } from '../compatibility';
 import type { SajuResult } from '../saju-calculator';
 import { setupStorageMock } from './test-utils';
@@ -119,12 +114,6 @@ describe('CompatibilitySession 스토리지', () => {
   it('세션이 없으면 null 반환', () => {
     expect(loadCompatSession()).toBeNull();
   });
-
-  it('clearCompatSession 후 loadCompatSession은 null 반환', () => {
-    saveCompatSession(dummy);
-    clearCompatSession();
-    expect(loadCompatSession()).toBeNull();
-  });
 });
 
 describe('SSR 환경 (window 없음)', () => {
@@ -146,9 +135,5 @@ describe('SSR 환경 (window 없음)', () => {
 
   it('loadCompatSession은 null 반환', () => {
     expect(loadCompatSession()).toBeNull();
-  });
-
-  it('clearCompatSession은 아무것도 하지 않음', () => {
-    expect(() => clearCompatSession()).not.toThrow();
   });
 });

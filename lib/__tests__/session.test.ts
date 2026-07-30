@@ -1,5 +1,5 @@
 import type { SajuResult } from '../saju-calculator';
-import { saveSession, loadSession, clearSession } from '../session';
+import { saveSession, loadSession } from '../session';
 import type { SajuSession } from '../session';
 import { setupStorageMock } from './test-utils';
 
@@ -26,12 +26,6 @@ describe('session', () => {
     expect(loaded).not.toBeNull();
     expect(loaded?.input.name).toBe('홍길동');
     expect(loaded?.result.ilgan).toBe('戊');
-  });
-
-  it('clearSession 후 loadSession은 null 반환', () => {
-    saveSession(DUMMY_SESSION);
-    clearSession();
-    expect(loadSession()).toBeNull();
   });
 
   it('sessionStorage가 비어있으면 loadSession은 null 반환', () => {
@@ -68,9 +62,5 @@ describe('SSR 환경 (window 없음)', () => {
 
   it('loadSession은 null 반환', () => {
     expect(loadSession()).toBeNull();
-  });
-
-  it('clearSession은 아무것도 하지 않음', () => {
-    expect(() => clearSession()).not.toThrow();
   });
 });
