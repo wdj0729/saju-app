@@ -1,9 +1,10 @@
 'use client';
 
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadCompatSession } from '@/lib/compatibility';
 import { useSessionOrRedirect } from '@/hooks/useSessionOrRedirect';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import ShareButton from '@/components/ShareButton';
 import BackButton from '@/components/BackButton';
 import AiContent from '@/components/AiContent';
@@ -82,15 +83,11 @@ export default function CompatibilityResultContent() {
     };
   }, [session]);
 
-  useEffect(() => {
-    if (!session || session === 'not-found') return;
-    const a = session.personA.name || '나';
-    const b = session.personB.name || '상대';
-    document.title = `${a} ♡ ${b} 궁합 결과 — 사주팔자`;
-    return () => {
-      document.title = '사주팔자';
-    };
-  }, [session]);
+  const docTitle =
+    session && session !== 'not-found'
+      ? `${session.personA.name || '나'} ♡ ${session.personB.name || '상대'} 궁합 결과 — 사주팔자`
+      : undefined;
+  useDocumentTitle(docTitle);
 
   if (session === 'not-found')
     return <SessionExpiredPage redirectPath="/compatibility" redirectLabel="다시 입력하기" />;
