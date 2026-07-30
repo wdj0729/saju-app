@@ -11,7 +11,7 @@ import BackButton from '@/components/BackButton';
 import AiContent from '@/components/AiContent';
 import { useAiText } from '@/hooks/useAiText';
 import { makeFortuneDayCacheKey } from '@/lib/ai-cache';
-import { SkeletonBox } from '@/components/Skeleton';
+import { SkeletonBox, SkeletonHeader } from '@/components/Skeleton';
 import SessionExpiredPage from '@/components/SessionExpiredPage';
 import { getDayPillar } from '@/lib/saju-calculator';
 import { OHAENG_LABEL } from '@/lib/constants';
@@ -23,10 +23,7 @@ const PERIODS: Period[] = ['오늘', '이달', '올해'];
 function FortuneSkeleton() {
   return (
     <div className="flex flex-col flex-1">
-      <header className="flex items-center gap-3 px-4 py-4 border-b border-border">
-        <SkeletonBox className="h-4 w-16" />
-        <SkeletonBox className="h-4 w-28" />
-      </header>
+      <SkeletonHeader titleWidth="w-28" />
       <div className="flex border-b border-border">
         {[0, 1, 2].map((i) => (
           <div key={i} className="flex-1 py-3 flex justify-center">

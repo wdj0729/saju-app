@@ -97,14 +97,9 @@ export async function POST(req: NextRequest): Promise<Response> {
     .filter((l): l is string => l !== null)
     .join('\n');
 
-  try {
-    return streamAnthropicResponse({
-      model: AI_MODEL,
-      max_tokens: MONTHLY_FORTUNE_MAX_TOKENS,
-      messages: [{ role: 'user', content: lines }],
-    });
-  } catch (error) {
-    console.error('[monthly-fortune] AI request failed:', error);
-    return new Response('AI 분석 요청에 실패했어요.', { status: 500 });
-  }
+  return streamAnthropicResponse({
+    model: AI_MODEL,
+    max_tokens: MONTHLY_FORTUNE_MAX_TOKENS,
+    messages: [{ role: 'user', content: lines }],
+  });
 }

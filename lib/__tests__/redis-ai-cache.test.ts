@@ -1,5 +1,6 @@
 const mockGet = jest.fn();
 const mockSet = jest.fn();
+const mockStream = jest.fn();
 
 jest.mock('@upstash/redis', () => ({
   Redis: {
@@ -10,14 +11,41 @@ jest.mock('@upstash/redis', () => ({
   },
 }));
 
+jest.mock('@anthropic-ai/sdk', () => {
+  return jest.fn().mockImplementation(() => ({
+    messages: {
+      stream: (...args: unknown[]) => mockStream(...args),
+    },
+  }));
+});
+
 import {
   getRedisAiCache,
   setRedisAiCache,
   makeSajuAnalysisCacheKey,
   makeAiAnalysisCacheKey,
   makeYearlyFortuneCacheKey,
+  streamAnthropicResponseWithRedisCache,
 } from '../redis-ai-cache';
 import type { PillarData } from '../stream-anthropic';
+
+function textDelta(text: string) {
+  return { type: 'content_block_delta', index: 0, delta: { type: 'text_delta', text } };
+}
+
+function fakeAnthropicStream(events: unknown[]) {
+  return {
+    [Symbol.asyncIterator]() {
+      let i = 0;
+      return {
+        async next() {
+          if (i < events.length) return { value: events[i++], done: false };
+          return { value: undefined, done: true };
+        },
+      };
+    },
+  };
+}
 
 const PILLARS = {
   year: { gan: '甲', ji: '子' } as PillarData,
@@ -90,5 +118,32 @@ describe('makeYearlyFortuneCacheKey', () => {
   it('fortuneYear 포함 키 생성', () => {
     const key = makeYearlyFortuneCacheKey(PILLARS, 'M', 2026);
     expect(key).toBe('server-ai:yearly:v1:甲子.乙丑.丙寅.x-M-2026');
+  });
+});
+
+describe('streamAnthropicResponseWithRedisCache', () => {
+  beforeEach(() => {
+    mockStream.mockReset();
+  });
+
+  it('캐시 히트 시 스트리밍 없이 캐시된 텍스트를 바로 반환', async () => {
+    mockGet.mockResolvedValueOnce('cached text');
+
+    const res = await streamAnthropicResponseWithRedisCache({} as never, 'key', 3600);
+
+    expect(await res.text()).toBe('cached text');
+    expect(res.headers.get('Content-Type')).toBe('text/plain; charset=utf-8');
+    expect(mockStream).not.toHaveBeenCalled();
+  });
+
+  it('캐시 미스 시 스트리밍하고 완료된 텍스트를 setRedisAiCache로 저장', async () => {
+    mockGet.mockResolvedValueOnce(null);
+    mockSet.mockResolvedValueOnce('OK');
+    mockStream.mockReturnValue(fakeAnthropicStream([textDelta('안녕'), textDelta('하세요')]));
+
+    const res = await streamAnthropicResponseWithRedisCache({} as never, 'key', 3600);
+
+    expect(await res.text()).toBe('안녕하세요');
+    expect(mockSet).toHaveBeenCalledWith('key', '안녕하세요', { ex: 3600 });
   });
 });

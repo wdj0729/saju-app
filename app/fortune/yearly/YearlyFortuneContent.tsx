@@ -8,17 +8,14 @@ import { useYearlySections } from '@/hooks/useYearlySections';
 import YearlySections from '@/components/YearlySections';
 import MonthlyFortune from '@/components/MonthlyFortune';
 import BackButton from '@/components/BackButton';
-import { SkeletonBox } from '@/components/Skeleton';
+import { SkeletonBox, SkeletonHeader } from '@/components/Skeleton';
 import SessionExpiredPage from '@/components/SessionExpiredPage';
 import { getFortuneYear, getFortuneGanjee } from '@/lib/constants';
 
 function YearlyFortuneSkeleton() {
   return (
     <div className="flex flex-col flex-1">
-      <header className="flex items-center gap-3 px-4 py-4 border-b border-border">
-        <SkeletonBox className="h-4 w-16" />
-        <SkeletonBox className="h-4 w-32" />
-      </header>
+      <SkeletonHeader titleWidth="w-32" />
       <div className="flex flex-col gap-4 px-4 py-6 flex-1">
         {[0, 1, 2, 3, 4].map((i) => (
           <div key={i} className="bg-card rounded-2xl p-4 flex flex-col gap-2">

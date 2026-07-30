@@ -6,12 +6,14 @@ import {
   formatGender,
   isPillarData,
   type PillarData,
-  streamAnthropicResponseWithCache,
 } from '@/lib/stream-anthropic';
 import { getFortuneYear, getFortuneGanjee } from '@/lib/constants';
 import { AI_MODEL } from '@/lib/anthropic';
 import { getRateLimitResponse } from '@/lib/rate-limit';
-import { getRedisAiCache, setRedisAiCache, makeYearlyFortuneCacheKey } from '@/lib/redis-ai-cache';
+import {
+  makeYearlyFortuneCacheKey,
+  streamAnthropicResponseWithRedisCache,
+} from '@/lib/redis-ai-cache';
 
 interface YearlyFortuneRequest {
   ilgan: string;
@@ -52,10 +54,6 @@ export async function POST(req: NextRequest): Promise<Response> {
   const fortuneGanjee = getFortuneGanjee(fortuneYear);
 
   const cacheKey = makeYearlyFortuneCacheKey(pillars, gender, fortuneYear);
-  const cached = await getRedisAiCache(cacheKey);
-  if (cached) {
-    return new Response(cached, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
-  }
 
   const pillarText = formatPillars(pillars);
 
@@ -94,13 +92,9 @@ export async function POST(req: NextRequest): Promise<Response> {
     .filter((l): l is string => l !== null)
     .join('\n');
 
-  try {
-    return streamAnthropicResponseWithCache(
-      { model: AI_MODEL, max_tokens: 1500, messages: [{ role: 'user', content: lines }] },
-      (text) => setRedisAiCache(cacheKey, text, 2592000)
-    );
-  } catch (error) {
-    console.error('[yearly-fortune] AI request failed:', error);
-    return new Response('AI 분석 요청에 실패했어요.', { status: 500 });
-  }
+  return streamAnthropicResponseWithRedisCache(
+    { model: AI_MODEL, max_tokens: 1500, messages: [{ role: 'user', content: lines }] },
+    cacheKey,
+    2592000
+  );
 }

@@ -9,16 +9,13 @@ import BackButton from '@/components/BackButton';
 import AiContent from '@/components/AiContent';
 import { useAiText } from '@/hooks/useAiText';
 import { OHAENG_ORDER, OHAENG_LABEL, OHAENG_BAR } from '@/lib/constants';
-import { SkeletonBox } from '@/components/Skeleton';
+import { SkeletonBox, SkeletonHeader } from '@/components/Skeleton';
 import SessionExpiredPage from '@/components/SessionExpiredPage';
 
 function CompatibilityResultSkeleton() {
   return (
     <div className="flex flex-col flex-1">
-      <header className="flex items-center gap-3 px-4 py-4 border-b border-border">
-        <SkeletonBox className="h-4 w-16" />
-        <SkeletonBox className="h-4 w-20" />
-      </header>
+      <SkeletonHeader titleWidth="w-20" />
       <div className="flex flex-col gap-4 px-4 py-6 flex-1">
         <div className="bg-card rounded-2xl p-5 flex flex-col items-center gap-3">
           <SkeletonBox className="h-4 w-28" />

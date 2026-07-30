@@ -1,12 +1,9 @@
-import { SkeletonBox } from '@/components/Skeleton';
+import { SkeletonBox, SkeletonHeader } from '@/components/Skeleton';
 
 export function SajuResultSkeleton() {
   return (
     <div className="flex flex-col flex-1">
-      <header className="flex items-center gap-3 px-4 py-4 border-b border-border">
-        <SkeletonBox className="h-4 w-16" />
-        <SkeletonBox className="h-4 w-24" />
-      </header>
+      <SkeletonHeader titleWidth="w-24" />
       <div className="flex flex-col gap-6 px-4 py-6 flex-1">
         <div className="grid grid-cols-4 gap-2">
           {[0, 1, 2, 3].map((i) => (
