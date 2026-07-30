@@ -60,4 +60,3 @@ const store = createSessionStore('group-compatibility-session', isGroupCompatibi
 
 export const saveGroupCompatSession = store.save;
 export const loadGroupCompatSession = store.load;
-export const clearGroupCompatSession = store.clear;

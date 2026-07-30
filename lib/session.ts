@@ -35,4 +35,3 @@ const store = createSessionStore('saju-session', isSajuSession);
 
 export const saveSession = store.save;
 export const loadSession = store.load;
-export const clearSession = store.clear;
