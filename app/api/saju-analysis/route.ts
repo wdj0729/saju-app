@@ -6,11 +6,10 @@ import {
   formatGender,
   isPillarData,
   type PillarData,
-  streamAnthropicResponseWithCache,
 } from '@/lib/stream-anthropic';
 import { AI_MODEL } from '@/lib/anthropic';
 import { getRateLimitResponse } from '@/lib/rate-limit';
-import { getRedisAiCache, setRedisAiCache, makeSajuAnalysisCacheKey } from '@/lib/redis-ai-cache';
+import { makeSajuAnalysisCacheKey, streamAnthropicResponseWithRedisCache } from '@/lib/redis-ai-cache';
 
 interface CurrentDaewoon {
   gan: string;
@@ -64,10 +63,6 @@ export async function POST(req: NextRequest): Promise<Response> {
 
   const today = new Date();
   const cacheKey = makeSajuAnalysisCacheKey(pillars, gender, birthYear, today.getFullYear());
-  const cached = await getRedisAiCache(cacheKey);
-  if (cached) {
-    return new Response(cached, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
-  }
 
   const pillarText = formatPillars(pillars);
 
@@ -115,9 +110,10 @@ export async function POST(req: NextRequest): Promise<Response> {
     .join('\n');
 
   try {
-    return streamAnthropicResponseWithCache(
+    return streamAnthropicResponseWithRedisCache(
       { model: AI_MODEL, max_tokens: 2048, messages: [{ role: 'user', content: lines }] },
-      (text) => setRedisAiCache(cacheKey, text, 2592000)
+      cacheKey,
+      2592000
     );
   } catch (error) {
     console.error('[saju-analysis] AI request failed:', error);

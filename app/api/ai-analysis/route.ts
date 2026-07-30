@@ -5,11 +5,10 @@ import {
   formatPillars,
   isPillarData,
   type PillarData,
-  streamAnthropicResponseWithCache,
 } from '@/lib/stream-anthropic';
 import { AI_MODEL } from '@/lib/anthropic';
 import { getRateLimitResponse } from '@/lib/rate-limit';
-import { getRedisAiCache, setRedisAiCache, makeAiAnalysisCacheKey } from '@/lib/redis-ai-cache';
+import { makeAiAnalysisCacheKey, streamAnthropicResponseWithRedisCache } from '@/lib/redis-ai-cache';
 
 interface AiAnalysisRequest {
   ilgan: string;
@@ -58,13 +57,9 @@ export async function POST(req: NextRequest): Promise<Response> {
     today.getMonth() + 1,
     today.getDate()
   );
-  const cached = await getRedisAiCache(cacheKey);
-  if (cached) {
-    return new Response(cached, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
-  }
 
   try {
-    return streamAnthropicResponseWithCache(
+    return streamAnthropicResponseWithRedisCache(
       {
         model: AI_MODEL,
         max_tokens: 1024,
@@ -82,7 +77,8 @@ export async function POST(req: NextRequest): Promise<Response> {
           },
         ],
       },
-      (text) => setRedisAiCache(cacheKey, text, 86400)
+      cacheKey,
+      86400
     );
   } catch (error) {
     console.error('[ai-analysis] AI request failed:', error);

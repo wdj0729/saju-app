@@ -1,8 +1,11 @@
 import { NextRequest } from 'next/server';
-import { parseBody, streamAnthropicResponseWithCache, formatOhaeng } from '@/lib/stream-anthropic';
+import { parseBody, formatOhaeng } from '@/lib/stream-anthropic';
 import { AI_MODEL } from '@/lib/anthropic';
 import { getRateLimitResponse } from '@/lib/rate-limit';
-import { getRedisAiCache, setRedisAiCache, makeGroupAnalysisCacheKey } from '@/lib/redis-ai-cache';
+import {
+  makeGroupAnalysisCacheKey,
+  streamAnthropicResponseWithRedisCache,
+} from '@/lib/redis-ai-cache';
 
 interface MemberData {
   name: string;
@@ -49,10 +52,6 @@ export async function POST(req: NextRequest): Promise<Response> {
     members.map((m) => m.ilgan),
     averageScore
   );
-  const cached = await getRedisAiCache(cacheKey);
-  if (cached) {
-    return new Response(cached, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
-  }
   const N = members.length;
 
   const memberLines = members
@@ -63,7 +62,7 @@ export async function POST(req: NextRequest): Promise<Response> {
     .join('\n');
 
   try {
-    return streamAnthropicResponseWithCache(
+    return streamAnthropicResponseWithRedisCache(
       {
         model: AI_MODEL,
         max_tokens: 1024,
@@ -79,7 +78,8 @@ ${memberLines}
           },
         ],
       },
-      (text) => setRedisAiCache(cacheKey, text, 86400)
+      cacheKey,
+      86400
     );
   } catch (error) {
     console.error('[group-compatibility-analysis] AI request failed:', error);

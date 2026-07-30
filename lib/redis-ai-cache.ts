@@ -1,4 +1,6 @@
+import type { MessageStreamParams } from '@anthropic-ai/sdk/resources/messages/messages';
 import { redis } from './upstash';
+import { streamAnthropicResponseWithCache } from './stream-anthropic';
 import type { PillarData } from './stream-anthropic';
 
 function pillarKey(pillars: {
@@ -62,4 +64,18 @@ export async function setRedisAiCache(
 
 export function makeGroupAnalysisCacheKey(memberIlgans: string[], averageScore: number): string {
   return `server-ai:group:v1:${memberIlgans.join('.')}:${averageScore}`;
+}
+
+export async function streamAnthropicResponseWithRedisCache(
+  params: MessageStreamParams,
+  cacheKey: string,
+  ttlSeconds: number
+): Promise<Response> {
+  const cached = await getRedisAiCache(cacheKey);
+  if (cached) {
+    return new Response(cached, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
+  }
+  return streamAnthropicResponseWithCache(params, (text) =>
+    setRedisAiCache(cacheKey, text, ttlSeconds)
+  );
 }
