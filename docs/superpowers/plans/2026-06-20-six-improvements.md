@@ -4,7 +4,7 @@
 
 **Goal:** Redis AI 캐싱, 스트리밍 에러 복구, 사주 URL 공유, sitemap/robots, 프로필 export/import, 대운 연도 레이블 6가지를 추가한다.
 
-**Architecture:** 각 태스크는 독립적으로 배포 가능하다. Redis 캐싱은 서버 라우트에만 영향을 미치고, 나머지 5개는 클라이언트 코드만 건드린다. 기존 `invite.ts` 패턴을 그대로 재활용한다.
+**Architecture:** 각 태스크는 독립적으로 배포 가능하다. Redis 캐싱은 서버 라우트에만 영향을 미치고, 나머지 5개는 클라이언트 코드만 건드린다.
 
 **Tech Stack:** Next.js 15 App Router, TypeScript, Upstash Redis (`@upstash/redis`), Tailwind CSS, Jest
 
