@@ -25,3 +25,11 @@ export function getOhaengRelationKey(ilganEl: Ohaeng, ganEl: Ohaeng): RelationKe
   if (OHAENG_CONTROLS[ganEl] === ilganEl) return 'ctrl_me';
   return 'i_ctrl';
 }
+
+export function getRelationText<T>(
+  map: Record<RelationKey, T>,
+  ilganEl: Ohaeng,
+  ganEl: Ohaeng
+): T {
+  return map[getOhaengRelationKey(ilganEl, ganEl)];
+}
