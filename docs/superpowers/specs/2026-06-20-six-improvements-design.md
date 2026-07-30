@@ -61,7 +61,7 @@ POST /api/saju-analysis
 ## 3. 사주 결과 URL 공유
 
 ### 방식
-초대 링크(`/compatibility/invite`)와 동일한 base64 URL-safe 인코딩.
+base64 URL-safe 인코딩.
 
 ### 새 파일/라우트
 
