@@ -1,13 +1,15 @@
 import { NextRequest } from 'next/server';
-import { parseBody, streamAnthropicResponse, formatOhaeng } from '@/lib/stream-anthropic';
+import {
+  parseBody,
+  streamAnthropicResponse,
+  formatOhaeng,
+  isNamedOhaengData,
+  type NamedOhaengData,
+} from '@/lib/stream-anthropic';
 import { AI_MODEL } from '@/lib/anthropic';
 import { getRateLimitResponse } from '@/lib/rate-limit';
 
-interface PersonData {
-  name: string;
-  ilgan: string;
-  ohaeng: Record<string, number>;
-}
+type PersonData = NamedOhaengData;
 
 interface CompatibilityAnalysisRequest {
   personA: PersonData;
@@ -16,23 +18,12 @@ interface CompatibilityAnalysisRequest {
   grade: string;
 }
 
-function isPersonData(v: unknown): v is PersonData {
-  return (
-    typeof v === 'object' &&
-    v !== null &&
-    typeof (v as Record<string, unknown>).name === 'string' &&
-    typeof (v as Record<string, unknown>).ilgan === 'string' &&
-    typeof (v as Record<string, unknown>).ohaeng === 'object' &&
-    (v as Record<string, unknown>).ohaeng !== null
-  );
-}
-
 function isCompatibilityAnalysisRequest(v: unknown): v is CompatibilityAnalysisRequest {
   if (typeof v !== 'object' || v === null) return false;
   const r = v as Record<string, unknown>;
   return (
-    isPersonData(r.personA) &&
-    isPersonData(r.personB) &&
+    isNamedOhaengData(r.personA) &&
+    isNamedOhaengData(r.personB) &&
     typeof r.score === 'number' &&
     typeof r.grade === 'string'
   );
