@@ -1,7 +1,7 @@
 'use client';
 
 import { memo } from 'react';
-import { SkeletonBox } from './Skeleton';
+import { SectionCards } from './SectionCards';
 import { YEARLY_SECTION_KEYS } from '@/lib/yearly-sections';
 import type { YearlySectionKey } from '@/lib/yearly-sections';
 import { getFortuneYear } from '@/lib/constants';
@@ -56,30 +56,13 @@ function YearlySections({
           </button>
         </div>
       )}
-      {YEARLY_SECTION_KEYS.map((key) => {
-        const { emoji, title } = SECTION_META[key];
-        const text = sections[key];
-
-        return (
-          <div key={key} className="bg-card rounded-2xl p-4">
-            <p className="text-xs text-muted mb-2">
-              {emoji} {title}
-            </p>
-            {isStreaming && !text ? (
-              <div className="flex flex-col gap-2">
-                <SkeletonBox className="h-4 w-full" />
-                <SkeletonBox className="h-4 w-[80%]" />
-                <SkeletonBox className="h-4 w-[60%]" />
-              </div>
-            ) : (
-              <p className="text-sm text-primary leading-relaxed whitespace-pre-wrap">
-                {text}
-                {activeSection === key && <span className="animate-pulse opacity-70">▌</span>}
-              </p>
-            )}
-          </div>
-        );
-      })}
+      <SectionCards
+        keys={YEARLY_SECTION_KEYS}
+        meta={SECTION_META}
+        sections={sections}
+        activeSection={activeSection}
+        isStreaming={isStreaming}
+      />
       {isStreaming && onAbort && (
         <button
           onClick={onAbort}

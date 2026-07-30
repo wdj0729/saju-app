@@ -1,7 +1,7 @@
 'use client';
 
 import { memo } from 'react';
-import { SkeletonBox } from './Skeleton';
+import { SectionCards } from './SectionCards';
 import { SECTION_KEYS } from '@/lib/saju-sections';
 import type { SectionKey } from '@/lib/saju-sections';
 
@@ -64,29 +64,13 @@ function AiSections({
           </button>
         </div>
       )}
-      {SECTION_KEYS.map((key) => {
-        const { emoji, title } = SECTION_META[key];
-        const text = sections[key];
-        return (
-          <div key={key} className="bg-card rounded-2xl p-4">
-            <p className="text-xs text-muted mb-2">
-              {emoji} {title}
-            </p>
-            {isStreaming && !text ? (
-              <div className="flex flex-col gap-2">
-                <SkeletonBox className="h-4 w-full" />
-                <SkeletonBox className="h-4 w-[80%]" />
-                <SkeletonBox className="h-4 w-[60%]" />
-              </div>
-            ) : (
-              <p className="text-sm text-primary leading-relaxed whitespace-pre-wrap">
-                {text}
-                {activeSection === key && <span className="animate-pulse opacity-70">▌</span>}
-              </p>
-            )}
-          </div>
-        );
-      })}
+      <SectionCards
+        keys={SECTION_KEYS}
+        meta={SECTION_META}
+        sections={sections}
+        activeSection={activeSection}
+        isStreaming={isStreaming}
+      />
       {isStreaming && onAbort && (
         <button
           onClick={onAbort}
