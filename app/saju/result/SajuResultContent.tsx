@@ -4,7 +4,6 @@ import { memo, useCallback, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loadSession } from '@/lib/session';
 import { makeAiCacheKey } from '@/lib/ai-cache';
-import { ILJU_TEXT } from '@/lib/ilju-text';
 import { GAN_OHAENG, JI_OHAENG } from '@/lib/saju-data';
 import { OHAENG_TEXT } from '@/lib/constants';
 import { getYearPillar } from '@/lib/saju-calculator';
@@ -17,6 +16,7 @@ import { useSessionOrRedirect } from '@/hooks/useSessionOrRedirect';
 import { useAiSections } from '@/hooks/useAiSections';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import SajuGrid from '@/components/SajuGrid';
+import IljuCard from '@/components/IljuCard';
 import OhaengChart from '@/components/OhaengChart';
 import OhaengAdvice from '@/components/OhaengAdvice';
 import SinsalCard from '@/components/SinsalCard';
@@ -196,15 +196,7 @@ export default function SajuResultContent() {
       <div className="flex flex-col gap-6 px-4 py-6 flex-1">
         <SajuGrid year={result.year} month={result.month} day={result.day} hour={result.hour} />
 
-        <div className="bg-card rounded-2xl p-4">
-          <p className="text-xs text-muted mb-1">
-            일주 {result.day.gan}
-            {result.day.ji} · 기질
-          </p>
-          <p className="text-sm text-primary leading-relaxed">
-            {ILJU_TEXT[result.day.gan + result.day.ji] ?? '일주 정보를 불러올 수 없어요.'}
-          </p>
-        </div>
+        <IljuCard gan={result.day.gan} ji={result.day.ji} />
 
         <div className="bg-card rounded-2xl p-4">
           <p className="text-xs text-muted mb-4">오행 분포</p>
