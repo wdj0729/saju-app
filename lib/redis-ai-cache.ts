@@ -62,10 +62,6 @@ export async function setRedisAiCache(
   }
 }
 
-export function makeGroupAnalysisCacheKey(memberIlgans: string[], averageScore: number): string {
-  return `server-ai:group:v1:${memberIlgans.join('.')}:${averageScore}`;
-}
-
 export async function streamAnthropicResponseWithRedisCache(
   params: MessageStreamParams,
   cacheKey: string,
